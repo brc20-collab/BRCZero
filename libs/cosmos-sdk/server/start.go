@@ -7,6 +7,9 @@ import (
 	"runtime/pprof"
 
 	"github.com/gogo/protobuf/jsonpb"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/baseapp"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/lcd"
@@ -27,8 +30,6 @@ import (
 	"github.com/brc20-collab/brczero/libs/tendermint/rpc/client"
 	"github.com/brc20-collab/brczero/libs/tendermint/rpc/client/local"
 	"github.com/brc20-collab/brczero/libs/tendermint/state"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	tmiavl "github.com/brc20-collab/brczero/libs/iavl"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"

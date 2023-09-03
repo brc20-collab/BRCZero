@@ -7,14 +7,12 @@ import (
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	tmtypes "github.com/brc20-collab/brczero/libs/tendermint/types"
 
+	ethcdc "github.com/brc20-collab/brczero/app/codec"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/simapp"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/x/slashing"
 	"github.com/brc20-collab/brczero/x/staking"
-	"github.com/brc20-collab/brczero/x/staking/exported"
-
-	ethcdc "github.com/brc20-collab/brczero/app/codec"
 )
 
 // NewDefaultGenesisState generates the default state for the application.
@@ -77,10 +75,10 @@ func (app *BRCZeroApp) prepForZeroHeightGenesis(ctx sdk.Context, jailWhiteList [
 	/* Handle fee distribution state. */
 
 	// withdraw all validator commission
-	app.StakingKeeper.IterateValidators(ctx, func(_ int64, val exported.ValidatorI) (stop bool) {
-		_, _ = app.DistrKeeper.WithdrawValidatorCommission(ctx, val.GetOperator())
-		return false
-	})
+	//app.StakingKeeper.IterateValidators(ctx, func(_ int64, val exported.ValidatorI) (stop bool) {
+	//	_, _ = app.DistrKeeper.WithdrawValidatorCommission(ctx, val.GetOperator())
+	//	return false
+	//})
 	//todo need resolved later
 	// withdraw all delegator rewards
 	//dels := app.StakingKeeper.GetAllDelegations(ctx)

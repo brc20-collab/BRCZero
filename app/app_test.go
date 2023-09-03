@@ -16,11 +16,9 @@ import (
 	"github.com/brc20-collab/brczero/x/distribution/keeper"
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
 
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/upgrade"
-	distr "github.com/brc20-collab/brczero/x/distribution"
-	"github.com/brc20-collab/brczero/x/params"
-
 	"github.com/stretchr/testify/require"
+
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/upgrade"
 
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
@@ -32,7 +30,6 @@ import (
 	authtypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
 	abcitypes "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto"
-	"github.com/brc20-collab/brczero/x/gov"
 )
 
 var (
@@ -99,16 +96,6 @@ func TestModuleManager(t *testing.T) {
 		_, found := app.mm.Modules[moduleName]
 		require.True(t, found)
 	}
-}
-
-func TestProposalManager(t *testing.T) {
-	db := dbm.NewMemDB()
-	app := NewBRCZeroApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, 0)
-
-	require.True(t, app.GovKeeper.Router().HasRoute(params.RouterKey))
-	require.True(t, app.GovKeeper.Router().HasRoute(distr.RouterKey))
-
-	require.True(t, app.GovKeeper.ProposalHandlerRouter().HasRoute(params.RouterKey))
 }
 
 func TestFakeBlockTxSuite(t *testing.T) {
@@ -236,70 +223,6 @@ func (suite *FakeBlockTxTestSuite) TestFakeBlockTx() {
 			},
 			abci.CodeTypeNonceInc + 7, //execution reverted: failed to execute message; message index: 0
 			21195,
-		},
-		{
-			"send std tx for gov, success",
-			func() []byte {
-				content := gov.NewTextProposal("Test", "description")
-				newProposalMsg := gov.NewMsgSubmitProposal(content, sysCoins10, suite.stdSenderAccAddress)
-				depositMsg := gov.NewMsgDeposit(suite.stdSenderAccAddress, govProposalID1, sysCoins90)
-				msgs := []cosmossdk.Msg{newProposalMsg, depositMsg}
-				tx := newTestStdTx(msgs, []crypto.PrivKey{suite.stdSenderPrivKey}, []uint64{accountNum}, []uint64{nonce0}, txFees, memo)
-
-				txEncoder := authclient.GetTxEncoder(suite.codec)
-				txBytes, _ := txEncoder(tx)
-				return txBytes
-			},
-			0,
-			161071,
-		},
-		{
-			"send tx for gov with error fee, failed, do not write to block",
-			func() []byte {
-				content := gov.NewTextProposal("Test", "description")
-				newProposalMsg := gov.NewMsgSubmitProposal(content, sysCoins10, suite.stdSenderAccAddress)
-				depositMsg := gov.NewMsgDeposit(suite.stdSenderAccAddress, govProposalID1, sysCoins90)
-				msgs := []cosmossdk.Msg{newProposalMsg, depositMsg}
-				tx := newTestStdTx(msgs, []crypto.PrivKey{suite.stdSenderPrivKey}, []uint64{accountNum}, []uint64{nonce1}, txFeesError, memo)
-
-				txEncoder := authclient.GetTxEncoder(suite.codec)
-				txBytes, _ := txEncoder(tx)
-				return txBytes
-			},
-			5,
-			0,
-		},
-		{
-			"send tx for gov with repeat proposal id, failed",
-			func() []byte {
-				content := gov.NewTextProposal("Test", "description")
-				newProposalMsg := gov.NewMsgSubmitProposal(content, sysCoins10, suite.stdSenderAccAddress)
-				depositMsg := gov.NewMsgDeposit(suite.stdSenderAccAddress, govProposalID1, sysCoins90)
-				msgs := []cosmossdk.Msg{newProposalMsg, depositMsg}
-				tx := newTestStdTx(msgs, []crypto.PrivKey{suite.stdSenderPrivKey}, []uint64{accountNum}, []uint64{nonce1}, txFees, memo)
-
-				txEncoder := authclient.GetTxEncoder(suite.codec)
-				txBytes, _ := txEncoder(tx)
-				return txBytes
-			},
-			abci.CodeTypeNonceInc + 68007, //the status of proposal is not for this operation: failed to execute message; message index: 1
-			122596,
-		},
-		{
-			"send std tx for gov again with proposal id 2, success",
-			func() []byte {
-				content := gov.NewTextProposal("Test", "description")
-				newProposalMsg := gov.NewMsgSubmitProposal(content, sysCoins10, suite.stdSenderAccAddress)
-				depositMsg := gov.NewMsgDeposit(suite.stdSenderAccAddress, govProposalID2, sysCoins90)
-				msgs := []cosmossdk.Msg{newProposalMsg, depositMsg}
-				tx := newTestStdTx(msgs, []crypto.PrivKey{suite.stdSenderPrivKey}, []uint64{accountNum}, []uint64{nonce2}, txFees, memo)
-
-				txEncoder := authclient.GetTxEncoder(suite.codec)
-				txBytes, _ := txEncoder(tx)
-				return txBytes
-			},
-			0,
-			154919,
 		},
 	}
 

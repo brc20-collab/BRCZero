@@ -7,14 +7,8 @@ import (
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth"
 	authante "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/ante"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
-	ibc "github.com/brc20-collab/brczero/libs/ibc-go/modules/core"
-	ibcante "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/ante"
 	"github.com/brc20-collab/brczero/libs/system/trace"
 	tmcrypto "github.com/brc20-collab/brczero/libs/tendermint/crypto"
-	govante "github.com/brc20-collab/brczero/x/gov/ante"
-	"github.com/brc20-collab/brczero/x/params"
-	"github.com/brc20-collab/brczero/x/staking"
-	wasmkeeper "github.com/brc20-collab/brczero/x/wasm/keeper"
 )
 
 func init() {
@@ -32,13 +26,12 @@ const (
 // Ethereum or SDK transaction to an internal ante handler for performing
 // transaction-level processing (e.g. fee payment, signature verification) before
 // being passed onto it's respective handler.
-func NewAnteHandler(ak auth.AccountKeeper, evmKeeper EVMKeeper, sk types.SupplyKeeper, validateMsgHandler ValidateMsgHandler, option wasmkeeper.HandlerOption, ibcChannelKeepr *ibc.Keeper, s staking.Keeper, pk params.Keeper) sdk.AnteHandler {
+func NewAnteHandler(ak auth.AccountKeeper, evmKeeper EVMKeeper, sk types.SupplyKeeper, validateMsgHandler ValidateMsgHandler) sdk.AnteHandler {
 	var stdTxAnteHandler, evmTxAnteHandler sdk.AnteHandler
 
 	stdTxAnteHandler = sdk.ChainAnteDecorators(
-		authante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
-		NewWasmGasLimitDecorator(evmKeeper), // gas limit should not be greater than max gas limit
-		wasmkeeper.NewCountTXDecorator(option.TXCounterStoreKey),
+		authante.NewSetUpContextDecorator(),               // outermost AnteDecorator. SetUpContext must be called first
+		NewWasmGasLimitDecorator(evmKeeper),               // gas limit should not be greater than max gas limit
 		NewAccountBlockedVerificationDecorator(evmKeeper), //account blocked check AnteDecorator
 		authante.NewMempoolFeeDecorator(),
 		authante.NewValidateBasicDecorator(),
@@ -51,8 +44,6 @@ func NewAnteHandler(ak auth.AccountKeeper, evmKeeper EVMKeeper, sk types.SupplyK
 		authante.NewSigVerificationDecorator(ak),
 		authante.NewIncrementSequenceDecorator(ak), // innermost AnteDecorator
 		NewValidateMsgHandlerDecorator(validateMsgHandler),
-		ibcante.NewAnteDecorator(ibcChannelKeepr),
-		govante.NewAnteDecorator(s, ak, pk),
 	)
 
 	evmTxAnteHandler = sdk.ChainAnteDecorators(
@@ -63,7 +54,6 @@ func NewAnteHandler(ak auth.AccountKeeper, evmKeeper EVMKeeper, sk types.SupplyK
 		NewEthSigVerificationDecorator(),
 		NewAccountBlockedVerificationDecorator(evmKeeper), //account blocked check AnteDecorator
 		NewAccountAnteDecorator(ak, evmKeeper, sk),
-		NewWrapWasmCountTXDecorator(wasmkeeper.NewCountTXDecorator(option.TXCounterStoreKey), evmKeeper),
 	)
 
 	return func(
