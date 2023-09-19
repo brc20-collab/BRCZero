@@ -14,6 +14,7 @@ import (
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
+
 	"github.com/brc20-collab/brczero/x/evm/types"
 )
 
@@ -34,8 +35,6 @@ func (k *Keeper) BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock) {
 	blockHash := common.BytesToHash(currentHash)
 	k.SetHeightHash(ctx, uint64(height), blockHash)
 	k.SetBlockHeight(ctx, currentHash, height)
-	// Add latest block height and hash to cache
-	k.AddHeightHashToCache(height, blockHash.Hex())
 	// Add latest block height and hash to cache
 	// reset counters that are used on CommitStateDB.Prepare
 	if !ctx.IsTraceTx() {
