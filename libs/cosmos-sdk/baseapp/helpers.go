@@ -23,6 +23,14 @@ func (app *BaseApp) Simulate(txBytes []byte, tx sdk.Tx, height int64, overridesB
 	return info.gInfo, info.result, e
 }
 
+func (app *BaseApp) SimulateBRCZero(txBytes []byte, tx []sdk.Tx, height int64, overridesBytes []byte, from ...string) (sdk.GasInfo, *sdk.Result, error) {
+	info := &runTxInfo{
+		overridesBytes: overridesBytes,
+	}
+	e := app.runtxWithInfo(info, runTxModeSimulate, txBytes, tx, height, from...)
+	return info.gInfo, info.result, e
+}
+
 func (app *BaseApp) Deliver(tx sdk.Tx) (sdk.GasInfo, *sdk.Result, error) {
 	info, e := app.runTx(runTxModeDeliver, nil, tx, LatestSimulateTxHeight)
 	return info.gInfo, info.result, e

@@ -40,6 +40,7 @@ const (
 	_                                        // Deliver a transaction partial concurrent [deprecated]
 	runTxModeTrace                           // Trace a transaction
 	runTxModeWrappedCheck
+	runTxModeBRCZero
 
 	// MainStoreKey is the string representation of the main store
 	MainStoreKey = "main"
@@ -122,13 +123,15 @@ func (m runTxMode) String() (res string) {
 // BaseApp reflects the ABCI application implementation.
 type BaseApp struct { // nolint: maligned
 	// initialized on creation
-	logger      log.Logger
-	name        string               // application name from abci.Info
-	db          dbm.DB               // common DB backend
-	cms         sdk.CommitMultiStore // Main (uncached) state
-	storeLoader StoreLoader          // function to handle store loading, may be overridden with SetStoreLoader()
-	router      sdk.Router           // handle any kind of message
-	queryRouter sdk.QueryRouter      // router for redirecting query calls
+	logger        log.Logger
+	name          string               // application name from abci.Info
+	db            dbm.DB               // common DB backend
+	cms           sdk.CommitMultiStore // Main (uncached) state
+	brczeroCms    map[int64]sdk.CacheMultiStore
+	brcLastHeight int64
+	storeLoader   StoreLoader     // function to handle store loading, may be overridden with SetStoreLoader()
+	router        sdk.Router      // handle any kind of message
+	queryRouter   sdk.QueryRouter // router for redirecting query calls
 
 	// txDecoder returns a cosmos-sdk/types.Tx interface that definitely is an StdTx or a MsgEthereumTx
 	txDecoder sdk.TxDecoder
@@ -261,6 +264,8 @@ func NewBaseApp(
 
 		checkTxCacheMultiStores: newCacheMultiStoreList(),
 		FeeSplitCollector:       make([]*sdk.FeeSplitInfo, 0),
+		brczeroCms:              make(map[int64]sdk.CacheMultiStore, 0),
+		brcLastHeight:           -1,
 	}
 
 	for _, option := range options {
@@ -745,6 +750,28 @@ func (app *BaseApp) getContextForSimTx(txBytes []byte, height int64) (sdk.Contex
 			}
 		}
 	}
+
+	simState := &state{
+		ms:  ms,
+		ctx: sdk.NewContext(ms, abciHeader, true, app.logger),
+	}
+	simState.ctx.SetMinGasPrices(app.minGasPrices)
+
+	ctx := simState.ctx
+	ctx.SetTxBytes(txBytes)
+	ctx.SetConsensusParams(app.consensusParams)
+
+	return ctx, nil
+}
+
+// retrieve the context for simulating the tx w/ txBytes
+func (app *BaseApp) getContextForBRCZero(txBytes []byte, height int64) (sdk.Context, error) {
+	ms, ok := app.brczeroCms[height]
+	if !ok {
+		return sdk.Context{}, fmt.Errorf("can not get ms for btc height:%d", height)
+	}
+
+	var abciHeader = app.checkState.ctx.BlockHeader()
 
 	simState := &state{
 		ms:  ms,

@@ -35,6 +35,8 @@ func (app *BaseApp) getModeHandler(mode runTxMode) modeHandler {
 		h = &modeHandlerSimulate{&modeHandlerBase{mode: mode, app: app}}
 	case runTxModeDeliverInAsync:
 		h = &modeHandlerDeliverInAsync{&modeHandlerBase{mode: mode, app: app}}
+	case runTxModeBRCZero:
+		h = &modeHandlerBRCZero{&modeHandlerBase{mode: mode, app: app}}
 	default:
 		h = &modeHandlerBase{mode: mode, app: app}
 	}
@@ -100,7 +102,7 @@ type modeHandlerSimulate struct {
 	*modeHandlerBase
 }
 
-//modeHandlerTrace derived from modeHandlerDeliver
+// modeHandlerTrace derived from modeHandlerDeliver
 type modeHandlerTrace struct {
 	*modeHandlerDeliver
 }
@@ -164,15 +166,15 @@ func (m *modeHandlerBase) handleRunMsg(info *runTxInfo) (err error) {
 	return
 }
 
-//=============================
+// =============================
 // 4. handleDeferGasConsumed
 func (m *modeHandlerBase) handleDeferGasConsumed(*runTxInfo) {}
 
-//====================================================================
+// ====================================================================
 // 5. handleDeferRefund
 func (m *modeHandlerBase) handleDeferRefund(*runTxInfo) {}
 
-//===========================================================================================
+// ===========================================================================================
 // other members
 func (m *modeHandlerBase) setGasConsumed(info *runTxInfo) {
 	info.ctx.BlockGasMeter().ConsumeGas(info.ctx.GasMeter().GasConsumedToLimit(), "block gas meter")
@@ -203,4 +205,51 @@ func (m *modeHandlerBase) handleRunMsg4CheckMode(info *runTxInfo) {
 	if err == nil {
 		info.result.Data = data
 	}
+}
+
+type modeHandlerBRCZero struct {
+	*modeHandlerBase
+}
+
+func (m *modeHandlerBRCZero) handleStartHeight(info *runTxInfo, height int64) error {
+	app := m.app
+	startHeight := tmtypes.GetStartBlockHeight()
+
+	var err error
+	lastHeight := app.LastBlockHeight()
+	if height == 0 {
+		height = lastHeight
+	}
+
+	if app.brcLastHeight == -1 {
+		app.brcLastHeight = lastHeight
+	}
+	if height <= startHeight {
+		err = sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("height(%d) should be greater than start block height(%d)", height, startHeight))
+	} else if height > startHeight && height <= lastHeight {
+		err = sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+			fmt.Sprintf("height(%d) should be greater than last block height(%d), it's can not be happen", height, startHeight))
+	} else {
+		if height <= app.brcLastHeight {
+			//it must be rollback
+			if _, ok := app.brczeroCms[height-1]; ok {
+				info.ctx, err = app.getContextForBRCZero(info.txBytes, height)
+			} else {
+				if height-1 == lastHeight {
+					info.ctx, err = app.getContextForSimTx(info.txBytes, height)
+				} else {
+					return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest,
+						fmt.Sprintf(" can not find height(%d) cachems", height))
+				}
+			}
+		} else {
+			info.ctx, err = app.getContextForBRCZero(info.txBytes, height)
+		}
+
+	}
+	if info.overridesBytes != nil {
+		info.ctx.SetOverrideBytes(info.overridesBytes)
+	}
+	return err
 }
