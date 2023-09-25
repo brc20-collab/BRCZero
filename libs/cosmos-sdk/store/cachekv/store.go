@@ -126,6 +126,8 @@ func (store *Store) Set(key []byte, value []byte) {
 	types.AssertValidValue(value)
 
 	store.setCacheValue(key, value, false, true)
+
+	store.parent.Set(key, value)
 }
 
 // Implements types.KVStore.
