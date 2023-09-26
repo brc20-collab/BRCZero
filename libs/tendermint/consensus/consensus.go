@@ -166,6 +166,8 @@ type State struct {
 
 	preBlockTaskChan chan *preBlockTask
 	taskResultChan   chan *preBlockTaskRes
+
+	btcH2H map[int64]int64
 }
 
 // preBlockSignal
@@ -209,6 +211,7 @@ func NewState(
 		vcHeight:         make(map[int64]string),
 		taskResultChan:   make(chan *preBlockTaskRes, 1),
 		preBlockTaskChan: make(chan *preBlockTask, 1),
+		btcH2H:           make(map[int64]int64),
 	}
 	// set function defaults (may be overwritten before calling Start)
 	cs.decideProposal = cs.defaultDecideProposal

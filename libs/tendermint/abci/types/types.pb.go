@@ -9,14 +9,14 @@ import (
 	math_bits "math/bits"
 	time "time"
 
+	merkle "github.com/brc20-collab/brczero/libs/tendermint/crypto/merkle"
+	kv "github.com/brc20-collab/brczero/libs/tendermint/libs/kv"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	golang_proto "github.com/golang/protobuf/proto"
 	_ "github.com/golang/protobuf/ptypes/duration"
 	_ "github.com/golang/protobuf/ptypes/timestamp"
-	merkle "github.com/brc20-collab/brczero/libs/tendermint/crypto/merkle"
-	kv "github.com/brc20-collab/brczero/libs/tendermint/libs/kv"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -767,7 +767,8 @@ func (m *RequestCheckTx) GetNonce() uint64 {
 }
 
 type RequestDeliverTx struct {
-	Tx                   []byte   `protobuf:"bytes,1,opt,name=tx,proto3" json:"tx,omitempty"`
+	Tx                   []byte `protobuf:"bytes,1,opt,name=tx,proto3" json:"tx,omitempty"`
+	Height               int64
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`

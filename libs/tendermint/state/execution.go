@@ -339,7 +339,7 @@ func (blockExec *BlockExecutor) ApplyBlock(
 	return state, retainHeight, nil
 }
 
-func (blockExec *BlockExecutor) DeliverTxsForBrczeroRpc(block *types.Block) (*ABCIResponses, error) {
+func (blockExec *BlockExecutor) DeliverTxsForBrczeroRpc(block *types.Block, height int64) (*ABCIResponses, error) {
 	//block := types.MakeBlockBrc(2, txs, types.NewCommit(0, 0, types.BlockID{}, nil), make([]types.Evidence, 0), 0)
 	var validTxs, invalidTxs = 0, 0
 	txIndex := 0
@@ -377,7 +377,7 @@ func (blockExec *BlockExecutor) DeliverTxsForBrczeroRpc(block *types.Block) (*AB
 	}
 
 	for _, tx := range block.Txs {
-		proxyApp.DeliverTxAsync(abci.RequestDeliverTx{Tx: tx})
+		proxyApp.DeliverTxAsync(abci.RequestDeliverTx{Tx: tx, Height: height})
 		if err := proxyApp.Error(); err != nil {
 			return nil, err
 		}
@@ -591,7 +591,7 @@ func execBlockOnProxyApp(context *executionTask) (*ABCIResponses, error) {
 		if realTx != nil {
 			proxyAppConn.DeliverRealTxAsync(realTx)
 		} else {
-			proxyAppConn.DeliverTxAsync(abci.RequestDeliverTx{Tx: block.Txs[count]})
+			proxyAppConn.DeliverTxAsync(abci.RequestDeliverTx{Tx: block.Txs[count], Height: block.BtcHeight})
 		}
 
 		if err = proxyAppConn.Error(); err != nil {

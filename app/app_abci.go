@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"runtime"
 	"time"
 
@@ -21,6 +22,7 @@ func (app *BRCZeroApp) DeliverTx(req abci.RequestDeliverTx) (res abci.ResponseDe
 
 	trace.OnAppDeliverTxEnter()
 
+	fmt.Println("DeliverTx req h", req.Height)
 	resp := app.BaseApp.DeliverTx(req)
 
 	return resp

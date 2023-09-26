@@ -382,6 +382,11 @@ func (cs *State) rpcDeliverTxsRoutine() {
 			fmt.Println("rollback!!!!!!!!!!!!!!")
 			cs.blockExec.CleanBrcRpcState()
 			latestHandledBtcHeight = rollbackHeight
+			for btcH, _ := range cs.btcH2H {
+				if btcH > rollbackHeight {
+					delete(cs.btcH2H, btcH)
+				}
+			}
 		case <-tick.C:
 			if latestHandledBtcHeight == 0 {
 				latestHandledBtcHeight = cs.blockExec.BrczeroDataMinHeight()
@@ -397,10 +402,18 @@ func (cs *State) rpcDeliverTxsRoutine() {
 			cs.mtx.RLock()
 			mockBlock, _ := cs.createMockBlock(latestHandledBtcHeight, brczeroData)
 			// when DeliverTx, the stores(mpt and iavl) use Set()/Delete() and the cache the kv
-			deliverRsp, _ := cs.blockExec.DeliverTxsForBrczeroRpc(mockBlock)
+			var maxH int64 = 0
+			for btcH, _ := range cs.btcH2H {
+				if btcH > maxH {
+					maxH = btcH
+				}
+			}
+			fmt.Println("rpc deliver h", latestHandledBtcHeight)
+			deliverRsp, _ := cs.blockExec.DeliverTxsForBrczeroRpc(mockBlock, latestHandledBtcHeight)
 			cs.mtx.RUnlock()
 			fmt.Println("=========Test-DeliverTxs=======", deliverRsp.DeliverTxs)
 			latestHandledBtcHeight++
+			cs.btcH2H[latestHandledBtcHeight] = mockBlock.Height
 		}
 	}
 }

@@ -47,17 +47,21 @@ func (info *runTxInfo) PutCacheMultiStore(cms sdk.CacheMultiStore) {
 	info.reusableCacheMultiStore = cms
 }
 
-func (app *BaseApp) GetCacheMultiStore(txBytes []byte) (sdk.CacheMultiStore, bool) {
+func (app *BaseApp) GetCacheMultiStore(txBytes []byte, height int64) (sdk.CacheMultiStore, bool) {
 	if app.reusableCacheMultiStore == nil {
 		return nil, false
 	}
-	reuse := updateCacheMultiStore(app.reusableCacheMultiStore, txBytes)
-	app.reusableCacheMultiStore = nil
+	cms, ok := app.reusableCacheMultiStore[height]
+	if !ok {
+		return nil, false
+	}
+	reuse := updateCacheMultiStore(cms, txBytes)
+	//app.reusableCacheMultiStore = nil
 	return reuse, true
 }
 
-func (app *BaseApp) PutCacheMultiStore(cms sdk.CacheMultiStore) {
-	app.reusableCacheMultiStore = cms
+func (app *BaseApp) PutCacheMultiStore(cms sdk.CacheMultiStore, height int64) {
+	app.reusableCacheMultiStore[height] = cms
 }
 
 func (app *BaseApp) runTxWithIndex(txIndex int, mode runTxMode,
@@ -93,7 +97,7 @@ func (app *BaseApp) runtxWithInfo(info *runTxInfo, mode runTxMode, txBytes []byt
 	}
 
 	//init info context
-	err = handler.handleStartHeight(info, height)
+	err = handler.handleStartHeight(info, 0)
 	if err != nil {
 		return err
 	}
@@ -130,7 +134,8 @@ func (app *BaseApp) runtxWithInfo(info *runTxInfo, mode runTxMode, txBytes []byt
 		info.gInfo = sdk.GasInfo{GasWanted: info.gasWanted, GasUsed: gasUsed}
 		if mode == runTxModeDeliver {
 			if cms, ok := info.GetCacheMultiStore(); ok {
-				app.PutCacheMultiStore(cms)
+				fmt.Println("------put app cms h:", height+1)
+				app.PutCacheMultiStore(cms, height+1)
 			}
 		}
 	}()
@@ -164,7 +169,8 @@ func (app *BaseApp) runtxWithInfo(info *runTxInfo, mode runTxMode, txBytes []byt
 	app.pin(trace.ValTxMsgs, false, mode)
 
 	if mode == runTxModeDeliver {
-		if cms, ok := app.GetCacheMultiStore(info.txBytes); ok {
+		fmt.Println("----------get app cms h:", height)
+		if cms, ok := app.GetCacheMultiStore(info.txBytes, height); ok {
 			info.PutCacheMultiStore(cms)
 		}
 	}
@@ -306,7 +312,7 @@ func (app *BaseApp) DeliverTx(req abci.RequestDeliverTx) abci.ResponseDeliverTx 
 	}
 
 	var deliverTx abci.ResponseDeliverTx
-	info, err := app.runTx(runTxModeDeliver, req.Tx, realTx, LatestSimulateTxHeight)
+	info, err := app.runTx(runTxModeDeliver, req.Tx, realTx, req.Height)
 	if err != nil {
 		deliverTx = sdkerrors.ResponseDeliverTx(err, info.gInfo.GasWanted, info.gInfo.GasUsed, app.trace)
 	} else {

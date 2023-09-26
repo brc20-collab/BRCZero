@@ -220,7 +220,7 @@ type BaseApp struct { // nolint: maligned
 
 	interceptors map[string]Interceptor
 
-	reusableCacheMultiStore sdk.CacheMultiStore
+	reusableCacheMultiStore map[int64]sdk.CacheMultiStore
 	checkTxCacheMultiStores *cacheMultiStoreList
 
 	watcherCollector sdk.EvmWatcherCollector
@@ -261,6 +261,8 @@ func NewBaseApp(
 
 		checkTxCacheMultiStores: newCacheMultiStoreList(),
 		FeeSplitCollector:       make([]*sdk.FeeSplitInfo, 0),
+
+		reusableCacheMultiStore: make(map[int64]sdk.CacheMultiStore),
 	}
 
 	for _, option := range options {
