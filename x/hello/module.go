@@ -12,6 +12,7 @@ import (
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/module"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
+	"github.com/brc20-collab/brczero/x/hello/client/cli"
 	"github.com/brc20-collab/brczero/x/hello/client/rest"
 	"github.com/brc20-collab/brczero/x/hello/internal/keeper"
 )
@@ -45,7 +46,7 @@ func (AppModuleBasic) RegisterRESTRoutes(ctx context.CLIContext, rtr *mux.Router
 }
 
 func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
-	return nil
+	return cli.GetTxCmd(cdc)
 }
 
 // GetQueryCmd returns no root query command for the bank module.

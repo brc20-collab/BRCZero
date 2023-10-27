@@ -2,6 +2,7 @@ package core
 
 import (
 	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 
 	"github.com/ethereum/go-ethereum/rlp"
@@ -40,6 +41,25 @@ func BroadcastBrczeroTxsAsync(ctx *rpctypes.Context, btcHeight int64, btcBlockHa
 	res := make([]*ctypes.ResultBroadcastTx, 0)
 	for _, s := range brczeroTxs {
 		tx, err := rlp.EncodeToBytes(s)
+		if err != nil {
+			return nil, err
+		}
+		txs = append(txs, tx)
+		res = append(res, &ctypes.ResultBroadcastTx{Hash: types.Tx(tx).Hash()})
+	}
+
+	err := env.Mempool.AddBrczeroData(btcHeight, btcBlockHash, isConfirmed, txs)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func BroadcastBrc20TxsAsync(ctx *rpctypes.Context, btcHeight int64, btcBlockHash string, isConfirmed bool, brczeroTxs []string) ([]*ctypes.ResultBroadcastTx, error) {
+	txs := make([]types.Tx, 0)
+	res := make([]*ctypes.ResultBroadcastTx, 0)
+	for _, s := range brczeroTxs {
+		tx, err := hex.DecodeString(s)
 		if err != nil {
 			return nil, err
 		}

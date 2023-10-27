@@ -9,6 +9,7 @@ const (
 	ModuleName   = types.ModuleName
 	QuerierRoute = types.QuerierRoute
 	RouterKey    = types.RouterKey
+	StoreKey     = types.StoreKey
 )
 
 type (
@@ -22,4 +23,5 @@ var (
 	NewGenesisState     = types.NewGenesisState
 	DefaultGenesisState = types.DefaultGenesisState
 	ValidateGenesis     = types.ValidateGenesis
+	NewKeeper           = keeper.NewKeeper
 )

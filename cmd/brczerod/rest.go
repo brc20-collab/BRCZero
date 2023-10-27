@@ -6,6 +6,7 @@ import (
 	mintclient "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/mint/client"
 	mintrest "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/mint/client/rest"
 	evmclient "github.com/brc20-collab/brczero/x/evm/client"
+	hellorest "github.com/brc20-collab/brczero/x/hello/client/rest"
 
 	"github.com/brc20-collab/brczero/app/rpc"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client"
@@ -69,6 +70,7 @@ func registerRoutesV1(rs *lcd.RestServer) {
 		},
 	)
 	mintrest.RegisterRoutes(rs.CliCtx, v1Router)
+	hellorest.RegisterRoutes(rs.CliCtx, v1Router)
 
 }
 

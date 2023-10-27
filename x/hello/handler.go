@@ -22,7 +22,7 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 }
 
 func handleMsgKV(ctx sdk.Context, k keeper.Keeper, msg types.MsgKV) (*sdk.Result, error) {
-	k.SetValue(ctx, msg.Key, msg.Value)
+	k.SetValue(ctx, []byte(msg.Key), []byte(msg.Value))
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(

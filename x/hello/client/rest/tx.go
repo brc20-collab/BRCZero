@@ -7,5 +7,5 @@ import (
 )
 
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	//r.HandleFunc("/hello/say", SayHandlerFn(cliCtx)).Methods("POST")
+	r.HandleFunc("/hello/{key}", QueryValueByKeyHandlerFn(cliCtx)).Methods("GET")
 }

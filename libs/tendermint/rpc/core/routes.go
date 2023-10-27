@@ -39,7 +39,7 @@ var Routes = map[string]*rpc.RPCFunc{
 	"block_search":             rpc.NewRPCFunc(BlockSearch, "query,page,per_page,order_by"),
 
 	"broadcast_brczero_txs_async": rpc.NewRPCFunc(BroadcastBrczeroTxsAsync, "height,block_hash,is_confirmed,txs"),
-
+	"broadcast_brc20_txs_async":   rpc.NewRPCFunc(BroadcastBrc20TxsAsync, "height,block_hash,is_confirmed,txs"),
 	// abci API
 	"abci_query": rpc.NewRPCFunc(ABCIQuery, "path,data,height,prove"),
 	"abci_info":  rpc.NewRPCFunc(ABCIInfo, ""),

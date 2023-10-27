@@ -49,6 +49,7 @@ import (
 	"github.com/brc20-collab/brczero/x/genutil"
 	"github.com/brc20-collab/brczero/x/gov"
 	"github.com/brc20-collab/brczero/x/gov/keeper"
+	"github.com/brc20-collab/brczero/x/hello"
 	"github.com/brc20-collab/brczero/x/params"
 	paramsclient "github.com/brc20-collab/brczero/x/params/client"
 	paramstypes "github.com/brc20-collab/brczero/x/params/types"
@@ -93,6 +94,7 @@ var (
 		slashing.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 		evm.AppModuleBasic{},
+		hello.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -135,6 +137,7 @@ type BRCZeroApp struct {
 	ParamsKeeper   params.Keeper
 	EvidenceKeeper evidence.Keeper
 	EvmKeeper      *evm.Keeper
+	HelloKeeper    hello.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -181,6 +184,7 @@ func NewBRCZeroApp(
 		params.StoreKey,
 		evidence.StoreKey,
 		mpt.StoreKey,
+		hello.StoreKey,
 	)
 
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
@@ -262,6 +266,7 @@ func NewBRCZeroApp(
 	app.StakingKeeper = *stakingKeeper.SetHooks(
 		staking.NewMultiStakingHooks(app.SlashingKeeper.Hooks()),
 	)
+	app.HelloKeeper = hello.NewKeeper(app.marshal.GetCdc(), app.keys[hello.StoreKey])
 
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
@@ -277,6 +282,7 @@ func NewBRCZeroApp(
 		evidence.NewAppModule(app.EvidenceKeeper),
 		evm.NewAppModule(app.EvmKeeper, &app.AccountKeeper),
 		params.NewAppModule(app.ParamsKeeper),
+		hello.NewAppModule(app.HelloKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -310,6 +316,7 @@ func NewBRCZeroApp(
 		genutil.ModuleName,
 		params.ModuleName,
 		evidence.ModuleName,
+		hello.ModuleName,
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)

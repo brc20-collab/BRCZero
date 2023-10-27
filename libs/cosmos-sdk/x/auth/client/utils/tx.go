@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"encoding/hex"
 	"fmt"
 	"io/ioutil"
 	"math/big"
@@ -129,6 +130,7 @@ func CompleteAndBroadcastTxCLI(txBldr authtypes.TxBuilder, cliCtx context.CLICon
 			return err
 		}
 	}
+	panic(hex.EncodeToString(txBytes))
 	// broadcast to a Tendermint node
 	res, err := cliCtx.BroadcastTx(txBytes)
 	if err != nil {

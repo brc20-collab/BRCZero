@@ -10,15 +10,25 @@ type Keeper struct {
 	cdc      *codec.Codec
 }
 
-func (k Keeper) GetValue(ctx sdk.Context, key string) string {
-	store := ctx.KVStore(k.storeKey)
+func NewKeeper(
+	cdc *codec.Codec, storeKey sdk.StoreKey,
+) Keeper {
 
-	v := store.Get([]byte(key))
-	return string(v)
+	return Keeper{
+		cdc:      cdc,
+		storeKey: storeKey,
+	}
 }
 
-func (k Keeper) SetValue(ctx sdk.Context, key string, value string) {
+func (k Keeper) GetValue(ctx sdk.Context, key []byte) []byte {
 	store := ctx.KVStore(k.storeKey)
 
-	store.Set([]byte(key), []byte(value))
+	v := store.Get(key)
+	return v
+}
+
+func (k Keeper) SetValue(ctx sdk.Context, key []byte, value []byte) {
+	store := ctx.KVStore(k.storeKey)
+
+	store.Set(key, value)
 }
