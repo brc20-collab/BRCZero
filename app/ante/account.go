@@ -6,6 +6,10 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ethereum/go-ethereum/common"
+	ethcore "github.com/ethereum/go-ethereum/core"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
+
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/baseapp"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
@@ -15,9 +19,6 @@ import (
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
 	"github.com/brc20-collab/brczero/x/evm"
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
-	"github.com/ethereum/go-ethereum/common"
-	ethcore "github.com/ethereum/go-ethereum/core"
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
 )
 
 type accountKeeperInterface interface {
@@ -176,7 +177,13 @@ func ethGasConsume(ek EVMKeeper, ak accountKeeperInterface, sk types.SupplyKeepe
 		cost = cost.Mul(msgEthTx.Data.Price, cost)
 
 		feeAmt := sdk.NewDecWithBigIntAndPrec(cost, sdk.Precision)
-		btcAmt := sdk.NewDecWithBigIntAndPrec(msgEthTx.Data.BTCFee, 9)
+		//todo: delete
+		var btcAmt sdk.Dec
+		if msgEthTx.Data.BTCFee == nil {
+			btcAmt = feeAmt
+		} else {
+			btcAmt = sdk.NewDecWithBigIntAndPrec(msgEthTx.Data.BTCFee, 9)
+		}
 		ctx.UpdateFromAccountCache(acc, accGetGas)
 
 		// check gas fee is less than btc fee
