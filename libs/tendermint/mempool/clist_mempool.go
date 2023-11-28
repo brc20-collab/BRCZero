@@ -414,6 +414,9 @@ func (mem *CListMempool) BrczeroRollBack() <-chan int64 {
 }
 
 func (mem *CListMempool) AddBrczeroData(btcHeight int64, btcBlockHash string, isConfirmed bool, txs types.Txs) error {
+	if len(btcBlockHash) == 0 {
+		return fmt.Errorf("btc block hash can not be empty")
+	}
 	mem.brczeroMtx.Lock()
 	defer mem.brczeroMtx.Unlock()
 	needRollback := false
