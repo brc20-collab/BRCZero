@@ -65,12 +65,12 @@ func (Mempool) Update(
 	trace.GetElapsedInfo().AddInfo(trace.GasUsed, fmt.Sprintf("%d", gasUsed))
 	return nil
 }
-func (Mempool) UpdateForBRCZeroData()         {}
-func (Mempool) Flush()                        {}
-func (Mempool) FlushAppConn() error           { return nil }
-func (Mempool) TxsAvailable() <-chan struct{} { return make(chan struct{}) }
-func (Mempool) EnableTxsAvailable()           {}
-func (Mempool) TxsBytes() int64               { return 0 }
+func (Mempool) UpdateForBRCZeroData(height int64, btcHeight int64) {}
+func (Mempool) Flush()                                             {}
+func (Mempool) FlushAppConn() error                                { return nil }
+func (Mempool) TxsAvailable() <-chan struct{}                      { return make(chan struct{}) }
+func (Mempool) EnableTxsAvailable()                                {}
+func (Mempool) TxsBytes() int64                                    { return 0 }
 
 func (Mempool) TxsFront() *clist.CElement    { return nil }
 func (Mempool) TxsWaitChan() <-chan struct{} { return nil }

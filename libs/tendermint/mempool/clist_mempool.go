@@ -47,8 +47,9 @@ var (
 // be efficiently accessed by multiple concurrent readers.
 type CListMempool struct {
 	// Atomic integers
-	height   int64 // the last block Update()'d to
-	txsBytes int64 // total size of mempool, in bytes
+	height    int64 // the last block Update()'d to
+	btcHeight int64 // the last btc height
+	txsBytes  int64 // total size of mempool, in bytes
 
 	// notify listeners (ie. consensus) when txs are available
 	notifiedTxsAvailable bool
@@ -1024,7 +1025,9 @@ func (mem *CListMempool) logUpdate(address string, nonce uint64) {
 	logDataPool.Put(logData)
 }
 
-func (mem *CListMempool) UpdateForBRCZeroData() {
+func (mem *CListMempool) UpdateForBRCZeroData(height int64, btcHeight int64) {
+	atomic.StoreInt64(&mem.height, height)
+	atomic.StoreInt64(&mem.btcHeight, btcHeight)
 	if mem.txsAvailable != nil {
 		select {
 		case mem.txsAvailable <- struct{}{}:
