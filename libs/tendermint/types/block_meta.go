@@ -136,3 +136,8 @@ func (bm *BlockMeta) ValidateBasic() error {
 	}
 	return nil
 }
+
+type BTCBlockMeta struct {
+	BTCHeight    int64  `json:"btc_height"`
+	BTCBlockHash string `json:"btc_block_hash"`
+}

@@ -42,6 +42,7 @@ func (Mempool) GetBrczeroDataByBTCHeight(btcHeight int64) (types.BRCZeroData, er
 	return types.BRCZeroData{}, nil
 }
 func (Mempool) BrczeroDataMinHeight() int64                   { return 0 }
+func (Mempool) DelOldBrczeroData(height int64)                {}
 func (Mempool) DelBrczeroDataByBTCHeight(btcHeight int64)     {}
 func (Mempool) SetBrcDataDelivered(btcH int64, value bool)    {}
 func (Mempool) ReapEssentialTx(tx types.Tx) abci.TxEssentials { return nil }

@@ -460,6 +460,18 @@ func (mem *CListMempool) GetBrczeroDataByBTCHeight(btcHeight int64) (types.BRCZe
 	return types.BRCZeroData{}, errors.New(fmt.Sprintf("BRCZero data at height %d does not exist!", btcHeight))
 }
 
+func (mem *CListMempool) DelOldBrczeroData(height int64) {
+	mem.brczeroMtx.RLock()
+	defer mem.brczeroMtx.RUnlock()
+	if len(mem.brczeroTxs) == 0 {
+		return
+	}
+	for h, _ := range mem.brczeroTxs {
+		if h < height {
+			delete(mem.brczeroTxs, h)
+		}
+	}
+}
 func (mem *CListMempool) BrczeroDataMinHeight() int64 {
 	mem.brczeroMtx.RLock()
 	defer mem.brczeroMtx.RUnlock()

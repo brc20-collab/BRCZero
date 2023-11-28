@@ -35,4 +35,7 @@ func addMoreFlags(cmd *cobra.Command) {
 		"Set TimeoutConsensus")
 	cmd.Flags().Bool("consensus.waiting", config.Consensus.Waiting,
 		"Set Wating")
+
+	cmd.Flags().Uint64("consensus.start_btc_height", config.Consensus.StartBtcHeight,
+		"Set Start BTC height")
 }

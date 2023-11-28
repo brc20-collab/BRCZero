@@ -2,6 +2,7 @@ package store
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -87,7 +88,23 @@ var blockLoadBufPool = &sync.Pool{
 // If no block is found for that height, it returns nil.
 func (bs *BlockStore) LoadBlock(height int64) *types.Block {
 	b, _ := bs.LoadBlockWithExInfo(height)
+	if btcmeta, err := bs.LoadBTCMeta(height); err == nil {
+		b.BtcBlockHash = btcmeta.BTCBlockHash
+		b.BtcHeight = btcmeta.BTCHeight
+	}
 	return b
+}
+
+func (bs *BlockStore) LoadBTCMeta(height int64) (*types.BTCBlockMeta, error) {
+	btcbuff, err := bs.db.Get(calcBRCZeroToBTC(height))
+	if err != nil {
+		return nil, err
+	}
+	var meta types.BTCBlockMeta
+	if err := json.Unmarshal(btcbuff, &meta); err != nil {
+		return nil, err
+	}
+	return &meta, nil
 }
 
 // LoadBlockWithExInfo returns the block with the given height.
@@ -363,6 +380,12 @@ func (bs *BlockStore) deleteBatch(height int64, deleteFromTop bool) (uint64, err
 		for p := 0; p < meta.BlockID.PartsHeader.Total; p++ {
 			batch.Delete(calcBlockPartKey(h, p))
 		}
+		batch.Delete(calcBRCZeroToBTC(h))
+		btcmeta, err := bs.LoadBTCMeta(h)
+		if err != nil {
+			return nil
+		}
+		batch.Delete(calcBTCToBRCZero(btcmeta.BTCHeight))
 		deleted++
 
 		// flush every 1000 blocks to avoid batches becoming too large
@@ -430,6 +453,14 @@ func (bs *BlockStore) SaveBlock(block *types.Block, blockParts *types.PartSet, s
 	batch.Set(calcBlockMetaKey(height), metaBytes)
 	batch.Set(calcBlockHashKey(hash), []byte(fmt.Sprintf("%d", height)))
 
+	//save btc_info
+	btcmeta := types.BTCBlockMeta{BTCHeight: block.BtcHeight, BTCBlockHash: block.BtcBlockHash}
+	btcvalue, err := json.Marshal(btcmeta)
+	if err != nil {
+		panic(fmt.Errorf("failed saveBlock height:%d json marshal btc block meta:%v", height, btcmeta))
+	}
+	batch.Set(calcBRCZeroToBTC(height), btcvalue)
+	batch.Set(calcBTCToBRCZero(block.BtcHeight), []byte(fmt.Sprintf("%d", height)))
 	// Save block parts
 	for i := 0; i < blockParts.Total(); i++ {
 		part := blockParts.GetPart(i)
@@ -505,6 +536,14 @@ func calcSeenCommitKey(height int64) []byte {
 
 func calcBlockHashKey(hash []byte) []byte {
 	return amino.StrToBytes(strings.Join([]string{"BH", amino.HexEncodeToString(hash)}, ":"))
+}
+
+func calcBRCZeroToBTC(height int64) []byte {
+	return amino.StrToBytes(strings.Join([]string{"BRC0H", strconv.FormatInt(height, 10)}, ":"))
+}
+
+func calcBTCToBRCZero(height int64) []byte {
+	return amino.StrToBytes(strings.Join([]string{"BTCH", strconv.FormatInt(height, 10)}, ":"))
 }
 
 //-----------------------------------------------------------------------------

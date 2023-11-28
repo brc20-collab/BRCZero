@@ -178,19 +178,19 @@ func (blockExec *BlockExecutor) CreateProposalBlock(
 
 	txs := make([]types.Tx, 0)
 	btcBlockHash := ""
-	var btcHeight int64 = 0
-	minHeight := blockExec.mempool.BrczeroDataMinHeight()
-	if brczeroData, err := blockExec.mempool.GetBrczeroDataByBTCHeight(minHeight); err == nil {
+	btcHeight := latestBH + 1
+	if brczeroData, err := blockExec.mempool.GetBrczeroDataByBTCHeight(btcHeight); err == nil {
 		if brczeroData.IsConfirmed {
-			if minHeight <= latestBH {
-				blockExec.mempool.DelBrczeroDataByBTCHeight(minHeight)
-			} else if minHeight == latestBH+1 || latestBH == 0 {
+			txs = brczeroData.Txs
+			btcBlockHash = brczeroData.BTCBlockHash
+		} else {
+			if _, err := blockExec.mempool.GetBrczeroDataByBTCHeight(btcHeight + 6); err == nil {
 				txs = brczeroData.Txs
 				btcBlockHash = brczeroData.BTCBlockHash
-				btcHeight = minHeight
 			}
 		}
 	}
+	blockExec.mempool.DelOldBrczeroData(btcHeight)
 
 	return state.MakeBlockBrc(height, txs, commit, evidence, proposerAddr, btcHeight, btcBlockHash)
 }
