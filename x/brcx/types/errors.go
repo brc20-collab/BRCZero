@@ -8,7 +8,7 @@ import (
 
 const (
 	manageContract = 10
-	entryPoint     = 100
+	callContract   = 100
 )
 
 var (
@@ -36,13 +36,13 @@ func ErrExecute(msg string) *sdkerrors.Error {
 }
 
 func ErrGetContractAddress(msg string) *sdkerrors.Error {
-	return sdkerrors.New(ModuleName, entryPoint+1, msg)
+	return sdkerrors.New(ModuleName, callContract+1, msg)
 }
 
 func ErrPackInput(msg string) *sdkerrors.Error {
-	return sdkerrors.New(ModuleName, entryPoint+2, msg)
+	return sdkerrors.New(ModuleName, callContract+2, msg)
 }
 
-func ErrCallEntryPoint(msg string) *sdkerrors.Error {
-	return sdkerrors.New(ModuleName, entryPoint+3, msg)
+func ErrCallMethod(msg string) *sdkerrors.Error {
+	return sdkerrors.New(ModuleName, callContract+3, msg)
 }

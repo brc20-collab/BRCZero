@@ -146,7 +146,7 @@ func handleEntryPoint(ctx sdk.Context, msg MsgInscription, protocol string, k Ke
 	info.CallData = hex.EncodeToString(input)
 	executionResult, contractResult, err := k.CallEvm(ctx, from, &to, big.NewInt(0), input, info)
 	if err != nil {
-		return nil, ErrCallEntryPoint(fmt.Sprintf("call entryPoint failed: %s", err))
+		return nil, ErrCallMethod(fmt.Sprintf("call entryPoint failed: %s", err))
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(types.EventTypeEntryPoint, sdk.NewAttribute(AttributeEvmOutput, hex.EncodeToString(contractResult.Ret))))
