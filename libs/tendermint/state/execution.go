@@ -345,6 +345,8 @@ func (blockExec *BlockExecutor) ApplyBlock(
 }
 
 func (blockExec *BlockExecutor) DeliverTxsForBrczeroRpc(block *types.Block) (*ABCIResponses, error) {
+
+	fmt.Println("!!!!!!!111111111DeliverTxsForBrczeroRpc")
 	var validTxs, invalidTxs = 0, 0
 	txIndex := 0
 	abciResponses := NewABCIResponses(block)

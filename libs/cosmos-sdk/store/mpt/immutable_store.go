@@ -60,6 +60,7 @@ func (ms *ImmutableMptStore) GetBrcRpcState(key []byte) []byte {
 func (ms *ImmutableMptStore) Get(key []byte) []byte {
 	ms.mtx.Lock()
 	defer ms.mtx.Unlock()
+	fmt.Println("!!!!!!!!!!!!1111 IIIIIIIMPT flag: ", tmtypes.RpcFlag)
 	if tmtypes.RpcFlag != tmtypes.RpcApplyBlockMode {
 		if value := ms.GetBrcRpcState(key); value != nil {
 			return value

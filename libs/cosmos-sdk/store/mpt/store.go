@@ -217,6 +217,7 @@ func (ms *MptStore) CacheWrapWithTrace(w io.Writer, tc types.TraceContext) types
 }
 
 func (ms *MptStore) Get(key []byte) []byte {
+	fmt.Println("!!!!!!!!!!!!1111 MPT flag: ", tmtypes.RpcFlag)
 	if tmtypes.RpcFlag != tmtypes.RpcApplyBlockMode {
 		if value := ms.GetBrcRpcState(key); value != nil {
 			return value
@@ -297,7 +298,7 @@ func (ms *MptStore) Has(key []byte) bool {
 
 func (ms *MptStore) Set(key, value []byte) {
 	types.AssertValidValue(value)
-
+	fmt.Println("!!!!!!!!!!!!1111 flag: ", tmtypes.RpcFlag)
 	if tmtypes.RpcFlag == tmtypes.RpcDeliverTxsMode {
 		ms.brcRpcStateCache[hex.EncodeToString(key)] = value
 		return

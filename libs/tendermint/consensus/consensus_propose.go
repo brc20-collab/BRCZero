@@ -122,7 +122,8 @@ func (cs *State) enterPropose(height int64, round int) {
 
 	// If we don't get the proposal and all block parts quick enough, enterPrevote
 	cs.timeoutTicker.ScheduleTimeout(timeoutInfo{Duration: cs.config.Propose(round), Height: height, Round: round, Step: cstypes.RoundStepPropose, ActiveViewChange: cs.HasVC})
-
+	minHeight := cs.blockExec.BrczeroDataMinHeight()
+	cs.rpcDeliverTxs(minHeight)
 	if isBlockProducer == "y" {
 		logger.Info("enterPropose: Our turn to propose",
 			"proposer",

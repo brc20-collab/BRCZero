@@ -386,9 +386,10 @@ func (cs *State) isValidator() bool {
 }
 
 func (cs *State) rpcDeliverTxs(btcHeight int64) {
-	if cs.isValidator() {
-		return
-	}
+	//if cs.isValidator() {
+	//	return
+	//}
+	fmt.Println("1111111111111rpcDeliverTxs")
 	if btcHeight == 0 {
 		btcHeight = cs.blockExec.BrczeroDataMinHeight()
 	}
