@@ -119,18 +119,18 @@ func queryBalance(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, err
 		return nil, types.ErrPackInput(fmt.Sprintf("pack input of getBalance failed: %s", err))
 	}
 
-	executionResult, _, err := k.CallEvm(ctx, from, &to, big.NewInt(0), input, &types.ResultInfo{})
+	_, contractResult, err := k.CallEvm(ctx, from, &to, big.NewInt(0), input, &types.ResultInfo{})
 	if err != nil {
 		return nil, types.ErrCallMethod(fmt.Sprintf("call getBalance failed: %s", err))
 	}
 
-	//todo: process res
-	data, err := evmtypes.DecodeResultData(executionResult.Result.Data)
+	totalBalances, availableBalance, transferableBalance, err := types.UnpackGetBalanceOutput(contractResult.Ret)
 	if err != nil {
-		return nil, err
+		return nil, types.ErrUnpackOutput(fmt.Sprintf("unpack output of getBalance failed: %s", err))
 	}
 
-	res, err := codec.MarshalJSONIndent(types.ModuleCdc, data)
+	response := types.NewQueryBalanceResponse(params.Name, availableBalance.String(), transferableBalance.String(), totalBalances.String())
+	res, err := codec.MarshalJSONIndent(types.ModuleCdc, response)
 	if err != nil {
 		return nil, common.ErrMarshalJSONFailed(err.Error())
 	}
@@ -156,18 +156,23 @@ func queryAllBalance(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, 
 		return nil, types.ErrPackInput(fmt.Sprintf("pack input of getAllBalance failed: %s", err))
 	}
 
-	executionResult, _, err := k.CallEvm(ctx, from, &to, big.NewInt(0), input, &types.ResultInfo{})
+	_, contractResult, err := k.CallEvm(ctx, from, &to, big.NewInt(0), input, &types.ResultInfo{})
 	if err != nil {
 		return nil, types.ErrCallMethod(fmt.Sprintf("call getBalance failed: %s", err))
 	}
 
-	//todo: process res
-	data, err := evmtypes.DecodeResultData(executionResult.Result.Data)
+	allBalance, err := types.UnpackGetAllBalanceOutput(contractResult.Ret)
 	if err != nil {
-		return nil, err
+		return nil, types.ErrUnpackOutput(fmt.Sprintf("unpack output of getAllBalance failed: %s", err))
 	}
 
-	res, err := codec.MarshalJSONIndent(types.ModuleCdc, data)
+	balanceResp := make([]types.QueryBalanceResponse, 0)
+	for _, b := range allBalance {
+		balanceResp = append(balanceResp, b.ToResponse())
+	}
+
+	response := types.NewQueryAllBalanceResponse(balanceResp)
+	res, err := codec.MarshalJSONIndent(types.ModuleCdc, response)
 	if err != nil {
 		return nil, common.ErrMarshalJSONFailed(err.Error())
 	}

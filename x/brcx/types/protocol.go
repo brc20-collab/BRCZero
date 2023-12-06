@@ -3,7 +3,9 @@ package types
 import (
 	"bytes"
 	_ "embed"
+	"errors"
 	"fmt"
+	"math/big"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
 )
@@ -67,12 +69,46 @@ func GetBalanceInput(addr string, tickName string) ([]byte, error) {
 	return data, nil
 }
 
+func UnpackGetBalanceOutput(ret []byte) (*big.Int, *big.Int, *big.Int, error) {
+	res, err := entryPointABI.Methods[GetBalanceMethodName].Outputs.Unpack(ret)
+	if len(res) != 3 || err != nil {
+		return nil, nil, nil, err
+	}
+
+	totalBalances, ok := res[0].(*big.Int)
+	if !ok {
+		return nil, nil, nil, errors.New("decode totalBalances failed")
+	}
+
+	availableBalance, ok := res[1].(*big.Int)
+	if !ok {
+		return nil, nil, nil, errors.New("decode availableBalance failed")
+	}
+
+	transferableBalance, ok := res[2].(*big.Int)
+	if !ok {
+		return nil, nil, nil, errors.New("decode transferableBalance failed")
+	}
+
+	return totalBalances, availableBalance, transferableBalance, nil
+}
+
 func GetAllBalanceInput(addr string) ([]byte, error) {
 	data, err := entryPointABI.Pack(GetAllBalanceMethodName, addr)
 	if err != nil {
 		return nil, err
 	}
 	return data, nil
+}
+
+func UnpackGetAllBalanceOutput(ret []byte) ([]BRC20Balance, error) {
+	var output []BRC20Balance
+	err := entryPointABI.UnpackIntoInterface(&output, GetAllBalanceMethodName, ret)
+	if err != nil {
+		return nil, err
+	}
+
+	return output, nil
 }
 
 func GetTotalTickHoldersInput() ([]byte, error) {

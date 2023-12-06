@@ -46,3 +46,7 @@ func ErrPackInput(msg string) *sdkerrors.Error {
 func ErrCallMethod(msg string) *sdkerrors.Error {
 	return sdkerrors.New(ModuleName, callContract+3, msg)
 }
+
+func ErrUnpackOutput(msg string) *sdkerrors.Error {
+	return sdkerrors.New(ModuleName, callContract+4, msg)
+}
