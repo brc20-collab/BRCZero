@@ -444,6 +444,7 @@ func (b *EthermintBackend) GetTransactionByHash(hash common.Hash) (tx *watcher.T
 
 // GetLogs returns all the logs from all the ethereum transactions in a block.
 func (b *EthermintBackend) GetLogs(height int64) ([][]*ethtypes.Log, error) {
+	fmt.Println("EthermintBackend GetLogs", height)
 	block, err := b.GetBlockByNumber(rpctypes.BlockNumber(height), false)
 	if err != nil {
 		return nil, err
@@ -459,6 +460,7 @@ func (b *EthermintBackend) GetLogs(height int64) ([][]*ethtypes.Log, error) {
 	default:
 		return nil, ErrInvalidBlock
 	}
+	fmt.Println("txs=", len(txs))
 	// return empty directly when block was produced during stress testing.
 	var blockLogs = [][]*ethtypes.Log{}
 	if b.logsLimit > 0 && len(txs) > b.logsLimit {
@@ -474,10 +476,12 @@ func (b *EthermintBackend) GetLogs(height int64) ([][]*ethtypes.Log, error) {
 			// NOTE: we query the state in case the tx result logs are not persisted after an upgrade.
 			txRes, err := b.clientCtx.Client.Tx(tx.Bytes(), !b.clientCtx.TrustNode)
 			if err != nil {
+				fmt.Println("continue 1", txRes.Hash.String(), err)
 				continue
 			}
 			execRes, err := evmtypes.DecodeResultData(txRes.TxResult.Data)
 			if err != nil {
+				fmt.Println("continue 2", txRes.Hash.String(), err)
 				continue
 			}
 			var validLogs []*ethtypes.Log
@@ -489,7 +493,7 @@ func (b *EthermintBackend) GetLogs(height int64) ([][]*ethtypes.Log, error) {
 			blockLogs = append(blockLogs, validLogs)
 		}
 	}
-
+	fmt.Println("blockLogs=", len(blockLogs))
 	return blockLogs, nil
 }
 

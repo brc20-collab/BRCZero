@@ -7,12 +7,12 @@ import (
 
 	"github.com/brc20-collab/brczero/app/rpc/backend"
 
+	rpctypes "github.com/brc20-collab/brczero/app/rpc/types"
+	tmtypes "github.com/brc20-collab/brczero/libs/tendermint/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/bloombits"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/eth/filters"
-	rpctypes "github.com/brc20-collab/brczero/app/rpc/types"
-	tmtypes "github.com/brc20-collab/brczero/libs/tendermint/types"
 	"github.com/spf13/viper"
 )
 
@@ -151,6 +151,7 @@ func (f *Filter) Logs(ctx context.Context) ([]*ethtypes.Log, error) {
 
 // blockLogs returns the logs matching the filter criteria within a single block.
 func (f *Filter) blockLogs(header *ethtypes.Header) ([]*ethtypes.Log, error) {
+	fmt.Println("Filter blockLogs")
 	if !bloomFilter(header.Bloom, f.criteria.Addresses, f.criteria.Topics) {
 		return []*ethtypes.Log{}, nil
 	}
@@ -159,6 +160,7 @@ func (f *Filter) blockLogs(header *ethtypes.Header) ([]*ethtypes.Log, error) {
 	if err != nil {
 		return []*ethtypes.Log{}, err
 	}
+	fmt.Println("logsList=", len(logsList))
 
 	var unfiltered []*ethtypes.Log // nolint: prealloc
 	for _, logs := range logsList {
@@ -168,6 +170,7 @@ func (f *Filter) blockLogs(header *ethtypes.Header) ([]*ethtypes.Log, error) {
 	if len(logs) == 0 {
 		return []*ethtypes.Log{}, nil
 	}
+	fmt.Println("logs=", len(logs))
 	return logs, nil
 }
 
