@@ -12,7 +12,6 @@ import (
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	"github.com/brc20-collab/brczero/x/brcx/types"
 	"github.com/brc20-collab/brczero/x/common"
-	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
 )
 
 // NewQuerier creates a new querier for slashing clients.
@@ -83,22 +82,26 @@ func queryAllTick(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, err
 		return nil, types.ErrPackInput(fmt.Sprintf("pack input of getAllTickInformation failed: %s", err))
 	}
 
-	executionResult, _, err := k.CallEvm(ctx, from, &to, big.NewInt(0), input, &types.ResultInfo{})
+	_, contractResult, err := k.CallEvm(ctx, from, &to, big.NewInt(0), input, &types.ResultInfo{})
 	if err != nil {
 		return nil, types.ErrCallMethod(fmt.Sprintf("call getAllTickInformation failed: %s", err))
 	}
 
-	//todo: process res
-	data, err := evmtypes.DecodeResultData(executionResult.Result.Data)
+	tickInfos, err := types.UnpackGetAllTickInfoOutput(contractResult.Ret)
 	if err != nil {
-		return nil, err
+		return nil, types.ErrUnpackOutput(fmt.Sprintf("unpack output of getAllTickInformation failed: %s", err))
 	}
 
-	res, err := codec.MarshalJSONIndent(types.ModuleCdc, data)
+	tickInfosResp := make([]types.QueryTickInfoResponse, 0)
+	for _, info := range tickInfos {
+		tickInfosResp = append(tickInfosResp, info.ToResponse())
+	}
+
+	response := types.NewQueryAllTickInfoResponse(tickInfosResp)
+	res, err := codec.MarshalJSONIndent(types.ModuleCdc, response)
 	if err != nil {
 		return nil, common.ErrMarshalJSONFailed(err.Error())
 	}
-
 	return res, nil
 }
 

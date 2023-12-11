@@ -77,6 +77,16 @@ func GetAllTickInfoInput() ([]byte, error) {
 	return data, nil
 }
 
+func UnpackGetAllTickInfoOutput(ret []byte) ([]BRC20Information, error) {
+	var output []BRC20Information
+	err := entryPointABI.UnpackIntoInterface(&output, GetAllTickInfoMethodName, ret)
+	if err != nil {
+		return nil, err
+	}
+
+	return output, nil
+}
+
 func GetBalanceInput(addr string, tickName string) ([]byte, error) {
 	data, err := entryPointABI.Pack(GetBalanceMethodName, addr, tickName)
 	if err != nil {

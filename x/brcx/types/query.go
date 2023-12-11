@@ -63,6 +63,22 @@ type BRC20Information struct {
 	BlockHeight       uint64
 }
 
+func (info BRC20Information) ToResponse() QueryTickInfoResponse {
+	return QueryTickInfoResponse{
+		Tick:              info.Tick,
+		InscriptionId:     info.InscriptionId,
+		InscriptionNumber: info.InscriptionNumber,
+		MaxSupply:         info.MaxSupply.String(),
+		Lim:               info.Lim.String(),
+		NowSupply:         info.NowSupply.String(),
+		Decimals:          info.Decimals.String(),
+		Sender:            info.Sender,
+		Txid:              info.Txid,
+		BlockHeight:       info.BlockHeight,
+		BlockTime:         info.BlockTime,
+	}
+}
+
 type WrappedBRC20Information struct {
 	BRC20Information
 }
@@ -94,6 +110,16 @@ func NewQueryTickInfoResponse(info WrappedBRC20Information) QueryTickInfoRespons
 		Txid:              info.Txid,
 		BlockHeight:       info.BlockHeight,
 		BlockTime:         info.BlockTime,
+	}
+}
+
+type QueryAllTickInfoResponse struct {
+	Tokens []QueryTickInfoResponse `json:"tokens" yaml:"tokens"`
+}
+
+func NewQueryAllTickInfoResponse(infos []QueryTickInfoResponse) QueryAllTickInfoResponse {
+	return QueryAllTickInfoResponse{
+		Tokens: infos,
 	}
 }
 
