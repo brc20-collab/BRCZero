@@ -4,10 +4,6 @@ import (
 	"encoding/binary"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/brc20-collab/brczero/app/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt"
@@ -25,6 +21,10 @@ import (
 	"github.com/brc20-collab/brczero/x/gov"
 	"github.com/brc20-collab/brczero/x/staking"
 	"github.com/brc20-collab/brczero/x/token"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
+	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 )
 
 type QueryOnChainProxy interface {

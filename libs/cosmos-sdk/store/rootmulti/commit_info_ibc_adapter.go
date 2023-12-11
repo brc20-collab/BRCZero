@@ -2,11 +2,11 @@ package rootmulti
 
 import (
 	"fmt"
-	ics23 "github.com/confio/ics23/go"
 	sdkmaps "github.com/brc20-collab/brczero/libs/cosmos-sdk/store/internal/maps"
 	sdkproofs "github.com/brc20-collab/brczero/libs/cosmos-sdk/store/internal/proofs"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/types"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/merkle"
+	ics23 "github.com/confio/ics23/go"
 )
 
 func (ci commitInfo) ProofOp(storeName string) merkle.ProofOp {

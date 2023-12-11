@@ -1,10 +1,10 @@
 package module
 
 import (
-	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	clientCtx "github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	codectypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
+	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 )
 
 // RegisterInterfaces registers all module interface types

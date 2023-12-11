@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"log"
 
-	ethcmn "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/rawdb"
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/trie"
 	apptypes "github.com/brc20-collab/brczero/app/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/server"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt"
 	authexported "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/exported"
 	authtypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
+	ethcmn "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/rawdb"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/trie"
 	"github.com/spf13/cobra"
 )
 

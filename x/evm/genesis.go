@@ -3,13 +3,13 @@ package evm
 import (
 	"fmt"
 
-	ethcmn "github.com/ethereum/go-ethereum/common"
 	ethermint "github.com/brc20-collab/brczero/app/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/server"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	authexported "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/exported"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	"github.com/brc20-collab/brczero/x/evm/types"
+	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/spf13/viper"
 )
 

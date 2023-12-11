@@ -6,11 +6,11 @@ package typesadapter
 import (
 	context "context"
 	fmt "fmt"
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/query"
 	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/query"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"

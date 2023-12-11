@@ -6,9 +6,9 @@ import (
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/server"
 
-	"github.com/mosn/holmes"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/cli"
 	tmos "github.com/brc20-collab/brczero/libs/tendermint/libs/os"
+	"github.com/mosn/holmes"
 	"github.com/spf13/viper"
 )
 

@@ -5,14 +5,15 @@ import (
 )
 
 var treeMap *TreeMap
+
 type TreeMap struct {
 	mtx sync.RWMutex
 	// used for checking whether a tree is saved or not
-	mutableTreeSavedMap     map[string]*MutableTree
-	totalPpncSize           int64
-	evmPpncSize             int64
-	accPpncSize             int64
-	lastUpdatedVersion      int64
+	mutableTreeSavedMap map[string]*MutableTree
+	totalPpncSize       int64
+	evmPpncSize         int64
+	accPpncSize         int64
+	lastUpdatedVersion  int64
 }
 
 func init() {

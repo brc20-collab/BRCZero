@@ -6,8 +6,8 @@ package main
 import (
 	"log"
 
-	"github.com/cosmos/gorocksdb"
 	dbm "github.com/brc20-collab/brczero/libs/tm-db"
+	"github.com/cosmos/gorocksdb"
 )
 
 func init() {

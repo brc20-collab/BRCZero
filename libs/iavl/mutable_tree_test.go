@@ -10,10 +10,10 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/brc20-collab/brczero/libs/iavl/mock"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/rand"
 	db "github.com/brc20-collab/brczero/libs/tm-db"
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/go-amino"

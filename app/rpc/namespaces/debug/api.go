@@ -7,8 +7,8 @@ import (
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/spf13/viper"
 
-	"github.com/ethereum/go-ethereum/common"
 	clientcontext "github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
+	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/brc20-collab/brczero/app/rpc/backend"
 	"github.com/brc20-collab/brczero/app/rpc/monitor"

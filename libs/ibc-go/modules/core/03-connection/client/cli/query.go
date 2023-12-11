@@ -2,12 +2,12 @@ package cli
 
 import (
 	"fmt"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/version"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/flags"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	interfacetypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/version"
 	utils "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/03-connection/client/utils"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/03-connection/types"
 	host "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/24-host"

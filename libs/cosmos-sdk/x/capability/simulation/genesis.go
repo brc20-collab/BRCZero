@@ -10,7 +10,6 @@ import (
 
 // DONTCOVER
 
-
 // Simulation parameter constants
 const index = "index"
 

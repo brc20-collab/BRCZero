@@ -6,12 +6,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/libs/tendermint/types"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/go-amino"
 )

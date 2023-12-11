@@ -59,7 +59,7 @@ func createLogFile() *os.File {
 	return f
 }
 
-//_____________________
+// _____________________
 // dummy log writter
 type DummyLogWriter struct{}
 

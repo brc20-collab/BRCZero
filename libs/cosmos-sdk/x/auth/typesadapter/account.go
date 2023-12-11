@@ -19,6 +19,7 @@ func NewBaseAccountWithAddress(addr sdk.AccAddress) *BaseAccount {
 }
 
 // NewBaseAccount creates a new BaseAccount object
+//
 //nolint:interfacer
 func NewBaseAccount(address sdk.AccAddress, pubKey cryptotypes.PubKey, accountNumber, sequence uint64) *BaseAccount {
 	acc := &BaseAccount{

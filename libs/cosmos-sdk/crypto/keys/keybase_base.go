@@ -7,9 +7,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/cosmos/go-bip39"
 	tmcrypto "github.com/brc20-collab/brczero/libs/tendermint/crypto"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/secp256k1"
+	"github.com/cosmos/go-bip39"
 	"github.com/pkg/errors"
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/crypto"

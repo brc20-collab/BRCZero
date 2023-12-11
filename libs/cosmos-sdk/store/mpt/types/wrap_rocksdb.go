@@ -5,15 +5,17 @@ package types
 
 import (
 	"fmt"
+	tmdb "github.com/brc20-collab/brczero/libs/tm-db"
 	"github.com/cosmos/gorocksdb"
 	"github.com/ethereum/go-ethereum/ethdb"
-	tmdb "github.com/brc20-collab/brczero/libs/tm-db"
 	"github.com/pkg/errors"
 )
 
-//------------------------------------------
+// ------------------------------------------
+//
 //	Register go-ethereum gorocksdb
-//------------------------------------------
+//
+// ------------------------------------------
 func init() {
 	dbCreator := func(name string, dir string) (ethdb.KeyValueStore, error) {
 		return NewWrapRocksDB(name, dir)

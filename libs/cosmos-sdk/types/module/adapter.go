@@ -1,12 +1,12 @@
 package module
 
 import (
-	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	clictx "github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	codectypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
+	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 )
 

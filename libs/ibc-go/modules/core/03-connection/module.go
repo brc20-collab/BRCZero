@@ -1,11 +1,11 @@
 package connection
 
 import (
-	"github.com/gogo/protobuf/grpc"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	interfacetypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/03-connection/client/cli"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/03-connection/types"
+	"github.com/gogo/protobuf/grpc"
 	"github.com/spf13/cobra"
 )
 

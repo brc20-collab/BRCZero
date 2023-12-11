@@ -12,7 +12,7 @@ import (
 func subscribeCmd(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "subscribe",
-		Short: "subscribe "+system.ChainName+" logs from kafka",
+		Short: "subscribe " + system.ChainName + " logs from kafka",
 	}
 	cmd.AddCommand(subscribeLog())
 	return cmd

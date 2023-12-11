@@ -93,9 +93,9 @@ func ValidateDenom(denom string) error {
 	if denom == DefaultBondDenom {
 		return nil
 	}
-	if !reDnm.MatchString(denom)  {
+	if !reDnm.MatchString(denom) {
 		if strings.HasPrefix(denom, "ibc") && validIBCCoinDenom(denom) {
-				return nil
+			return nil
 		}
 		return fmt.Errorf("invalid denom: %s", denom)
 	}

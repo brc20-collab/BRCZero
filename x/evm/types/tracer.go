@@ -6,13 +6,13 @@ import (
 	"math/big"
 	"time"
 
+	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/eth/tracers"
 	"github.com/ethereum/go-ethereum/eth/tracers/logger"
 	json "github.com/json-iterator/go"
-	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 )
 
 type TraceConfig struct {

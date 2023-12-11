@@ -9,9 +9,9 @@ import (
 	math "math"
 	math_bits "math/bits"
 
+	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/02-client/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/02-client/types"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.

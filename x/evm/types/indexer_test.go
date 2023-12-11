@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
+	"github.com/ethereum/go-ethereum/common"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/stretchr/testify/require"
 
 	dbm "github.com/brc20-collab/brczero/libs/tm-db"

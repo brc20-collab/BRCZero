@@ -6,8 +6,8 @@ import (
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/base"
 	"math/rand"
 
-	"github.com/gorilla/mux"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
+	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"

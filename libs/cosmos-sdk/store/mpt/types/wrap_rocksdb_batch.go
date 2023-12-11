@@ -4,8 +4,8 @@
 package types
 
 import (
-	"github.com/ethereum/go-ethereum/ethdb"
 	tmdb "github.com/brc20-collab/brczero/libs/tm-db"
+	"github.com/ethereum/go-ethereum/ethdb"
 )
 
 var _ ethdb.Batch = (*WrapRocksDBBatch)(nil)

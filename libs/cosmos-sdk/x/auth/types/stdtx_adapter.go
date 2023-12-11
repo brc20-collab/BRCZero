@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/tx/signing"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/exported"
+	"github.com/gogo/protobuf/proto"
 )
 
 type IbcTx struct {
@@ -151,7 +151,7 @@ func IbcDirectSignBytes(chainID string, accnum uint64,
 
 //////
 
-///////////
+// /////////
 type ProtobufViewMsg struct {
 	TypeStr string `json:"type"`
 	Data    string `json:"data"`

@@ -10,6 +10,8 @@ import (
 	testing "testing"
 	time "time"
 
+	_ "github.com/brc20-collab/brczero/libs/tendermint/crypto/merkle"
+	_ "github.com/brc20-collab/brczero/libs/tendermint/libs/kv"
 	_ "github.com/gogo/protobuf/gogoproto"
 	github_com_gogo_protobuf_jsonpb "github.com/gogo/protobuf/jsonpb"
 	github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
@@ -17,8 +19,6 @@ import (
 	golang_proto "github.com/golang/protobuf/proto"
 	_ "github.com/golang/protobuf/ptypes/duration"
 	_ "github.com/golang/protobuf/ptypes/timestamp"
-	_ "github.com/brc20-collab/brczero/libs/tendermint/crypto/merkle"
-	_ "github.com/brc20-collab/brczero/libs/tendermint/libs/kv"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.

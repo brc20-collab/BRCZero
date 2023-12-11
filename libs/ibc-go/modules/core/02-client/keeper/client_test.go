@@ -220,7 +220,7 @@ func (suite *KeeperTestSuite) TestUpdateClientLocalhost() {
 	suite.Require().Equal(localhostClient.GetLatestHeight().(types.Height).Increment(), clientState.GetLatestHeight())
 }
 
-//todo add upgrade client
+// todo add upgrade client
 func (suite *KeeperTestSuite) testUpgradeClient() {
 	//	var (
 	//		path                                        *ibctesting.Path

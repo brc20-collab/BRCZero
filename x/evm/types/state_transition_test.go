@@ -1,15 +1,15 @@
 package types_test
 
 import (
-	"github.com/ethereum/go-ethereum/common"
-	ethcmn "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/brc20-collab/brczero/app/crypto/ethsecp256k1"
 	ethermint "github.com/brc20-collab/brczero/app/types"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	"github.com/brc20-collab/brczero/x/evm/types"
+	"github.com/ethereum/go-ethereum/common"
+	ethcmn "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 	"math/big"
 )
 
@@ -42,86 +42,90 @@ var (
 	}
 )
 
-//Call Code ABI
-//[
-//  {
-//    "constant": false,
-//    "inputs": [],
-//    "name": "inc",
-//    "outputs": [],
-//    "payable": false,
-//    "stateMutability": "nonpayable",
-//    "type": "function"
-//  },
-//  {
-//    "constant": false,
-//    "inputs": [],
-//    "name": "onc",
-//    "outputs": [],
-//    "payable": false,
-//    "stateMutability": "nonpayable",
-//    "type": "function"
-//  },
-//]
-//Blocked Code ABI
-//[
-//  {
-//    "constant": false,
-//    "inputs": [
-//      {
-//        "name": "contractAddress",
-//        "type": "address"
-//      }
-//    ],
-//    "name": "inc_call",
-//    "outputs": [],
-//    "payable": false,
-//    "stateMutability": "nonpayable",
-//    "type": "function"
-//  },
-//  {
-//    "constant": false,
-//    "inputs": [
-//      {
-//        "name": "contractAddress",
-//        "type": "address"
-//      }
-//    ],
-//    "name": "inc_call_selfdestruct",
-//    "outputs": [],
-//    "payable": false,
-//    "stateMutability": "nonpayable",
-//    "type": "function"
-//  },
-//  {
-//    "constant": false,
-//    "inputs": [
-//      {
-//        "name": "contractAddress",
-//        "type": "address"
-//      }
-//    ],
-//    "name": "inc_callcode",
-//    "outputs": [],
-//    "payable": false,
-//    "stateMutability": "nonpayable",
-//    "type": "function"
-//  },
-//  {
-//    "constant": false,
-//    "inputs": [
-//      {
-//        "name": "contractAddress",
-//        "type": "address"
-//      }
-//    ],
-//    "name": "inc_delegatecall",
-//    "outputs": [],
-//    "payable": false,
-//    "stateMutability": "nonpayable",
-//    "type": "function"
-//  },
-//]
+// Call Code ABI
+// [
+//
+//	{
+//	  "constant": false,
+//	  "inputs": [],
+//	  "name": "inc",
+//	  "outputs": [],
+//	  "payable": false,
+//	  "stateMutability": "nonpayable",
+//	  "type": "function"
+//	},
+//	{
+//	  "constant": false,
+//	  "inputs": [],
+//	  "name": "onc",
+//	  "outputs": [],
+//	  "payable": false,
+//	  "stateMutability": "nonpayable",
+//	  "type": "function"
+//	},
+//
+// ]
+// Blocked Code ABI
+// [
+//
+//	{
+//	  "constant": false,
+//	  "inputs": [
+//	    {
+//	      "name": "contractAddress",
+//	      "type": "address"
+//	    }
+//	  ],
+//	  "name": "inc_call",
+//	  "outputs": [],
+//	  "payable": false,
+//	  "stateMutability": "nonpayable",
+//	  "type": "function"
+//	},
+//	{
+//	  "constant": false,
+//	  "inputs": [
+//	    {
+//	      "name": "contractAddress",
+//	      "type": "address"
+//	    }
+//	  ],
+//	  "name": "inc_call_selfdestruct",
+//	  "outputs": [],
+//	  "payable": false,
+//	  "stateMutability": "nonpayable",
+//	  "type": "function"
+//	},
+//	{
+//	  "constant": false,
+//	  "inputs": [
+//	    {
+//	      "name": "contractAddress",
+//	      "type": "address"
+//	    }
+//	  ],
+//	  "name": "inc_callcode",
+//	  "outputs": [],
+//	  "payable": false,
+//	  "stateMutability": "nonpayable",
+//	  "type": "function"
+//	},
+//	{
+//	  "constant": false,
+//	  "inputs": [
+//	    {
+//	      "name": "contractAddress",
+//	      "type": "address"
+//	    }
+//	  ],
+//	  "name": "inc_delegatecall",
+//	  "outputs": [],
+//	  "payable": false,
+//	  "stateMutability": "nonpayable",
+//	  "type": "function"
+//	},
+//
+// ]
 func (suite *StateDBTestSuite) TestGetHashFn() {
 	testCase := []struct {
 		name         string

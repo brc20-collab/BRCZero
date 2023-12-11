@@ -3,10 +3,10 @@ package token
 import (
 	"encoding/json"
 
-	"github.com/gorilla/mux"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/module"
+	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 
 	"github.com/brc20-collab/brczero/x/token/client/cli"

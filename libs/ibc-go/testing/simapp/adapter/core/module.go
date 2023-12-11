@@ -41,7 +41,7 @@ func (CoreModule) DefaultGenesis() json.RawMessage {
 
 // InitGenesis performs genesis initialization for the ibc module. It returns
 // no validator updates.
-//func (am CoreModule) InitGenesis(ctx sdk.Context, cdc Corec.JSONMarshaler, bz json.RawMessage) []abci.ValidatorUpdate {
+// func (am CoreModule) InitGenesis(ctx sdk.Context, cdc Corec.JSONMarshaler, bz json.RawMessage) []abci.ValidatorUpdate {
 func (am CoreModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.ValidatorUpdate {
 	return am.initGenesis(ctx, data)
 }

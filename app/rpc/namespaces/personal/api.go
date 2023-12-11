@@ -10,8 +10,8 @@ import (
 
 	"github.com/spf13/viper"
 
-	"github.com/google/uuid"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
+	"github.com/google/uuid"
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/crypto/keys"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/crypto/keys/mintkey"

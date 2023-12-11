@@ -72,7 +72,7 @@ type (
 )
 
 // TxDecoder unmarshals transaction bytes
-//type TxDecoder func(txBytes []byte) (costypes.Tx, error)
+// type TxDecoder func(txBytes []byte) (costypes.Tx, error)
 type IbcTxDecoder func(txBytes []byte) (*stdtx.IbcTx, error)
 
 // TxEncoder marshals transaction to bytes

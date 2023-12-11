@@ -5,11 +5,11 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/brc20-collab/brczero/app/crypto/ethsecp256k1"
 	ethereumTx "github.com/brc20-collab/brczero/app/types"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/x/evm/types"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 func Test_getSender(t *testing.T) {

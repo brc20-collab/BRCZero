@@ -6,11 +6,11 @@ import (
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt"
 
+	"github.com/brc20-collab/brczero/app/types"
 	ethcmn "github.com/ethereum/go-ethereum/common"
 	ethstate "github.com/ethereum/go-ethereum/core/state"
 	types2 "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/brc20-collab/brczero/app/types"
 )
 
 const (

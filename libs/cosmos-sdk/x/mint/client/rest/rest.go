@@ -1,8 +1,8 @@
 package rest
 
 import (
-	"github.com/gorilla/mux"
 	govRest "github.com/brc20-collab/brczero/x/gov/client/rest"
+	"github.com/gorilla/mux"
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 )

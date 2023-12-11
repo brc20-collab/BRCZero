@@ -12,8 +12,8 @@ import (
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/evidence/client/cli"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/evidence/client/rest"
 
-	"github.com/gorilla/mux"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
+	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 )
 

@@ -1,7 +1,6 @@
 package ibc_tx
 
 import (
-	"github.com/gogo/protobuf/proto"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client"
 	codectypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
 	cryptotypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/crypto/types"
@@ -11,6 +10,7 @@ import (
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/tx"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/tx/signing"
 	sigtx "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/ibcsigning"
+	"github.com/gogo/protobuf/proto"
 )
 
 // wrapper is a wrapper around the tx.Tx proto.Message which retain the raw

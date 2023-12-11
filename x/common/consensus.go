@@ -9,7 +9,7 @@ import (
 type ConsensusType string
 
 const (
-	PoA ConsensusType = "poa"
+	PoA  ConsensusType = "poa"
 	DPoS ConsensusType = "dpos"
 )
 

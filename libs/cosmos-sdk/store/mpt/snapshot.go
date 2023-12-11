@@ -2,11 +2,11 @@ package mpt
 
 import (
 	"fmt"
+	mpttypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt/types"
+	"github.com/brc20-collab/brczero/libs/tendermint/global"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/rawdb"
 	"github.com/ethereum/go-ethereum/core/state/snapshot"
-	mpttypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt/types"
-	"github.com/brc20-collab/brczero/libs/tendermint/global"
 )
 
 var (

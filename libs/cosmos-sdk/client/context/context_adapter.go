@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	interfacetypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
+	"github.com/gogo/protobuf/proto"
 	"gopkg.in/yaml.v2"
 )
 

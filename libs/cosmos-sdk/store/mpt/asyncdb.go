@@ -7,9 +7,9 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
 	"github.com/tendermint/go-amino"
 )
 

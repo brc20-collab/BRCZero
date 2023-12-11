@@ -15,13 +15,13 @@ import (
 	channeltypes "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/04-channel/types"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/exported"
 
-	"github.com/gogo/protobuf/proto"
 	capabilitytypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/capability/types"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/apps/27-interchain-accounts/host/types"
 	icatypes "github.com/brc20-collab/brczero/libs/ibc-go/modules/apps/27-interchain-accounts/types"
 	host "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/24-host"
 	ibctesting "github.com/brc20-collab/brczero/libs/ibc-go/testing"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto"
+	"github.com/gogo/protobuf/proto"
 	"github.com/stretchr/testify/suite"
 )
 

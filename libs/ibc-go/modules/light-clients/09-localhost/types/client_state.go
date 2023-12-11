@@ -3,7 +3,6 @@ package types
 import (
 	"bytes"
 	"encoding/binary"
-	ics23 "github.com/confio/ics23/go"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
@@ -12,6 +11,7 @@ import (
 	channeltypes "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/04-channel/types"
 	host "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/24-host"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/exported"
+	ics23 "github.com/confio/ics23/go"
 	"reflect"
 	"strings"
 )

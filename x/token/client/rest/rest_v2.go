@@ -6,10 +6,10 @@ import (
 
 	"github.com/brc20-collab/brczero/x/token/types"
 
-	"github.com/gorilla/mux"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/x/common"
+	"github.com/gorilla/mux"
 )
 
 // RegisterRoutesV2, a central function to define routes

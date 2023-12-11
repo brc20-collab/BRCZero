@@ -1,11 +1,11 @@
 package channel
 
 import (
-	"github.com/gogo/protobuf/grpc"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	interfacetypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/04-channel/client/cli"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/04-channel/types"
+	"github.com/gogo/protobuf/grpc"
 	"github.com/spf13/cobra"
 )
 

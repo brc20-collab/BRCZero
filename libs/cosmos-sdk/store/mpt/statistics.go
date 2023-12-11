@@ -163,7 +163,7 @@ func (s *RuntimeState) getDeletedCount() int {
 	return int(atomic.LoadInt64(&s.totalDeletedCount))
 }
 
-//================================
+// ================================
 func (ms *MptStore) sprintDebugLog(version int64) {
 	if ms.logger == nil {
 		return

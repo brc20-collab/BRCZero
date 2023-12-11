@@ -2,9 +2,9 @@ package codec
 
 import (
 	"bytes"
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
 	"github.com/gogo/protobuf/jsonpb"
 	"github.com/gogo/protobuf/proto"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
 )
 
 // ProtoMarshalJSON provides an auxiliary function to return Proto3 JSON encoded
@@ -26,4 +26,3 @@ func ProtoMarshalJSON(msg proto.Message, resolver jsonpb.AnyResolver) ([]byte, e
 
 	return buf.Bytes(), nil
 }
-

@@ -5,10 +5,10 @@ package consensus
 
 import (
 	fmt "fmt"
-	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
 	bits "github.com/brc20-collab/brczero/libs/tendermint/proto/libs/bits"
 	types "github.com/brc20-collab/brczero/libs/tendermint/proto/types"
+	_ "github.com/gogo/protobuf/gogoproto"
+	proto "github.com/gogo/protobuf/proto"
 	math "math"
 )
 
@@ -96,7 +96,7 @@ func (m *NewRoundStep) GetLastCommitRound() int32 {
 }
 
 // NewValidBlockMessage is sent when a validator observes a valid block B in some round r,
-//i.e., there is a Proposal for block B and 2/3+ prevotes for the block B in the round r.
+// i.e., there is a Proposal for block B and 2/3+ prevotes for the block B in the round r.
 // In case the block is also committed, then IsCommit flag is set to true.
 type NewValidBlock struct {
 	Height               int64               `protobuf:"varint,1,opt,name=height,proto3" json:"height,omitempty"`

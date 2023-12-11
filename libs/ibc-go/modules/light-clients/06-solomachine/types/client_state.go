@@ -1,7 +1,6 @@
 package types
 
 import (
-	ics23 "github.com/confio/ics23/go"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	cryptotypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/crypto/types"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
@@ -11,6 +10,7 @@ import (
 	commitmenttypes "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/23-commitment/types"
 	host "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/24-host"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/exported"
+	ics23 "github.com/confio/ics23/go"
 	"reflect"
 )
 

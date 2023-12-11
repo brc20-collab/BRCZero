@@ -1,8 +1,8 @@
 package app
 
 import (
-	gogogrpc "github.com/gogo/protobuf/grpc"
 	cliContext "github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
+	gogogrpc "github.com/gogo/protobuf/grpc"
 )
 
 type ApplicationAdapter interface {

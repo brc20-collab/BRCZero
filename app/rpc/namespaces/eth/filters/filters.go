@@ -7,12 +7,12 @@ import (
 
 	"github.com/brc20-collab/brczero/app/rpc/backend"
 
+	rpctypes "github.com/brc20-collab/brczero/app/rpc/types"
+	tmtypes "github.com/brc20-collab/brczero/libs/tendermint/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/bloombits"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/eth/filters"
-	rpctypes "github.com/brc20-collab/brczero/app/rpc/types"
-	tmtypes "github.com/brc20-collab/brczero/libs/tendermint/types"
 	"github.com/spf13/viper"
 )
 

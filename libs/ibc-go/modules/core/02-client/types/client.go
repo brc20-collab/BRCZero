@@ -6,11 +6,11 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
 	host "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/24-host"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/exported"
+	"github.com/gogo/protobuf/proto"
 )
 
 // UnpackInterfaces implements UnpackInterfacesMesssage.UnpackInterfaces

@@ -1,12 +1,12 @@
 package types_test
 
 import (
+	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
+	"github.com/brc20-collab/brczero/x/evm/types"
 	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	ethstate "github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/core/vm"
-	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
-	"github.com/brc20-collab/brczero/x/evm/types"
 )
 
 func (suite *StateDBTestSuite) TestContractVerifier_Verify() {

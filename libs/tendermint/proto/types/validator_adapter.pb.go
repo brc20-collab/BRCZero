@@ -5,9 +5,9 @@ package types
 
 import (
 	fmt "fmt"
+	pc "github.com/brc20-collab/brczero/libs/tendermint/proto/crypto/keys"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	pc "github.com/brc20-collab/brczero/libs/tendermint/proto/crypto/keys"
 	io "io"
 	math "math"
 )
@@ -23,10 +23,9 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-
 type SimpleValidator struct {
 	PubKey      *pc.PublicKey `protobuf:"bytes,1,opt,name=pub_key,json=pubKey,proto3" json:"pub_key,omitempty"`
-	VotingPower int64             `protobuf:"varint,2,opt,name=voting_power,json=votingPower,proto3" json:"voting_power,omitempty"`
+	VotingPower int64         `protobuf:"varint,2,opt,name=voting_power,json=votingPower,proto3" json:"voting_power,omitempty"`
 }
 
 func (m *SimpleValidator) Reset()         { *m = SimpleValidator{} }
@@ -111,7 +110,6 @@ var fileDescriptor_4e92274df03d3088 = []byte{
 	0xff, 0x48, 0xbf, 0x34, 0x35, 0x9a, 0x02, 0x00, 0x00,
 }
 
-
 func (m *SimpleValidator) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -151,7 +149,6 @@ func (m *SimpleValidator) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	}
 	return len(dAtA) - i, nil
 }
-
 
 func (m *SimpleValidator) Size() (n int) {
 	if m == nil {

@@ -6,9 +6,9 @@ import (
 
 	"github.com/brc20-collab/brczero/libs/tendermint/types"
 
-	"github.com/gogo/protobuf/proto"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
+	"github.com/gogo/protobuf/proto"
 )
 
 // IBC port sentinel errors

@@ -2,8 +2,8 @@ package types
 
 import (
 	"bytes"
-	"github.com/ethereum/go-ethereum/trie"
 	"github.com/brc20-collab/brczero/libs/iavl"
+	"github.com/ethereum/go-ethereum/trie"
 	"math"
 	"testing"
 	"time"

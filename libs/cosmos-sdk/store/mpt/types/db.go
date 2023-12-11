@@ -10,7 +10,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethdb/memorydb"
 )
 
-//------------------------------------------
+// ------------------------------------------
 type (
 	BackendType string
 
@@ -61,9 +61,11 @@ func CreateKvDB(name string, backend BackendType, dir string) (ethdb.KeyValueSto
 	return dbCreator(name, dir)
 }
 
-//------------------------------------------
+// ------------------------------------------
+//
 //	Register go-ethereum memdb and leveldb
-//------------------------------------------
+//
+// ------------------------------------------
 func init() {
 	levelDBCreator := func(name string, dir string) (ethdb.KeyValueStore, error) {
 		return NewMptLevelDB(name, dir)

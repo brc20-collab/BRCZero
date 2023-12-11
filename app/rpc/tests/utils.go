@@ -139,7 +139,7 @@ func CallWithError(netAddr string, method string, params interface{}) (*Response
 	return rpcRes, nil
 }
 
-//nolint
+// nolint
 func GetTransactionReceipt(t *testing.T, addr string, hash ethcmn.Hash) map[string]interface{} {
 	param := []string{hash.Hex()}
 	rpcRes := Call(t, addr, "eth_getTransactionReceipt", param)

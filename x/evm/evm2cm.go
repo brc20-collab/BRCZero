@@ -5,10 +5,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/baseapp"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/x/evm/types"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 var (

@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	ethcmn "github.com/ethereum/go-ethereum/common"
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
@@ -14,6 +12,8 @@ import (
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/params/subspace"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
+	ethcmn "github.com/ethereum/go-ethereum/common"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
 )
 
 // AccountKeeper encodes/decodes accounts using the go-amino (binary)

@@ -6,13 +6,13 @@ import (
 	types2 "github.com/brc20-collab/brczero/libs/tendermint/types"
 
 	//"github.com/cosmos/cosmos-sdk/telemetry"
-	"github.com/gogo/protobuf/proto"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
 	clienttypes "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/02-client/types"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/03-connection/types"
 	commitmenttypes "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/23-commitment/types"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/exported"
+	"github.com/gogo/protobuf/proto"
 )
 
 // ConnOpenInit initialises a connection attempt on chain A. The generated connection identifier
@@ -54,8 +54,8 @@ func (k Keeper) ConnOpenInit(
 // code is executed on chain B).
 //
 // NOTE:
-//  - Here chain A acts as the counterparty
-//  - Identifiers are checked on msg validation
+//   - Here chain A acts as the counterparty
+//   - Identifiers are checked on msg validation
 func (k Keeper) ConnOpenTry(
 	ctx sdk.Context,
 	previousConnectionID string, // previousIdentifier

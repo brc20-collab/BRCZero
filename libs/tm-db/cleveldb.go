@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/jmhodges/levigo"
 	"github.com/brc20-collab/brczero/libs/tm-db/common"
+	"github.com/jmhodges/levigo"
 )
 
 func init() {

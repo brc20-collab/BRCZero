@@ -7,9 +7,9 @@ import (
 	"sort"
 	"strings"
 
+	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	"github.com/gogo/protobuf/jsonpb"
 	proto "github.com/gogo/protobuf/proto"
-	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	kv "github.com/brc20-collab/brczero/libs/tendermint/libs/kv"
@@ -179,9 +179,10 @@ func (a Attribute) String() string {
 }
 
 // ToKVPair converts an Attribute object into a Tendermint key/value pair.
-// func (a Attribute) ToKVPair() abci.EventAttribute {
-// 	return abci.EventAttribute{Key: toBytes(a.Key), Value: toBytes(a.Value)}
-// }
+//
+//	func (a Attribute) ToKVPair() abci.EventAttribute {
+//		return abci.EventAttribute{Key: toBytes(a.Key), Value: toBytes(a.Value)}
+//	}
 func (a Attribute) ToKVPair() kv.Pair {
 	return kv.Pair{Key: toBytes(a.Key), Value: toBytes(a.Value)}
 }

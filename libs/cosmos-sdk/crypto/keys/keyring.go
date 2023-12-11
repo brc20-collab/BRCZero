@@ -497,7 +497,7 @@ func (kb keyringKeybase) writeInfo(name string, info Info) {
 	}
 }
 
-//FileDir show keyringKeybase absolute position
+// FileDir show keyringKeybase absolute position
 func (kb keyringKeybase) FileDir() (string, error) {
 	return resolvePath(kb.fileDir)
 }

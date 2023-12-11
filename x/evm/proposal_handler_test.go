@@ -1,10 +1,10 @@
 package evm_test
 
 import (
-	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/brc20-collab/brczero/x/evm"
 	"github.com/brc20-collab/brczero/x/evm/types"
 	govtypes "github.com/brc20-collab/brczero/x/gov/types"
+	ethcmn "github.com/ethereum/go-ethereum/common"
 )
 
 func (suite *EvmTestSuite) TestProposalHandler_ManageContractDeploymentWhitelistProposal() {

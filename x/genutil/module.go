@@ -5,12 +5,12 @@ import (
 
 	"github.com/brc20-collab/brczero/x/genutil/types"
 
-	"github.com/gorilla/mux"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/module"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
+	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 )
 

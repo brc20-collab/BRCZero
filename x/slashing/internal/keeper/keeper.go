@@ -29,7 +29,7 @@ func NewKeeper(cdc *codec.Codec, key sdk.StoreKey, sk types.StakingKeeper, param
 	}
 }
 
-//Get Staking keeper object
+// Get Staking keeper object
 func (k Keeper) GetStakingKeeper() types.StakingKeeper {
 	return k.sk
 }

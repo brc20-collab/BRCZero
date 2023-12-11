@@ -6,9 +6,9 @@ import (
 	"math"
 	"strings"
 
-	"github.com/gogo/protobuf/proto"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	ctypes "github.com/brc20-collab/brczero/libs/tendermint/rpc/core/types"
+	"github.com/gogo/protobuf/proto"
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	codectypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"

@@ -12,8 +12,6 @@ import (
 
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/ed25519"
 
-	"github.com/fortytw2/leaktest"
-	"github.com/go-kit/kit/log/term"
 	"github.com/brc20-collab/brczero/libs/tendermint/abci/example/kvstore"
 	cfg "github.com/brc20-collab/brczero/libs/tendermint/config"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
@@ -22,6 +20,8 @@ import (
 	"github.com/brc20-collab/brczero/libs/tendermint/p2p/mock"
 	"github.com/brc20-collab/brczero/libs/tendermint/proxy"
 	"github.com/brc20-collab/brczero/libs/tendermint/types"
+	"github.com/fortytw2/leaktest"
+	"github.com/go-kit/kit/log/term"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )

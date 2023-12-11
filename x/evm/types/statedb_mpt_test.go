@@ -1,11 +1,11 @@
 package types_test
 
 import (
-	ethcmn "github.com/ethereum/go-ethereum/common"
-	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 	ethermint "github.com/brc20-collab/brczero/app/types"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	dbm "github.com/brc20-collab/brczero/libs/tm-db"
+	ethcmn "github.com/ethereum/go-ethereum/common"
+	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/suite"
 	"testing"

@@ -5,9 +5,9 @@ package types
 
 import (
 	fmt "fmt"
+	keys "github.com/brc20-collab/brczero/libs/tendermint/proto/crypto/keys"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/golang/protobuf/proto"
-	keys "github.com/brc20-collab/brczero/libs/tendermint/proto/crypto/keys"
 	io "io"
 	math "math"
 	math_bits "math/bits"

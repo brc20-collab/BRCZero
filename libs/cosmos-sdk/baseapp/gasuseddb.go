@@ -5,11 +5,11 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/gogo/protobuf/proto"
-	lru "github.com/hashicorp/golang-lru"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/flags"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	db "github.com/brc20-collab/brczero/libs/tm-db"
+	"github.com/gogo/protobuf/proto"
+	lru "github.com/hashicorp/golang-lru"
 	"github.com/spf13/viper"
 )
 

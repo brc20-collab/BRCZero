@@ -1,9 +1,9 @@
 package client
 
 import (
+	govcli "github.com/brc20-collab/brczero/x/gov/client"
 	"github.com/brc20-collab/brczero/x/staking/client/cli"
 	"github.com/brc20-collab/brczero/x/staking/client/rest"
-	govcli "github.com/brc20-collab/brczero/x/gov/client"
 )
 
 var (
@@ -12,4 +12,3 @@ var (
 		rest.ProposeValidatorProposalRESTHandler,
 	)
 )
-

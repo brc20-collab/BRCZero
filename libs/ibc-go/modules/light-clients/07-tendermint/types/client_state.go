@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	ics23 "github.com/confio/ics23/go"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
@@ -17,6 +16,7 @@ import (
 	common2 "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/common"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/exported"
 	lite "github.com/brc20-collab/brczero/libs/tendermint/lite2"
+	ics23 "github.com/confio/ics23/go"
 )
 
 var _ exported.ClientState = (*ClientState)(nil)

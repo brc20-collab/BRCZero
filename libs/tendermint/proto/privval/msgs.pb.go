@@ -5,10 +5,10 @@ package privval
 
 import (
 	fmt "fmt"
-	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
 	keys "github.com/brc20-collab/brczero/libs/tendermint/proto/crypto/keys"
 	types "github.com/brc20-collab/brczero/libs/tendermint/proto/types"
+	_ "github.com/gogo/protobuf/gogoproto"
+	proto "github.com/gogo/protobuf/proto"
 	math "math"
 )
 

@@ -126,7 +126,7 @@ type TreeDeltaMapImp struct {
 	TreeValue *TreeDelta
 }
 
-//MarshalToAmino marshal data to amino bytes
+// MarshalToAmino marshal data to amino bytes
 func (ti *TreeDeltaMapImp) MarshalToAmino(cdc *amino.Codec) ([]byte, error) {
 	if ti == nil {
 		return nil, nil

@@ -1,9 +1,9 @@
 package types
 
 import (
+	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 )
 
 // Event Hooks

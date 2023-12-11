@@ -5,12 +5,12 @@ package state
 
 import (
 	fmt "fmt"
-	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
-	_ "github.com/golang/protobuf/ptypes/timestamp"
 	types "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	types1 "github.com/brc20-collab/brczero/libs/tendermint/proto/types"
 	version "github.com/brc20-collab/brczero/libs/tendermint/proto/version"
+	_ "github.com/gogo/protobuf/gogoproto"
+	proto "github.com/gogo/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/timestamp"
 	math "math"
 	time "time"
 )

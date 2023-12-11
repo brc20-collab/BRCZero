@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/brc20-collab/brczero/libs/iavl/mock"
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
 

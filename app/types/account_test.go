@@ -6,8 +6,6 @@ import (
 	"math/big"
 	"testing"
 
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/brc20-collab/brczero/app/crypto/ethsecp256k1"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
@@ -19,6 +17,8 @@ import (
 	tmamino "github.com/brc20-collab/brczero/libs/tendermint/crypto/encoding/amino"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/secp256k1"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/sr25519"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
+	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"

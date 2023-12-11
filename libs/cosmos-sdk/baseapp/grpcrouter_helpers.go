@@ -4,8 +4,8 @@ import (
 	gocontext "context"
 	"fmt"
 
-	gogogrpc "github.com/gogo/protobuf/grpc"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
+	gogogrpc "github.com/gogo/protobuf/grpc"
 	"google.golang.org/grpc"
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"

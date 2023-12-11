@@ -6,8 +6,6 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	codectypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
@@ -16,6 +14,8 @@ import (
 	capabilitykeeper "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/capability/keeper"
 	capabilitytypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/capability/types"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
+	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
 	channeltypes "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/04-channel/types"

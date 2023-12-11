@@ -2,11 +2,11 @@ package keeper
 
 import (
 	"fmt"
-	ethcmn "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/rawdb"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/prefix"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/x/evm/types"
+	ethcmn "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/rawdb"
 )
 
 // SetCodeDirectly commit code into db with no cache

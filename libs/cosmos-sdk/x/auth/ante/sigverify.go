@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/hex"
 
-	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/brc20-collab/brczero/app/crypto/ethsecp256k1"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
@@ -18,6 +17,7 @@ import (
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/multisig"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/secp256k1"
 	types2 "github.com/brc20-collab/brczero/libs/tendermint/types"
+	ethcmn "github.com/ethereum/go-ethereum/common"
 )
 
 var (

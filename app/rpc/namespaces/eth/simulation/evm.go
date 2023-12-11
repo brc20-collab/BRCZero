@@ -4,7 +4,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
@@ -15,6 +14,7 @@ import (
 	"github.com/brc20-collab/brczero/x/evm"
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
 	"github.com/brc20-collab/brczero/x/evm/watcher"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 type EvmFactory struct {

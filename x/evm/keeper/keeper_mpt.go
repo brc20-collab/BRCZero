@@ -2,10 +2,10 @@ package keeper
 
 import (
 	"encoding/binary"
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/x/evm/types"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
 )
 
 /*

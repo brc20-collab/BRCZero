@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	cliContext "github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	codectypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
 	cosmost "github.com/brc20-collab/brczero/libs/cosmos-sdk/store/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/module"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/upgrade"
+	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
 	authinternaltypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/typesadapter"
@@ -34,7 +34,7 @@ func (am AppModuleBasic) RegisterGRPCGatewayRoutes(clictx cliContext.CLIContext,
 func (am AppModuleBasic) RegisterRouterForGRPC(clictx cliContext.CLIContext, r *mux.Router) {
 }
 
-//////
+// ////
 func (am AppModule) RegisterTask() upgrade.HeightTask {
 	return nil
 }

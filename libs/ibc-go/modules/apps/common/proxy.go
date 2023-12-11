@@ -14,7 +14,7 @@ var (
 	_ porttypes.Middleware = (*DisaleProxyMiddleware)(nil)
 )
 
-//////
+// ////
 type DisaleProxyMiddleware struct {
 }
 

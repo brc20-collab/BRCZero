@@ -1,13 +1,13 @@
 package keeper_test
 
 import (
-	ethcmn "github.com/ethereum/go-ethereum/common"
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/brc20-collab/brczero/app/crypto/ethsecp256k1"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	"github.com/brc20-collab/brczero/x/evm/types"
 	"github.com/brc20-collab/brczero/x/evm/watcher"
+	ethcmn "github.com/ethereum/go-ethereum/common"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
+	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/spf13/viper"
 	"math/big"
 	"os"

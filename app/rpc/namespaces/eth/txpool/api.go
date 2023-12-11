@@ -3,9 +3,9 @@ package txpool
 import (
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/common/hexutil"
 	clientcontext "github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/x/evm/watcher"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 
 	"github.com/brc20-collab/brczero/app/rpc/backend"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"

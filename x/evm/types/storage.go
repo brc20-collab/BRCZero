@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	ethcmn "github.com/ethereum/go-ethereum/common"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
+	ethcmn "github.com/ethereum/go-ethereum/common"
 )
 
 // Storage represents the account Storage map as a slice of single key value

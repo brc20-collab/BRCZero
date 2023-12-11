@@ -14,8 +14,8 @@ const (
 	ChainConfigName   = "ethermint/ChainConfig"
 	TxDataName        = "ethermint/TxData"
 
-	ManageContractDeploymentWhitelistProposalName = system.Chain+"/evm/ManageContractDeploymentWhitelistProposal"
-	ManageContractBlockedListProposalName         = system.Chain+"/evm/ManageContractBlockedListProposal"
+	ManageContractDeploymentWhitelistProposalName = system.Chain + "/evm/ManageContractDeploymentWhitelistProposal"
+	ManageContractBlockedListProposalName         = system.Chain + "/evm/ManageContractBlockedListProposal"
 )
 
 // RegisterCodec registers all the necessary types and interfaces for the

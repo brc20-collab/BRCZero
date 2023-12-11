@@ -1,9 +1,9 @@
 package mpt
 
 import (
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/types"
 	ethstate "github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/trie"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/types"
 )
 
 var _ types.Iterator = (*mptIterator)(nil)

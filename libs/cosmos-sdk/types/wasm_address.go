@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/bech32"
+	"github.com/ethereum/go-ethereum/common"
 	"gopkg.in/yaml.v2"
 )
 

@@ -6,9 +6,9 @@ package types
 import (
 	fmt "fmt"
 	types "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
+	types1 "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	types1 "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	//costypes "github.com/okx/brczero/libs/cosmos-sdk/types"
 	io "io"
 	math "math"

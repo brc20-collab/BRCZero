@@ -2,8 +2,8 @@ package types
 
 import (
 	"fmt"
-	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/rand"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/stretchr/testify/require"
 	"testing"
 )

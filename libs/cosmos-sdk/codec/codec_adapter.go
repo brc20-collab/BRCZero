@@ -1,8 +1,8 @@
 package codec
 
 import (
-	"github.com/gogo/protobuf/proto"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
+	"github.com/gogo/protobuf/proto"
 )
 
 type (
@@ -130,7 +130,7 @@ type (
 	}
 )
 
-/////////
+// ///////
 var (
 	_ CdcAbstraction = (*CodecProxy)(nil)
 )

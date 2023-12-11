@@ -14,7 +14,6 @@ const (
 	TotalSupplyUpperbound = int64(9 * 1e10)
 )
 
-//
 type MsgTokenIssue struct {
 	Description    string         `json:"description"`
 	Symbol         string         `json:"symbol"`

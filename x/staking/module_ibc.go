@@ -8,12 +8,12 @@ import (
 	cosmost "github.com/brc20-collab/brczero/libs/cosmos-sdk/store/types"
 	"github.com/brc20-collab/brczero/x/staking/typesadapter"
 
-	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	clictx "github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	anytypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/module"
+	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/upgrade"
 	"github.com/brc20-collab/brczero/x/params"
@@ -47,7 +47,7 @@ func (am AppModuleBasic) GetQueryCmdV2(cdc *codec.CodecProxy, reg anytypes.Inter
 	return nil
 }
 
-/// appmodule
+// / appmodule
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	typesadapter.RegisterQueryServer(cfg.QueryServer(), keeper.NewGrpcQuerier(am.keeper))
 }

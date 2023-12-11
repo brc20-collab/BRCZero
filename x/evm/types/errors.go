@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	ethcmn "github.com/ethereum/go-ethereum/common"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
+	ethcmn "github.com/ethereum/go-ethereum/common"
 )
 
 // NOTE: We can't use 1 since that error code is reserved for internal errors.

@@ -14,12 +14,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/minio/highwayhash"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto"
 	tmmath "github.com/brc20-collab/brczero/libs/tendermint/libs/math"
 	tmrand "github.com/brc20-collab/brczero/libs/tendermint/libs/rand"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/service"
 	"github.com/brc20-collab/brczero/libs/tendermint/p2p"
+	"github.com/minio/highwayhash"
 )
 
 const (

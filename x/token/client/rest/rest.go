@@ -9,10 +9,10 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/gorilla/mux"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/rest"
 	"github.com/brc20-collab/brczero/x/common"
+	"github.com/gorilla/mux"
 )
 
 // RegisterRoutes, a central function to define routes

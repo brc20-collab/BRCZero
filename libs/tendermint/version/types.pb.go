@@ -341,9 +341,9 @@ func (m *App) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v:=uint64(m.Protocol)
+				v := uint64(m.Protocol)
 				v |= uint64(b&0x7F) << shift
-				m.Protocol=Protocol(v)
+				m.Protocol = Protocol(v)
 				if b < 0x80 {
 					break
 				}
@@ -444,9 +444,9 @@ func (m *Consensus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v:=uint64(m.Block)
+				v := uint64(m.Block)
 				v |= uint64(b&0x7F) << shift
-				m.Block =Protocol(v)
+				m.Block = Protocol(v)
 				if b < 0x80 {
 					break
 				}
@@ -465,9 +465,9 @@ func (m *Consensus) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v:=uint64(m.App)
-				v|=uint64(b&0x7F) << shift
-				m.App =Protocol(v)
+				v := uint64(m.App)
+				v |= uint64(b&0x7F) << shift
+				m.App = Protocol(v)
 				if b < 0x80 {
 					break
 				}

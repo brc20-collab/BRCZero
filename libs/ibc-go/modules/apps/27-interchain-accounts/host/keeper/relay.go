@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"github.com/gogo/protobuf/proto"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
 	txmsg "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/ibc-adapter"
@@ -9,6 +8,7 @@ import (
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/apps/27-interchain-accounts/host/types"
 	icatypes "github.com/brc20-collab/brczero/libs/ibc-go/modules/apps/27-interchain-accounts/types"
 	channeltypes "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/04-channel/types"
+	"github.com/gogo/protobuf/proto"
 )
 
 // OnRecvPacket handles a given interchain accounts packet on a destination host chain.

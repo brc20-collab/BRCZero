@@ -9,8 +9,6 @@ import (
 
 	"math/rand"
 
-	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	clientCtx "github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	codectypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
@@ -26,6 +24,8 @@ import (
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/simulation"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/types"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
+	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 )
 
@@ -151,7 +151,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 // InitGenesis performs genesis initialization for the ibc module. It returns
 // no validator updates.
-//func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONMarshaler, bz json.RawMessage) []abci.ValidatorUpdate {
+// func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONMarshaler, bz json.RawMessage) []abci.ValidatorUpdate {
 func (am AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.ValidatorUpdate {
 	return am.initGenesis(ctx, data)
 }

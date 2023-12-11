@@ -3,8 +3,8 @@ package types
 import (
 	//gogotypes "github.com/gogo/protobuf/types"
 	//"github.com/okx/brczero/libs/tendermint/libs/bytes"
-	gogotypes "github.com/gogo/protobuf/types"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/bytes"
+	gogotypes "github.com/gogo/protobuf/types"
 )
 
 // cdcEncode returns nil if the input is nil, otherwise returns

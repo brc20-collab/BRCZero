@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/rest"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/client/utils"
 	"github.com/brc20-collab/brczero/x/common"
 	"github.com/brc20-collab/brczero/x/staking/types"
+	"github.com/gorilla/mux"
 )
 
 func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {

@@ -44,7 +44,7 @@ var (
 	//KeyInflationMin        = types.KeyInflationMin
 	//KeyGoalBonded          = types.KeyGoalBonded
 	KeyBlocksPerYear = types.KeyBlocksPerYear
-	
+
 	_ govtypes.Content = (*ExtraProposal)(nil)
 )
 

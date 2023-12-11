@@ -4,11 +4,11 @@ import (
 	"math/big"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/common"
 	ethermint "github.com/brc20-collab/brczero/app/types"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	tmtypes "github.com/brc20-collab/brczero/libs/tendermint/types"
 	"github.com/brc20-collab/brczero/x/evm/types"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 var commitStateDBPool = &sync.Pool{

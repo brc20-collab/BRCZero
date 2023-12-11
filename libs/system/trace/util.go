@@ -8,14 +8,14 @@ import (
 const FlagEnableAnalyzer string = "enable-analyzer"
 
 var (
-	openAnalyzer bool
-	dynamicConfig IDynamicConfig = MockDynamicConfig{}
+	openAnalyzer      bool
+	dynamicConfig     IDynamicConfig = MockDynamicConfig{}
 	forceAnalyzerTags map[string]struct{}
 	status            bool
 	once              sync.Once
 )
 
-func EnableAnalyzer(flag bool)  {
+func EnableAnalyzer(flag bool) {
 	status = flag
 }
 

@@ -20,7 +20,7 @@ type Analyzer struct {
 	txs            []*txLog
 }
 
-func (s *Analyzer) reset (height int64) {
+func (s *Analyzer) reset(height int64) {
 	s.status = status
 	s.currentTxIndex = 0
 	s.blockHeight = height
@@ -166,7 +166,6 @@ func formatRunAnteDetail(record map[string]int64) {
 	}
 	addInfo(RunAnteDetail, anteKeys, record)
 }
-
 
 // formatRecord format the record in the format fmt.Sprintf(", %s<%dms>", v, record[v])
 func formatRecord(i int, key string, ms int64) string {

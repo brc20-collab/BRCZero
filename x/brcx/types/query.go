@@ -2,6 +2,8 @@ package types
 
 import (
 	"math/big"
+
+	"github.com/ethereum/go-ethereum/common"
 )
 
 type BRC20Balance struct {
@@ -43,5 +45,44 @@ type QueryAllBalanceResponse struct {
 func NewQueryAllBalanceResponse(balance []QueryBalanceResponse) QueryAllBalanceResponse {
 	return QueryAllBalanceResponse{
 		Balance: balance,
+	}
+}
+
+type BRC20Information struct {
+	Tick        string         `json:"tick"`
+	TickAddress common.Address `json:"tickAddress"`
+	MaxSupply   *big.Int       `json:"maxSupply"`
+	NowSupply   *big.Int       `json:"nowSupply"`
+	Decimals    *big.Int       `json:"decimals"`
+	Lim         *big.Int       `json:"lim"`
+}
+
+type QueryTickInfoResponse struct {
+	Tick        string `json:"tick" yaml:"tick"`
+	TickAddress string `json:"tick_address" yaml:"tick_address"`
+	MaxSupply   string `json:"max_supply" yaml:"max_supply"`
+	NowSupply   string `json:"now_supply" yaml:"now_supply"`
+	Decimals    string `json:"decimals" yaml:"decimals"`
+	Lim         string `json:"lim" yaml:"lim"`
+}
+
+func NewQueryTickInfoResponse(info BRC20Information) QueryTickInfoResponse {
+	return QueryTickInfoResponse{
+		Tick:        info.Tick,
+		TickAddress: info.TickAddress.String(),
+		MaxSupply:   info.MaxSupply.String(),
+		NowSupply:   info.NowSupply.String(),
+		Decimals:    info.Decimals.String(),
+		Lim:         info.Lim.String(),
+	}
+}
+
+type QueryTotalTickHoldersResponse struct {
+	Holders string `json:"total_tick_holders" yaml:"total_tick_holders"`
+}
+
+func NewQueryTotalTickHoldersResponse(h string) QueryTotalTickHoldersResponse {
+	return QueryTotalTickHoldersResponse{
+		Holders: h,
 	}
 }

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/google/orderedcode"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/pubsub/query"
 	"github.com/brc20-collab/brczero/libs/tendermint/types"
+	"github.com/google/orderedcode"
 )
 
 func intInSlice(a int, list []int) bool {

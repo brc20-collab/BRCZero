@@ -26,7 +26,7 @@ func NewMsgSubmitProposal(content Content, initialDeposit sdk.SysCoins, proposer
 	return MsgSubmitProposal{content, initialDeposit, proposer}
 }
 
-//nolint
+// nolint
 func (msg MsgSubmitProposal) Route() string { return RouterKey }
 func (msg MsgSubmitProposal) Type() string  { return TypeMsgSubmitProposal }
 

@@ -1,9 +1,9 @@
 package backend
 
 import (
-	"github.com/ethereum/go-ethereum/common"
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
 	"github.com/brc20-collab/brczero/x/evm/watcher"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 type Cache interface {

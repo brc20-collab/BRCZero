@@ -79,7 +79,7 @@ func postWithdrawRewardEnabledProposalHandlerFn(cliCtx context.CLIContext) http.
 }
 
 // RewardTruncatePrecisionProposalRESTHandler returns a RewardTruncatePrecisionProposal
-//that exposes the reward truncate precision proposal REST handler with a given sub-route.
+// that exposes the reward truncate precision proposal REST handler with a given sub-route.
 func RewardTruncatePrecisionProposalRESTHandler(cliCtx context.CLIContext) govrest.ProposalRESTHandler {
 	return govrest.ProposalRESTHandler{
 		SubRoute: "reward_truncate_precision",

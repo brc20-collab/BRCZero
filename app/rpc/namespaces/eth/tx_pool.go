@@ -8,7 +8,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
 	rpctypes "github.com/brc20-collab/brczero/app/rpc/types"
 	ethermint "github.com/brc20-collab/brczero/app/types"
 	clientcontext "github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
@@ -20,6 +19,7 @@ import (
 	"github.com/brc20-collab/brczero/libs/tendermint/types"
 	tmdb "github.com/brc20-collab/brczero/libs/tm-db"
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/spf13/viper"
 )
 

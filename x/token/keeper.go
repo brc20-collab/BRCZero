@@ -6,7 +6,6 @@ import (
 	"sort"
 	"strings"
 
-	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 	app "github.com/brc20-collab/brczero/app/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
@@ -14,6 +13,7 @@ import (
 	types2 "github.com/brc20-collab/brczero/libs/tendermint/types"
 	"github.com/brc20-collab/brczero/x/params"
 	"github.com/brc20-collab/brczero/x/token/types"
+	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine

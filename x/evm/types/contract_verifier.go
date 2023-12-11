@@ -2,10 +2,10 @@ package types
 
 import (
 	"fmt"
+	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/vm"
-	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"math/big"
 )
 

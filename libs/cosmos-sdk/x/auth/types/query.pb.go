@@ -6,11 +6,11 @@ package types
 import (
 	context "context"
 	fmt "fmt"
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/query"
 	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/query"
 	_ "github.com/regen-network/cosmos-proto"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
@@ -272,28 +272,29 @@ func (*QueryParamsResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_c451370b3929a27c, []int{5}
 }
 
-//func (m *QueryParamsResponse) XXX_Unmarshal(b []byte) error {
-//	return m.Unmarshal(b)
-//}
-//func (m *QueryParamsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-//	if deterministic {
-//		return xxx_messageInfo_QueryParamsResponse.Marshal(b, m, deterministic)
-//	} else {
-//		b = b[:cap(b)]
-//		n, err := m.MarshalToSizedBuffer(b)
-//		if err != nil {
-//			return nil, err
-//		}
-//		return b[:n], nil
+//	func (m *QueryParamsResponse) XXX_Unmarshal(b []byte) error {
+//		return m.Unmarshal(b)
 //	}
-//}
+//
+//	func (m *QueryParamsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+//		if deterministic {
+//			return xxx_messageInfo_QueryParamsResponse.Marshal(b, m, deterministic)
+//		} else {
+//			b = b[:cap(b)]
+//			n, err := m.MarshalToSizedBuffer(b)
+//			if err != nil {
+//				return nil, err
+//			}
+//			return b[:n], nil
+//		}
+//	}
 func (m *QueryParamsResponse) XXX_Merge(src proto.Message) {
 	xxx_messageInfo_QueryParamsResponse.Merge(m, src)
 }
 
-//func (m *QueryParamsResponse) XXX_Size() int {
-//	return m.Size()
-//}
+//	func (m *QueryParamsResponse) XXX_Size() int {
+//		return m.Size()
+//	}
 func (m *QueryParamsResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_QueryParamsResponse.DiscardUnknown(m)
 }
@@ -1243,40 +1244,12 @@ func (m *QueryParamsRequest) Unmarshal(dAtA []byte) error {
 	return nil
 }
 
-//func (m *QueryParamsResponse) Unmarshal(dAtA []byte) error {
-//	l := len(dAtA)
-//	iNdEx := 0
-//	for iNdEx < l {
-//		preIndex := iNdEx
-//		var wire uint64
-//		for shift := uint(0); ; shift += 7 {
-//			if shift >= 64 {
-//				return ErrIntOverflowQuery
-//			}
-//			if iNdEx >= l {
-//				return io.ErrUnexpectedEOF
-//			}
-//			b := dAtA[iNdEx]
-//			iNdEx++
-//			wire |= uint64(b&0x7F) << shift
-//			if b < 0x80 {
-//				break
-//			}
-//		}
-//		fieldNum := int32(wire >> 3)
-//		wireType := int(wire & 0x7)
-//		if wireType == 4 {
-//			return fmt.Errorf("proto: QueryParamsResponse: wiretype end group for non-group")
-//		}
-//		if fieldNum <= 0 {
-//			return fmt.Errorf("proto: QueryParamsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-//		}
-//		switch fieldNum {
-//		case 1:
-//			if wireType != 2 {
-//				return fmt.Errorf("proto: wrong wireType = %d for field Params", wireType)
-//			}
-//			var msglen int
+//	func (m *QueryParamsResponse) Unmarshal(dAtA []byte) error {
+//		l := len(dAtA)
+//		iNdEx := 0
+//		for iNdEx < l {
+//			preIndex := iNdEx
+//			var wire uint64
 //			for shift := uint(0); ; shift += 7 {
 //				if shift >= 64 {
 //					return ErrIntOverflowQuery
@@ -1286,46 +1259,74 @@ func (m *QueryParamsRequest) Unmarshal(dAtA []byte) error {
 //				}
 //				b := dAtA[iNdEx]
 //				iNdEx++
-//				msglen |= int(b&0x7F) << shift
+//				wire |= uint64(b&0x7F) << shift
 //				if b < 0x80 {
 //					break
 //				}
 //			}
-//			if msglen < 0 {
-//				return ErrInvalidLengthQuery
+//			fieldNum := int32(wire >> 3)
+//			wireType := int(wire & 0x7)
+//			if wireType == 4 {
+//				return fmt.Errorf("proto: QueryParamsResponse: wiretype end group for non-group")
 //			}
-//			postIndex := iNdEx + msglen
-//			if postIndex < 0 {
-//				return ErrInvalidLengthQuery
+//			if fieldNum <= 0 {
+//				return fmt.Errorf("proto: QueryParamsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 //			}
-//			if postIndex > l {
-//				return io.ErrUnexpectedEOF
+//			switch fieldNum {
+//			case 1:
+//				if wireType != 2 {
+//					return fmt.Errorf("proto: wrong wireType = %d for field Params", wireType)
+//				}
+//				var msglen int
+//				for shift := uint(0); ; shift += 7 {
+//					if shift >= 64 {
+//						return ErrIntOverflowQuery
+//					}
+//					if iNdEx >= l {
+//						return io.ErrUnexpectedEOF
+//					}
+//					b := dAtA[iNdEx]
+//					iNdEx++
+//					msglen |= int(b&0x7F) << shift
+//					if b < 0x80 {
+//						break
+//					}
+//				}
+//				if msglen < 0 {
+//					return ErrInvalidLengthQuery
+//				}
+//				postIndex := iNdEx + msglen
+//				if postIndex < 0 {
+//					return ErrInvalidLengthQuery
+//				}
+//				if postIndex > l {
+//					return io.ErrUnexpectedEOF
+//				}
+//				if err := m.Params.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+//					return err
+//				}
+//				iNdEx = postIndex
+//			default:
+//				iNdEx = preIndex
+//				skippy, err := skipQuery(dAtA[iNdEx:])
+//				if err != nil {
+//					return err
+//				}
+//				if (skippy < 0) || (iNdEx+skippy) < 0 {
+//					return ErrInvalidLengthQuery
+//				}
+//				if (iNdEx + skippy) > l {
+//					return io.ErrUnexpectedEOF
+//				}
+//				iNdEx += skippy
 //			}
-//			if err := m.Params.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-//				return err
-//			}
-//			iNdEx = postIndex
-//		default:
-//			iNdEx = preIndex
-//			skippy, err := skipQuery(dAtA[iNdEx:])
-//			if err != nil {
-//				return err
-//			}
-//			if (skippy < 0) || (iNdEx+skippy) < 0 {
-//				return ErrInvalidLengthQuery
-//			}
-//			if (iNdEx + skippy) > l {
-//				return io.ErrUnexpectedEOF
-//			}
-//			iNdEx += skippy
 //		}
-//	}
 //
-//	if iNdEx > l {
-//		return io.ErrUnexpectedEOF
+//		if iNdEx > l {
+//			return io.ErrUnexpectedEOF
+//		}
+//		return nil
 //	}
-//	return nil
-//}
 func skipQuery(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0

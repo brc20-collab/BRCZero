@@ -7,8 +7,8 @@ import (
 	"os"
 	"strconv"
 
-	jsoniter "github.com/json-iterator/go"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
+	jsoniter "github.com/json-iterator/go"
 )
 
 // const

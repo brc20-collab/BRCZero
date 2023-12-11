@@ -6,10 +6,10 @@ import (
 	"crypto/subtle"
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	cryptotypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/crypto/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
+	"github.com/ethereum/go-ethereum/crypto"
 
 	tmcrypto "github.com/brc20-collab/brczero/libs/tendermint/crypto"
 )

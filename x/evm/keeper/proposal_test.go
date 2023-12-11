@@ -3,13 +3,13 @@ package keeper_test
 import (
 	"time"
 
-	ethcmn "github.com/ethereum/go-ethereum/common"
 	ethermint "github.com/brc20-collab/brczero/app/types"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/ed25519"
 	"github.com/brc20-collab/brczero/x/evm/types"
 	govtypes "github.com/brc20-collab/brczero/x/gov/types"
 	staking_types "github.com/brc20-collab/brczero/x/staking/types"
+	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
 )
 

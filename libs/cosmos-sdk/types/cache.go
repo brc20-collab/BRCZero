@@ -3,8 +3,8 @@ package types
 import (
 	"time"
 
-	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto"
+	ethcmn "github.com/ethereum/go-ethereum/common"
 )
 
 type Account interface {

@@ -6,8 +6,6 @@ import (
 
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 
-	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	clientCtx "github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	types2 "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
@@ -17,6 +15,8 @@ import (
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/capability/simulation"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/capability/types"
 	simulation2 "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/simulation"
+	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 )
 

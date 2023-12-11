@@ -1,8 +1,8 @@
 package watcher
 
 import (
-	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/brc20-collab/brczero/x/evm/types"
+	ethcmn "github.com/ethereum/go-ethereum/common"
 )
 
 type evmTx struct {

@@ -3,8 +3,8 @@ package deliver
 import (
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/brc20-collab/brczero/x/evm/watcher"
+	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/brc20-collab/brczero/app/refund"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"

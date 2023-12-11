@@ -84,7 +84,7 @@ func (k Keeper) calculateDelegationRewards(ctx sdk.Context, val stakingexported.
 	return rewards
 }
 
-//withdraw rewards according to the specified validator by delegator
+// withdraw rewards according to the specified validator by delegator
 func (k Keeper) withdrawDelegationRewards(ctx sdk.Context, val stakingexported.ValidatorI, delAddress sdk.AccAddress) (sdk.Coins, error) {
 	logger := k.Logger(ctx)
 

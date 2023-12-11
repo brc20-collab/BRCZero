@@ -53,18 +53,18 @@ func queryTick(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error)
 		return nil, types.ErrPackInput(fmt.Sprintf("pack input of getTickInformation failed: %s", err))
 	}
 
-	executionResult, _, err := k.CallEvm(ctx, from, &to, big.NewInt(0), input, &types.ResultInfo{})
+	_, contractResult, err := k.CallEvm(ctx, from, &to, big.NewInt(0), input, &types.ResultInfo{})
 	if err != nil {
 		return nil, types.ErrCallMethod(fmt.Sprintf("call getTickInformation failed: %s", err))
 	}
 
-	//todo: process res
-	data, err := evmtypes.DecodeResultData(executionResult.Result.Data)
+	tickInfo, err := types.UnpackGetTickInfoOutput(contractResult.Ret)
 	if err != nil {
-		return nil, err
+		return nil, types.ErrUnpackOutput(fmt.Sprintf("unpack output of getTickInformation failed: %s", err))
 	}
 
-	res, err := codec.MarshalJSONIndent(types.ModuleCdc, data)
+	response := types.NewQueryTickInfoResponse(tickInfo)
+	res, err := codec.MarshalJSONIndent(types.ModuleCdc, response)
 	if err != nil {
 		return nil, common.ErrMarshalJSONFailed(err.Error())
 	}
@@ -189,24 +189,23 @@ func queryTotalTickHolders(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]
 
 	input, err := types.GetTotalTickHoldersInput()
 	if err != nil {
-		return nil, types.ErrPackInput(fmt.Sprintf("pack input of getAllBalance failed: %s", err))
+		return nil, types.ErrPackInput(fmt.Sprintf("pack input of getTotalTickHolders failed: %s", err))
 	}
 
-	executionResult, _, err := k.CallEvm(ctx, from, &to, big.NewInt(0), input, &types.ResultInfo{})
+	_, contractResult, err := k.CallEvm(ctx, from, &to, big.NewInt(0), input, &types.ResultInfo{})
 	if err != nil {
-		return nil, types.ErrCallMethod(fmt.Sprintf("call getBalance failed: %s", err))
+		return nil, types.ErrCallMethod(fmt.Sprintf("call getTotalTickHolders failed: %s", err))
 	}
 
-	//todo: process res
-	data, err := evmtypes.DecodeResultData(executionResult.Result.Data)
+	holders, err := types.UnpackGetTotalTickHoldersOutput(contractResult.Ret)
 	if err != nil {
-		return nil, err
+		return nil, types.ErrUnpackOutput(fmt.Sprintf("unpack output of getTotalTickHolders failed: %s", err))
 	}
 
-	res, err := codec.MarshalJSONIndent(types.ModuleCdc, data)
+	response := types.NewQueryTotalTickHoldersResponse(holders.String())
+	res, err := codec.MarshalJSONIndent(types.ModuleCdc, response)
 	if err != nil {
 		return nil, common.ErrMarshalJSONFailed(err.Error())
 	}
-
 	return res, nil
 }

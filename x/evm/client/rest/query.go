@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"net/http"
 
-	ethcommon "github.com/ethereum/go-ethereum/common"
-	"github.com/gorilla/mux"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	clientCtx "github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/rest"
 	comm "github.com/brc20-collab/brczero/x/common"
 	"github.com/brc20-collab/brczero/x/evm/client/utils"
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
+	ethcommon "github.com/ethereum/go-ethereum/common"
+	"github.com/gorilla/mux"
 )
 
 func registerQueryRoutes(cliCtx clientCtx.CLIContext, r *mux.Router) {

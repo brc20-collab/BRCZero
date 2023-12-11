@@ -54,7 +54,7 @@ func TestStateCopy(t *testing.T) {
         %v`, state))
 }
 
-//TestMakeGenesisStateNilValidators tests state's consistency when genesis file's validators field is nil.
+// TestMakeGenesisStateNilValidators tests state's consistency when genesis file's validators field is nil.
 func TestMakeGenesisStateNilValidators(t *testing.T) {
 	doc := types.GenesisDoc{
 		ChainID:    "dummy",

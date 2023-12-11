@@ -2,13 +2,13 @@ package types
 
 import (
 	"fmt"
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt"
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/types"
+	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/rawdb"
 	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/types"
-	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 )
 
 func (csdb *CommitStateDB) ProtectStateDBEnvironment(ctx sdk.Context) {

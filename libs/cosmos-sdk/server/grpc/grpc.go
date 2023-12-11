@@ -18,8 +18,8 @@ import (
 
 	reflection "github.com/brc20-collab/brczero/libs/cosmos-sdk/server/grpc/reflection/v2alpha1"
 
-	"github.com/gogo/protobuf/jsonpb"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
+	"github.com/gogo/protobuf/jsonpb"
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/server/grpc/gogoreflection"
 

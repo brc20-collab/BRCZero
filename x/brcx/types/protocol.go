@@ -53,6 +53,35 @@ func GetTickInfoInput(tickName string) ([]byte, error) {
 	return data, nil
 }
 
+func UnpackGetTickInfoOutput(ret []byte) (BRC20Information, error) {
+	//res, err := entryPointABI.Methods[GetTickInfoMethodName].Outputs.Unpack(ret)
+	//if err != nil {
+	//	return BRC20Information{}, err
+	//}
+	//fmt.Printf("%v\n", res)
+	//_, ok := res[0].(contracts.IBrc20EntryPointBrc20Information)
+	//if !ok {
+	//	return BRC20Information{}, err
+	//}
+	var output BRC20Information
+	err := entryPointABI.UnpackIntoInterface(&output, GetTickInfoMethodName, ret)
+	if err != nil {
+		fmt.Println("Error unpacking data:", err)
+		return BRC20Information{}, err
+	}
+	//for k, v := range output {
+	//	fmt.Printf("key: %s\n", k)
+	//	fmt.Printf("val: %v\n", v)
+	//	_, ok := v.(contracts.IBrc20EntryPointBrc20Information)
+	//	if !ok {
+	//		return BRC20Information{}, err
+	//	}
+	//
+	//}
+
+	return BRC20Information{}, err
+}
+
 func GetAllTickInfoInput() ([]byte, error) {
 	data, err := entryPointABI.Pack(GetAllTickInfoMethodName)
 	if err != nil {
@@ -117,4 +146,18 @@ func GetTotalTickHoldersInput() ([]byte, error) {
 		return nil, err
 	}
 	return data, nil
+}
+
+func UnpackGetTotalTickHoldersOutput(ret []byte) (*big.Int, error) {
+	res, err := entryPointABI.Methods[GetTotalTickHoldersMethodName].Outputs.Unpack(ret)
+	if len(res) != 1 || err != nil {
+		return nil, err
+	}
+
+	holders, ok := res[0].(*big.Int)
+	if !ok {
+		return nil, errors.New("decode totalTickHolders failed")
+	}
+
+	return holders, nil
 }

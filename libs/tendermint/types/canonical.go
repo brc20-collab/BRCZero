@@ -51,7 +51,6 @@ func CanonicalizeBlockID(blockID BlockID) CanonicalBlockID {
 	}
 }
 
-
 func CanonicalizePartSetHeader(psh PartSetHeader) CanonicalPartSetHeader {
 	return CanonicalPartSetHeader{
 		psh.Hash,

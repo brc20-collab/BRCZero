@@ -5,8 +5,8 @@ import (
 	"math"
 	"testing"
 
-	kitlog "github.com/go-kit/kit/log"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
+	kitlog "github.com/go-kit/kit/log"
 )
 
 //func TestTMFmtLogger(t *testing.T) {

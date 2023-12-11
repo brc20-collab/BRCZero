@@ -1,8 +1,8 @@
 package module
 
 import (
-	"github.com/gogo/protobuf/grpc"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
+	"github.com/gogo/protobuf/grpc"
 )
 
 // Configurator provides the hooks to allow modules to configure and register
@@ -24,7 +24,7 @@ type configurator struct {
 	cdc         *codec.Codec
 	msgServer   grpc.Server
 	queryServer grpc.Server
-	migrations map[string]map[uint64]MigrationHandler
+	migrations  map[string]map[uint64]MigrationHandler
 }
 
 // NewConfigurator returns a new Configurator instance

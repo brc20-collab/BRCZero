@@ -6,13 +6,13 @@ import (
 	"path/filepath"
 	"sync"
 
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/flags"
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt/types"
+	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/rawdb"
 	ethstate "github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/trie"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/flags"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt/types"
-	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/spf13/viper"
 )
 

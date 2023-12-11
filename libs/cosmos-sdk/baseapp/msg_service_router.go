@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	gogogrpc "github.com/gogo/protobuf/grpc"
-	"github.com/gogo/protobuf/proto"
 	codectypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
+	gogogrpc "github.com/gogo/protobuf/grpc"
+	"github.com/gogo/protobuf/proto"
 	"google.golang.org/grpc"
 )
 
@@ -45,9 +45,9 @@ func (msr *MsgServiceRouter) HandlerWithMsg(msg sdk.MsgAdapter) MsgServiceHandle
 // service description, handler is an object which implements that gRPC service.
 //
 // This function PANICs:
-// - if it is called before the service `Msg`s have been registered using
-//   RegisterInterfaces,
-// - or if a service is being registered twice.
+//   - if it is called before the service `Msg`s have been registered using
+//     RegisterInterfaces,
+//   - or if a service is being registered twice.
 func (msr *MsgServiceRouter) RegisterService(sd *grpc.ServiceDesc, handler interface{}) {
 	// Adds a top-level query handler based on the gRPC service name.
 	for _, method := range sd.Methods {

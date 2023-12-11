@@ -1,11 +1,11 @@
 package keeper
 
 import (
-	"github.com/ethereum/go-ethereum/common"
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	sdkerror "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
 	"github.com/brc20-collab/brczero/x/evm/types"
+	"github.com/ethereum/go-ethereum/common"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
 )
 
 var (

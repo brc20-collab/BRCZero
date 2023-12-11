@@ -1,8 +1,8 @@
 package types
 
 import (
-	"github.com/gogo/protobuf/proto"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
+	"github.com/gogo/protobuf/proto"
 )
 
 const (

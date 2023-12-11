@@ -3,8 +3,8 @@ package types
 import (
 	"bytes"
 	"fmt"
-	"github.com/ethereum/go-ethereum/trie"
 	"github.com/brc20-collab/brczero/libs/iavl"
+	"github.com/ethereum/go-ethereum/trie"
 	"time"
 
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/tmhash"

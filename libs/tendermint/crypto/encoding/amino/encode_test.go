@@ -53,6 +53,7 @@ func checkAminoJSON(t *testing.T, src interface{}, dst interface{}, isNil bool) 
 }
 
 // ExamplePrintRegisteredTypes refers to unknown identifier: PrintRegisteredTypes
+//
 //nolint:govet
 func ExamplePrintRegisteredTypes() {
 	cdc.PrintTypes(os.Stdout)

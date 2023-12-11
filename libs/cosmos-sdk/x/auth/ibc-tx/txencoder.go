@@ -2,9 +2,9 @@ package ibc_tx
 
 import (
 	"fmt"
-	"github.com/gogo/protobuf/proto"
 	ibctx "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/ibc-adapter"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
+	"github.com/gogo/protobuf/proto"
 )
 
 func IbcTxEncoder() ibctx.IBCTxEncoder {

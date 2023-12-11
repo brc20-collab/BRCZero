@@ -3,11 +3,11 @@ package web3
 import (
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/brc20-collab/brczero/app/rpc/monitor"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/version"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/spf13/viper"
 )
 

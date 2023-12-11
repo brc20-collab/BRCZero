@@ -11,8 +11,8 @@ import (
 
 // NewDecodeStore returns a decoder function closure that unmarshals the KVPair's
 // Value to the corresponding capability type.
-func NewDecodeStore() func(cdc *codec.Codec,kvA, kvB kv.Pair) string {
-	return func(cdc *codec.Codec,kvA, kvB kv.Pair) string {
+func NewDecodeStore() func(cdc *codec.Codec, kvA, kvB kv.Pair) string {
+	return func(cdc *codec.Codec, kvA, kvB kv.Pair) string {
 		switch {
 		case bytes.Equal(kvA.Key, types.KeyIndex):
 			idxA := sdk.BigEndianToUint64(kvA.Value)

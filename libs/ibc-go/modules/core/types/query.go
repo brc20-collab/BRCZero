@@ -1,7 +1,6 @@
 package types
 
 import (
-	"github.com/gogo/protobuf/grpc"
 	client "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/02-client"
 	clienttypes "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/02-client/types"
 	connection "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/03-connection"
@@ -10,6 +9,7 @@ import (
 	channeltypes "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/04-channel/types"
 	port "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/05-port"
 	porttypes "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/05-port/types"
+	"github.com/gogo/protobuf/grpc"
 )
 
 // QueryService defines the IBC interfaces that the gRPC query server must implement

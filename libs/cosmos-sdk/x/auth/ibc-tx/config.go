@@ -57,7 +57,6 @@ func (g config) TxDecoder() ibctx.IbcTxDecoder {
 	return g.decoder
 }
 
-//
 func (g config) TxJSONEncoder() ibctx.IBCTxEncoder {
 	return g.jsonEncoder
 }

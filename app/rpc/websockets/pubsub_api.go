@@ -9,11 +9,11 @@ import (
 	tmtypes "github.com/brc20-collab/brczero/libs/tendermint/types"
 	"github.com/brc20-collab/brczero/x/evm/watcher"
 
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/eth/filters"
 	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 
 	rpcfilters "github.com/brc20-collab/brczero/app/rpc/namespaces/eth/filters"
 	rpctypes "github.com/brc20-collab/brczero/app/rpc/types"

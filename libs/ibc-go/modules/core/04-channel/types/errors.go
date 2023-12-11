@@ -33,7 +33,7 @@ var (
 	ErrRedundantTx = sdkerrors.Register(SubModuleName, 22, "packet messages are redundant")
 
 	// Perform a no-op on the current Msg
-	ErrNoOpMsg = sdkerrors.Register(SubModuleName, 23, "message is redundant, no-op will be performed")
+	ErrNoOpMsg               = sdkerrors.Register(SubModuleName, 23, "message is redundant, no-op will be performed")
 	ErrInvalidChannelVersion = sdkerrors.Register(SubModuleName, 24, "invalid channel version")
 	ErrPacketNotSent         = sdkerrors.Register(SubModuleName, 25, "packet has not been sent")
 )

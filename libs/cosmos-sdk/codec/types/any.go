@@ -1,8 +1,8 @@
 package types
 
 import (
-	"github.com/gogo/protobuf/proto"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
+	"github.com/gogo/protobuf/proto"
 )
 
 type Any struct {

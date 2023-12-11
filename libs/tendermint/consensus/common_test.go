@@ -193,7 +193,7 @@ func (vss ValidatorStubsByAddress) Swap(i, j int) {
 	vss[j].Index = j
 }
 
-//-------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------
 // Functions for transitioning the consensus state
 // timeoutRoutine: receive requests for timeouts on tickChan and fire timeouts on tockChan
 // receiveRoutine: serializes processing of proposoals, block parts, votes; coordinates state transitions
@@ -839,8 +839,8 @@ func (m *mockTicker) Stop() error {
 	return nil
 }
 
-//add noop Reset function for TimeoutTicker interface
-//need to implement when used
+// add noop Reset function for TimeoutTicker interface
+// need to implement when used
 func (m *mockTicker) Reset() error {
 	return nil
 }

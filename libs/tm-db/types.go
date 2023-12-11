@@ -106,10 +106,10 @@ type SetDeleter interface {
 // var itr Iterator = ...
 // defer itr.Close()
 //
-// for ; itr.Valid(); itr.Next() {
-//   k, v := itr.Key(); itr.Value()
-//   ...
-// }
+//	for ; itr.Valid(); itr.Next() {
+//	  k, v := itr.Key(); itr.Value()
+//	  ...
+//	}
 type Iterator interface {
 	// Domain returns the start (inclusive) and end (exclusive) limits of the iterator.
 	// CONTRACT: start, end readonly []byte

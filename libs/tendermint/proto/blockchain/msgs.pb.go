@@ -5,9 +5,9 @@ package blockchain
 
 import (
 	fmt "fmt"
+	types "github.com/brc20-collab/brczero/libs/tendermint/proto/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	types "github.com/brc20-collab/brczero/libs/tendermint/proto/types"
 	math "math"
 )
 

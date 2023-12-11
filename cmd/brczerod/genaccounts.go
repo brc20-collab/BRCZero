@@ -8,8 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/brc20-collab/brczero/app/crypto/hd"
 	chain "github.com/brc20-collab/brczero/app/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/flags"
@@ -22,6 +20,8 @@ import (
 	authvesting "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/vesting"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/cli"
 	"github.com/brc20-collab/brczero/x/genutil"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
+	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 )
 
 const (

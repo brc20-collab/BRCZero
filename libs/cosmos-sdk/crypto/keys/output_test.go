@@ -3,10 +3,10 @@ package keys
 import (
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/multisig"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/secp256k1"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
 
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"

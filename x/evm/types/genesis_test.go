@@ -3,10 +3,10 @@ package types
 import (
 	"testing"
 
+	"github.com/brc20-collab/brczero/app/crypto/ethsecp256k1"
 	ethcmn "github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	ethcrypto "github.com/ethereum/go-ethereum/crypto"
-	"github.com/brc20-collab/brczero/app/crypto/ethsecp256k1"
 	"github.com/stretchr/testify/require"
 )
 

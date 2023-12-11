@@ -2,10 +2,10 @@ package keeper_test
 
 import (
 	"fmt"
-	ethcmn "github.com/ethereum/go-ethereum/common"
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	"github.com/brc20-collab/brczero/x/evm/types"
+	ethcmn "github.com/ethereum/go-ethereum/common"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"math/big"
 )
 

@@ -10,18 +10,18 @@
 //
 // there are no TOS at this moment, use at your own risk we take no responsibility
 //
-//     Schemes: http, https
-//     Version: 0.0.1
-//     License: MIT http://opensource.org/licenses/MIT
+//	Schemes: http, https
+//	Version: 0.0.1
+//	License: MIT http://opensource.org/licenses/MIT
 //
-//     Security:
-//     - api_key:
+//	Security:
+//	- api_key:
 //
-//     SecurityDefinitions:
-//     api_key:
-//          type: apiKey
-//          name: KEY
-//          in: header
+//	SecurityDefinitions:
+//	api_key:
+//	     type: apiKey
+//	     name: KEY
+//	     in: header
 //
 // swagger:meta
 package rest

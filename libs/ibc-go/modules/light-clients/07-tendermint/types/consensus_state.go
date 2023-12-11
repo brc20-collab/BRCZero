@@ -2,7 +2,7 @@ package types
 
 import (
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
-	clienttypes"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/02-client/types"
+	clienttypes "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/02-client/types"
 	commitmenttypes "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/23-commitment/types"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/exported"
 	tmbytes "github.com/brc20-collab/brczero/libs/tendermint/libs/bytes"
@@ -23,7 +23,6 @@ func NewConsensusState(
 		NextValidatorsHash: nextValsHash,
 	}
 }
-
 
 // ClientType returns Tendermint
 func (ConsensusState) ClientType() string {

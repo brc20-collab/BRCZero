@@ -207,7 +207,7 @@ func (p *performance) OnAppEndBlockExit(height int64, seq uint64) {
 	p.app.endBlockElapse = time.Now().UnixNano() - p.app.lastTimestamp
 }
 
-//////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////
 func (p *performance) OnAppDeliverTxEnter(height int64) uint64 {
 	p.sanityCheckApp(height, p.app.seqNum)
 
@@ -246,7 +246,7 @@ func (p *performance) OnBeginBlockExit(ctx sdk.Context, moduleName string, seq u
 	m.beginBlockElapse = time.Now().UnixNano() - p.lastTimestamp
 }
 
-////////////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////////////
 func (p *performance) OnEndBlockEnter(ctx sdk.Context, moduleName string) uint64 {
 	p.lastTimestamp = time.Now().UnixNano()
 	p.seqNum++

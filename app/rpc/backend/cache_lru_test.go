@@ -5,9 +5,9 @@ import (
 
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
 
+	"github.com/brc20-collab/brczero/x/evm/watcher"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/brc20-collab/brczero/x/evm/watcher"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 )

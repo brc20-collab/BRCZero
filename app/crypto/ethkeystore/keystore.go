@@ -9,16 +9,16 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/common"
-	ethcrypto "github.com/ethereum/go-ethereum/crypto"
-	"github.com/google/uuid"
 	"github.com/brc20-collab/brczero/app/crypto/ethsecp256k1"
 	"github.com/brc20-collab/brczero/app/crypto/hd"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/crypto/keys"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/crypto/keys/mintkey"
 	tmcrypto "github.com/brc20-collab/brczero/libs/tendermint/crypto"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/secp256k1"
+	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/ethereum/go-ethereum/common"
+	ethcrypto "github.com/ethereum/go-ethereum/crypto"
+	"github.com/google/uuid"
 )
 
 // CreateKeystoreByTmKey  create a eth keystore by accountname from keybase
@@ -128,7 +128,7 @@ func newEthKeyFromECDSA(privateKeyECDSA *ecdsa.PrivateKey) (*keystore.Key, error
 	return key, nil
 }
 
-//keyFileName return the default keystore file name in the ethereum
+// keyFileName return the default keystore file name in the ethereum
 func keyFileName(keyAddr common.Address) string {
 	ts := time.Now().UTC()
 	return fmt.Sprintf("UTC--%s--%s", toISO8601(ts), hex.EncodeToString(keyAddr[:]))

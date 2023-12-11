@@ -1,8 +1,6 @@
 package types
 
-
 type UpgradeReq struct {
-
 }
 
 type UpgradeResp struct {
@@ -10,5 +8,4 @@ type UpgradeResp struct {
 }
 
 type ModuleUpgradeResp struct {
-
 }

@@ -1,10 +1,10 @@
 package v0_16
 
 import (
+	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 )
 
 type (

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/exported"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
+	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
 )
 

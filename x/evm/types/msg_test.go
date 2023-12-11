@@ -13,9 +13,9 @@ import (
 
 	ibcfee "github.com/brc20-collab/brczero/libs/ibc-go/modules/apps/29-fee"
 
+	chaincodec "github.com/brc20-collab/brczero/app/codec"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/common/math"
-	chaincodec "github.com/brc20-collab/brczero/app/codec"
 
 	"github.com/stretchr/testify/require"
 

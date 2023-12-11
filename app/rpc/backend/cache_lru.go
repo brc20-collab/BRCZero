@@ -5,9 +5,9 @@ import (
 
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
 
+	"github.com/brc20-collab/brczero/x/evm/watcher"
 	"github.com/ethereum/go-ethereum/common"
 	lru "github.com/hashicorp/golang-lru"
-	"github.com/brc20-collab/brczero/x/evm/watcher"
 	"github.com/spf13/viper"
 )
 

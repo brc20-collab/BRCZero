@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	lru "github.com/hashicorp/golang-lru"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
+	lru "github.com/hashicorp/golang-lru"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 )
@@ -37,7 +37,7 @@ func (al AddressList) String() string {
 	return strings.TrimSpace(b.String())
 }
 
-//BlockedContractList is the list of contract which method or all-method is blocked
+// BlockedContractList is the list of contract which method or all-method is blocked
 type BlockedContractList []BlockedContract
 
 // String returns string which is the list of blocked contract
@@ -98,7 +98,7 @@ func (bl BlockedContractList) GetBlockedContract(addr sdk.AccAddress) *BlockedCo
 	return nil
 }
 
-//BlockedContract i the contract which method or all-method is blocked
+// BlockedContract i the contract which method or all-method is blocked
 type BlockedContract struct {
 	//Contract Address
 	Address sdk.AccAddress `json:"address" yaml:"address"`
@@ -150,7 +150,7 @@ func (bc BlockedContract) String() string {
 	return strings.TrimSpace(b.String())
 }
 
-//ContractMethods is the list of blocked contract method
+// ContractMethods is the list of blocked contract method
 type ContractMethods []ContractMethod
 
 func SortContractMethods(cms []ContractMethod) {
@@ -278,7 +278,7 @@ func (cms *ContractMethods) DeleteContractMethodMap(methods ContractMethods) (Co
 	return result, nil
 }
 
-//ContractMethod is the blocked contract method
+// ContractMethod is the blocked contract method
 // Name is method  name
 // Extra is a extend data is useless
 type ContractMethod struct {

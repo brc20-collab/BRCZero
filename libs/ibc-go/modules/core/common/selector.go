@@ -44,7 +44,7 @@ func (m Selectors) Swap(i, j int) {
 	m[i], m[j] = m[j], m[i]
 }
 
-////////
+// //////
 var (
 	_ Selector = (*CommonHeightSelector)(nil)
 )

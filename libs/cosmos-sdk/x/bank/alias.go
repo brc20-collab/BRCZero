@@ -74,7 +74,7 @@ type (
 	SupplyKeeper       = keeperadapter.SupplyKeeper
 )
 
-//adapter
+// adapter
 type (
 	MsgMultiSendAdapter                = typesadapter.MsgMultiSend
 	MsgSendAdapter                     = typesadapter.MsgSend

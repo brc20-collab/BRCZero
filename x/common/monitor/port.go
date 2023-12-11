@@ -137,7 +137,7 @@ func (pm *PortMonitor) GetResultString() string {
 	return buffer.String()
 }
 
-//GetConnectingMap gets connectingMap
+// GetConnectingMap gets connectingMap
 func (pm *PortMonitor) GetConnectingMap() map[uint64]int {
 	return pm.connectingMap
 }

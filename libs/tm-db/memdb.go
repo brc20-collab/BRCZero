@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/google/btree"
 	"github.com/brc20-collab/brczero/libs/tm-db/common"
+	"github.com/google/btree"
 )
 
 const (

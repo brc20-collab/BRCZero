@@ -3,9 +3,9 @@ package simulation
 import (
 	"math/rand"
 
-	gogotypes "github.com/gogo/protobuf/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/simulation"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/apps/transfer/types"
+	gogotypes "github.com/gogo/protobuf/types"
 )
 
 // ParamChanges defines the parameters that can be modified by param change proposals

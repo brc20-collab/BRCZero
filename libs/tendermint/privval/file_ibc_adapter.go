@@ -3,11 +3,11 @@ package privval
 import (
 	"bytes"
 	"fmt"
-	"github.com/gogo/protobuf/proto"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/protoio"
 	tmproto "github.com/brc20-collab/brczero/libs/tendermint/proto/types"
 	"github.com/brc20-collab/brczero/libs/tendermint/types"
 	tmtime "github.com/brc20-collab/brczero/libs/tendermint/types/time"
+	"github.com/gogo/protobuf/proto"
 	"time"
 )
 

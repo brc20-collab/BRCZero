@@ -5,13 +5,13 @@ package types
 
 import (
 	fmt "fmt"
+	merkle "github.com/brc20-collab/brczero/libs/tendermint/proto/crypto/merkle"
+	bits "github.com/brc20-collab/brczero/libs/tendermint/proto/libs/bits"
+	version "github.com/brc20-collab/brczero/libs/tendermint/proto/version"
 	_ "github.com/gogo/protobuf/gogoproto"
 	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	proto "github.com/golang/protobuf/proto"
 	_ "github.com/golang/protobuf/ptypes/timestamp"
-	merkle "github.com/brc20-collab/brczero/libs/tendermint/proto/crypto/merkle"
-	bits "github.com/brc20-collab/brczero/libs/tendermint/proto/libs/bits"
-	version "github.com/brc20-collab/brczero/libs/tendermint/proto/version"
 	"io"
 	math "math"
 	math_bits "math/bits"

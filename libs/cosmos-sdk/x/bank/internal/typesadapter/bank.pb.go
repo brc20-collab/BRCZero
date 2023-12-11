@@ -5,9 +5,9 @@ package typesadapter
 
 import (
 	fmt "fmt"
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	_ "github.com/regen-network/cosmos-proto"
 	io "io"
 	math "math"

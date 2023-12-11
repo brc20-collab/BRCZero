@@ -5,14 +5,14 @@ import (
 	"fmt"
 	ethermint "github.com/brc20-collab/brczero/app/types"
 
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt"
+	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
+	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
 	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/rawdb"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/ethereum/go-ethereum/trie"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt"
-	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
-	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
 )
 
 func (csdb *CommitStateDB) CommitMpt(prefetcher *mpt.TriePrefetcher) (ethcmn.Hash, error) {

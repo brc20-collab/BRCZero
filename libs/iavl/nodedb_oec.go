@@ -10,9 +10,9 @@ import (
 
 	"time"
 
-	"github.com/go-errors/errors"
 	"github.com/brc20-collab/brczero/libs/system/trace"
 	dbm "github.com/brc20-collab/brczero/libs/tm-db"
+	"github.com/go-errors/errors"
 	"github.com/tendermint/go-amino"
 )
 

@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	ethcmn "github.com/ethereum/go-ethereum/common"
 	govtypes "github.com/brc20-collab/brczero/x/gov/types"
+	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/suite"
 )
 

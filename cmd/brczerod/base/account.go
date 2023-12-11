@@ -2,9 +2,9 @@ package base
 
 import (
 	"fmt"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/exported"
 	auth "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/status-im/keycard-go/hexutils"
 )
 

@@ -9,7 +9,7 @@ import (
 // Account defines a read-only version of the auth module's AccountI.
 type Account interface {
 	GetAddress() sdk.AccAddress
-	GetPubKey() crypto.PubKey// can return nil.
+	GetPubKey() crypto.PubKey // can return nil.
 	GetAccountNumber() uint64
 	GetSequence() uint64
 }

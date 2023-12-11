@@ -1,7 +1,6 @@
 package types
 
 import (
-	"github.com/gogo/protobuf/proto"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	codectypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
@@ -10,6 +9,7 @@ import (
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/msgservice"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/exported"
 	"github.com/brc20-collab/brczero/x/gov/types"
+	"github.com/gogo/protobuf/proto"
 )
 
 func init() {

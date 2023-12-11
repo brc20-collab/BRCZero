@@ -3,9 +3,9 @@ package watcher
 import (
 	"sync"
 
-	"github.com/ethereum/go-ethereum/common"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 // TxWatcher cache watch data when run tx

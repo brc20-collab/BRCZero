@@ -13,8 +13,8 @@ import (
 
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/brc20-collab/brczero/x/evm/types"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
 )
 
 // BeginBlock sets the block hash -> block height map for the previous block height

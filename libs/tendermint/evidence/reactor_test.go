@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-kit/kit/log/term"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/cmap"
+	"github.com/go-kit/kit/log/term"
 	"github.com/stretchr/testify/assert"
 
 	dbm "github.com/brc20-collab/brczero/libs/tm-db"

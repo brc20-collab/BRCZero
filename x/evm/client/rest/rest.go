@@ -16,6 +16,7 @@ import (
 
 	ethcommon "github.com/ethereum/go-ethereum/common"
 	"github.com/gorilla/mux"
+
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/rpc"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"

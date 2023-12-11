@@ -1,10 +1,10 @@
 package exported
 
 import (
-	ics23 "github.com/confio/ics23/go"
-	proto "github.com/gogo/protobuf/proto"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
+	ics23 "github.com/confio/ics23/go"
+	proto "github.com/gogo/protobuf/proto"
 )
 
 // Status represents the status of a client

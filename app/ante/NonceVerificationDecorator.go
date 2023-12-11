@@ -1,12 +1,12 @@
 package ante
 
 import (
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/baseapp"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth"
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 // NonceVerificationDecorator checks that the account nonce from the transaction matches

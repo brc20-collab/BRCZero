@@ -5,11 +5,11 @@ package types
 
 import (
 	fmt "fmt"
-	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
 	types1 "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/03-connection/types"
 	types2 "github.com/brc20-collab/brczero/libs/ibc-go/modules/core/04-channel/types"
+	_ "github.com/gogo/protobuf/gogoproto"
+	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
 	math_bits "math/bits"

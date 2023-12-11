@@ -52,7 +52,7 @@ func NopPortMetrics() *PortMetrics {
 	}
 }
 
-//SetConnectingNums sets connectingNums by connecting number of each port
+// SetConnectingNums sets connectingNums by connecting number of each port
 func (portMetrics *PortMetrics) SetConnectingNums(connectingMap map[uint64]int) {
 	if nil == connectingMap {
 		return

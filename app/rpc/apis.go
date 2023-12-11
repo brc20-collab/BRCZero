@@ -3,12 +3,12 @@ package rpc
 import (
 	"strings"
 
-	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/brc20-collab/brczero/app/rpc/namespaces/eth/txpool"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/server"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
+	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/spf13/viper"
 	"golang.org/x/time/rate"
 

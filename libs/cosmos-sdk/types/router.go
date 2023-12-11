@@ -30,7 +30,6 @@ var (
 	IsNumeric = regexp.MustCompile(`^[0-9]+$`).MatchString
 )
 
-
 // Router provides handlers for each transaction type.
 type Router interface {
 	AddRoute(r string, h Handler) Router
@@ -42,8 +41,6 @@ type QueryRouter interface {
 	AddRoute(r string, h Querier) QueryRouter
 	Route(path string) Querier
 }
-
-
 
 type Route struct {
 	path    string

@@ -83,7 +83,7 @@ func (k *Keeper) SetRouter(rtr *porttypes.Router) {
 	k.Router.Seal()
 }
 
-///
+// /
 func (k Keeper) GetPacketReceipt(ctx sdk.Context, portID, channelID string, sequence uint64) (string, bool) {
 	return k.ChannelKeeper.GetPacketReceipt(ctx, portID, channelID, sequence)
 }

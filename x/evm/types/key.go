@@ -1,8 +1,8 @@
 package types
 
 import (
-	ethcmn "github.com/ethereum/go-ethereum/common"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
+	ethcmn "github.com/ethereum/go-ethereum/common"
 )
 
 const (

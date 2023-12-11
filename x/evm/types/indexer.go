@@ -6,11 +6,11 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/ethereum/go-ethereum/common"
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	tmtypes "github.com/brc20-collab/brczero/libs/tendermint/types"
 	dbm "github.com/brc20-collab/brczero/libs/tm-db"
+	"github.com/ethereum/go-ethereum/common"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/spf13/viper"
 )
 

@@ -3,7 +3,6 @@ package evm
 import (
 	"encoding/json"
 
-	"github.com/gorilla/mux"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/baseapp"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
@@ -13,6 +12,7 @@ import (
 	"github.com/brc20-collab/brczero/x/evm/client/cli"
 	"github.com/brc20-collab/brczero/x/evm/keeper"
 	"github.com/brc20-collab/brczero/x/evm/types"
+	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 )
 

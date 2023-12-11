@@ -5,10 +5,10 @@ package types
 
 import (
 	fmt "fmt"
+	keys "github.com/brc20-collab/brczero/libs/tendermint/proto/crypto/keys"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	_ "github.com/golang/protobuf/ptypes/timestamp"
-	keys "github.com/brc20-collab/brczero/libs/tendermint/proto/crypto/keys"
 	math "math"
 	time "time"
 )

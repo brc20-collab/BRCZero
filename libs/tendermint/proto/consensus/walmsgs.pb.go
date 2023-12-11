@@ -5,11 +5,11 @@ package consensus
 
 import (
 	fmt "fmt"
+	types "github.com/brc20-collab/brczero/libs/tendermint/proto/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	_ "github.com/golang/protobuf/ptypes/duration"
 	_ "github.com/golang/protobuf/ptypes/timestamp"
-	types "github.com/brc20-collab/brczero/libs/tendermint/proto/types"
 	math "math"
 	time "time"
 )

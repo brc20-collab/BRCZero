@@ -8,17 +8,17 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	ethcmn "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/brc20-collab/brczero/app/crypto/ethsecp256k1"
 	"github.com/brc20-collab/brczero/app/crypto/hd"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/crypto/keys"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	tmamino "github.com/brc20-collab/brczero/libs/tendermint/crypto/encoding/amino"
 	"github.com/brc20-collab/brczero/x/evm/watcher"
+	"github.com/ethereum/go-ethereum/accounts"
+	ethcmn "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/require"
 )
 

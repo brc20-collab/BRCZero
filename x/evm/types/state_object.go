@@ -8,15 +8,15 @@ import (
 	"sync"
 
 	"github.com/VictoriaMetrics/fastcache"
+	"github.com/brc20-collab/brczero/app/types"
+	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
+	authexported "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/exported"
 	ethcmn "github.com/ethereum/go-ethereum/common"
 	ethstate "github.com/ethereum/go-ethereum/core/state"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/rlp"
 	lru "github.com/hashicorp/golang-lru"
-	"github.com/brc20-collab/brczero/app/types"
-	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
-	authexported "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/exported"
 )
 
 const keccak256HashSize = 100000

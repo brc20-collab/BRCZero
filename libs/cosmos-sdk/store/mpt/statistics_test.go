@@ -2,8 +2,8 @@ package mpt
 
 import (
 	"fmt"
-	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt/types"
+	"github.com/ethereum/go-ethereum/ethdb"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

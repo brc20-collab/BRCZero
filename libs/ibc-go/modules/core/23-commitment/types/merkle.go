@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"net/url"
 
-	ics23 "github.com/confio/ics23/go"
-	"github.com/gogo/protobuf/proto"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
 	"github.com/brc20-collab/brczero/libs/ibc-go/modules/core/exported"
 	"github.com/brc20-collab/brczero/libs/tendermint/proto/crypto"
+	ics23 "github.com/confio/ics23/go"
+	"github.com/gogo/protobuf/proto"
 )
 
 var _ exported.Root = (*MerkleRoot)(nil)

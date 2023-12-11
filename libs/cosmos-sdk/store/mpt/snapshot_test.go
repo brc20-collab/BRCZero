@@ -1,12 +1,12 @@
 package mpt
 
 import (
+	tmlog "github.com/brc20-collab/brczero/libs/tendermint/libs/log"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/prque"
 	"github.com/ethereum/go-ethereum/core/rawdb"
 	"github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/ethdb/memorydb"
-	tmlog "github.com/brc20-collab/brczero/libs/tendermint/libs/log"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
