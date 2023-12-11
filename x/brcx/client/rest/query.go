@@ -1,10 +1,13 @@
 package rest
 
 import (
+	"encoding/hex"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/tidwall/gjson"
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/rest"
@@ -242,6 +245,30 @@ func QueryTxsEventsByBtcTxIDRequestHandlerFn(cliCtx context.CLIContext) http.Han
 			return
 		}
 
-		rest.PostProcessResponseBare(w, cliCtx, searchResult.Txs[0].Logs[0].Events)
+		var eventsJsonStr string
+		// searchResult.Txs[0].Logs must not be nil
+		for _, e := range searchResult.Txs[0].Logs[0].Events {
+			if e.Type == "call_evm" {
+				for _, a := range e.Attributes {
+					if a.Key == "result" {
+						eventsJsonStr = a.Value
+					}
+				}
+			}
+		}
+
+		eventContextStr := gjson.Get(eventsJsonStr, "logs").Array()[0].Get("data").Str
+		eventContextBytes, err := hex.DecodeString(strings.TrimPrefix(eventContextStr, "0x"))
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		eventContext, err := types.UnpackEventContext(eventContextBytes)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+		rest.PostProcessResponseBare(w, cliCtx, eventContext)
 	}
 }

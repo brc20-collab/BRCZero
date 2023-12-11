@@ -57,6 +57,10 @@ type BRC20Information struct {
 	Lim         *big.Int       `json:"lim"`
 }
 
+type WrappedBRC20Information struct {
+	BRC20Information
+}
+
 type QueryTickInfoResponse struct {
 	Tick        string `json:"tick" yaml:"tick"`
 	TickAddress string `json:"tick_address" yaml:"tick_address"`
@@ -66,7 +70,7 @@ type QueryTickInfoResponse struct {
 	Lim         string `json:"lim" yaml:"lim"`
 }
 
-func NewQueryTickInfoResponse(info BRC20Information) QueryTickInfoResponse {
+func NewQueryTickInfoResponse(info WrappedBRC20Information) QueryTickInfoResponse {
 	return QueryTickInfoResponse{
 		Tick:        info.Tick,
 		TickAddress: info.TickAddress.String(),
@@ -85,4 +89,25 @@ func NewQueryTotalTickHoldersResponse(h string) QueryTotalTickHoldersResponse {
 	return QueryTotalTickHoldersResponse{
 		Holders: h,
 	}
+}
+
+type EventContext struct {
+	EventType         string   `json:"event" yaml:"event"`
+	Tick              string   `json:"tick" yaml:"tick"`
+	InscriptionId     string   `json:"inscription_id" yaml:"inscription_id"`
+	InscriptionNumber int64    `json:"inscription_number" yaml:"inscription_number"`
+	OldSatPoint       string   `json:"old_satpoint" yaml:"old_satpoint"`
+	NewSatPoint       string   `json:"new_satpoint" yaml:"new_satpoint"`
+	Supply            *big.Int `json:"supply" yaml:"supply"`
+	Lim               *big.Int `json:"lim_per_mint" yaml:"lim_per_mint"`
+	Dec               *big.Int `json:"decimals" yaml:"decimals"`
+	Amount            *big.Int `json:"amount" yaml:"amount"`
+	Sender            string   `json:"from" yaml:"from"`
+	Receiver          string   `json:"to" yaml:"to"`
+	Msg               string   `json:"msg" yaml:"msg"`
+	Txid              string   `json:"txid" yaml:"txid"`
+}
+
+type WrappedEvent struct {
+	EventContext `json:"events" yaml:"events"`
 }

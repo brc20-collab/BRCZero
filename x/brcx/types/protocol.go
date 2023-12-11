@@ -17,16 +17,22 @@ const (
 	GetBalanceMethodName          = "getBalance"
 	GetAllBalanceMethodName       = "getAllBalance"
 	GetTotalTickHoldersMethodName = "getTotalTickHolders"
+	EventsName                    = "Events"
 )
 
 var (
 	entryPointABI abi.ABI
 	//go:embed abi/BRC20EntryPointABI.json
 	entryPointABIJson []byte
+
+	brc20ABI abi.ABI
+	//go:embed abi/BRC20ABI.json
+	brc20ABIJson []byte
 )
 
 func init() {
 	entryPointABI = GetEVMABIConfig(entryPointABIJson)
+	brc20ABI = GetEVMABIConfig(brc20ABIJson)
 }
 
 func GetEVMABIConfig(data []byte) abi.ABI {
@@ -53,33 +59,15 @@ func GetTickInfoInput(tickName string) ([]byte, error) {
 	return data, nil
 }
 
-func UnpackGetTickInfoOutput(ret []byte) (BRC20Information, error) {
-	//res, err := entryPointABI.Methods[GetTickInfoMethodName].Outputs.Unpack(ret)
-	//if err != nil {
-	//	return BRC20Information{}, err
-	//}
-	//fmt.Printf("%v\n", res)
-	//_, ok := res[0].(contracts.IBrc20EntryPointBrc20Information)
-	//if !ok {
-	//	return BRC20Information{}, err
-	//}
-	var output BRC20Information
+func UnpackGetTickInfoOutput(ret []byte) (WrappedBRC20Information, error) {
+	var output WrappedBRC20Information
 	err := entryPointABI.UnpackIntoInterface(&output, GetTickInfoMethodName, ret)
 	if err != nil {
 		fmt.Println("Error unpacking data:", err)
-		return BRC20Information{}, err
+		return WrappedBRC20Information{}, err
 	}
-	//for k, v := range output {
-	//	fmt.Printf("key: %s\n", k)
-	//	fmt.Printf("val: %v\n", v)
-	//	_, ok := v.(contracts.IBrc20EntryPointBrc20Information)
-	//	if !ok {
-	//		return BRC20Information{}, err
-	//	}
-	//
-	//}
 
-	return BRC20Information{}, err
+	return output, err
 }
 
 func GetAllTickInfoInput() ([]byte, error) {
@@ -160,4 +148,13 @@ func UnpackGetTotalTickHoldersOutput(ret []byte) (*big.Int, error) {
 	}
 
 	return holders, nil
+}
+
+func UnpackEventContext(ret []byte) (WrappedEvent, error) {
+	var ec WrappedEvent
+	err := brc20ABI.UnpackIntoInterface(&ec, EventsName, ret)
+	if err != nil {
+		return WrappedEvent{}, err
+	}
+	return ec, nil
 }
