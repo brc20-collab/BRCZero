@@ -63,7 +63,6 @@ func UnpackGetTickInfoOutput(ret []byte) (WrappedBRC20Information, error) {
 	var output WrappedBRC20Information
 	err := entryPointABI.UnpackIntoInterface(&output, GetTickInfoMethodName, ret)
 	if err != nil {
-		fmt.Println("Error unpacking data:", err)
 		return WrappedBRC20Information{}, err
 	}
 

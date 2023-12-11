@@ -49,12 +49,18 @@ func NewQueryAllBalanceResponse(balance []QueryBalanceResponse) QueryAllBalanceR
 }
 
 type BRC20Information struct {
-	Tick        string         `json:"tick"`
-	TickAddress common.Address `json:"tickAddress"`
-	MaxSupply   *big.Int       `json:"maxSupply"`
-	NowSupply   *big.Int       `json:"nowSupply"`
-	Decimals    *big.Int       `json:"decimals"`
-	Lim         *big.Int       `json:"lim"`
+	Tick              string
+	TickAddress       common.Address
+	MaxSupply         *big.Int
+	NowSupply         *big.Int
+	Decimals          *big.Int
+	Lim               *big.Int
+	InscriptionId     string
+	InscriptionNumber int64
+	Txid              string
+	Sender            string
+	BlockTime         uint32
+	BlockHeight       uint64
 }
 
 type WrappedBRC20Information struct {
@@ -62,22 +68,32 @@ type WrappedBRC20Information struct {
 }
 
 type QueryTickInfoResponse struct {
-	Tick        string `json:"tick" yaml:"tick"`
-	TickAddress string `json:"tick_address" yaml:"tick_address"`
-	MaxSupply   string `json:"max_supply" yaml:"max_supply"`
-	NowSupply   string `json:"now_supply" yaml:"now_supply"`
-	Decimals    string `json:"decimals" yaml:"decimals"`
-	Lim         string `json:"lim" yaml:"lim"`
+	Tick              string `json:"tick" yaml:"tick"`
+	InscriptionId     string `json:"inscription_id" yaml:"inscription_id"`
+	InscriptionNumber int64  `json:"inscription_number" yaml:"inscription_number"`
+	MaxSupply         string `json:"supply" yaml:"supply"`
+	Lim               string `json:"limit_per_mint" yaml:"limit_per_mint"`
+	NowSupply         string `json:"minted" yaml:"minted"`
+	Decimals          string `json:"decimal" yaml:"decimal"`
+	Sender            string `json:"deploy_by" yaml:"deploy_by"`
+	Txid              string `json:"tx_id" yaml:"tx_id"`
+	BlockHeight       uint64 `json:"deploy_height" yaml:"deploy_height"`
+	BlockTime         uint32 `json:"deploy_blocktime" yaml:"deploy_blocktime"`
 }
 
 func NewQueryTickInfoResponse(info WrappedBRC20Information) QueryTickInfoResponse {
 	return QueryTickInfoResponse{
-		Tick:        info.Tick,
-		TickAddress: info.TickAddress.String(),
-		MaxSupply:   info.MaxSupply.String(),
-		NowSupply:   info.NowSupply.String(),
-		Decimals:    info.Decimals.String(),
-		Lim:         info.Lim.String(),
+		Tick:              info.Tick,
+		InscriptionId:     info.InscriptionId,
+		InscriptionNumber: info.InscriptionNumber,
+		MaxSupply:         info.MaxSupply.String(),
+		Lim:               info.Lim.String(),
+		NowSupply:         info.NowSupply.String(),
+		Decimals:          info.Decimals.String(),
+		Sender:            info.Sender,
+		Txid:              info.Txid,
+		BlockHeight:       info.BlockHeight,
+		BlockTime:         info.BlockTime,
 	}
 }
 
