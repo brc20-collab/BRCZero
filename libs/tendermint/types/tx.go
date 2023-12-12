@@ -302,3 +302,34 @@ func (data *BRCZeroData) ToConfirmed() {
 		data.IsConfirmed = true
 	}
 }
+
+type BRCZeroNewData struct {
+	AllTxs       map[string]Txs
+	hash         tmbytes.HexBytes
+	BTCBlockHash string
+	IsConfirmed  bool
+	Delivered    bool
+}
+
+func (data *BRCZeroNewData) BRCZeroHash() tmbytes.HexBytes {
+	if data == nil {
+		return (Txs{}).BRCZeroHash()
+	}
+	if data.hash == nil {
+		hasher := tmhash.New()
+		for _, txs := range data.AllTxs {
+			_, err := hasher.Write(txs.BRCZeroHash())
+			if err != nil {
+				panic(err)
+			}
+		}
+		data.hash = hasher.Sum(nil)
+	}
+	return data.hash
+}
+
+func (data *BRCZeroNewData) ToConfirmed() {
+	if !data.IsConfirmed {
+		data.IsConfirmed = true
+	}
+}

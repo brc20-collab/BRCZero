@@ -690,6 +690,7 @@ type MempoolConfig struct {
 	PendingPoolMaxTxPerAddress int      `mapstructure:"pending_pool_max_tx_per_address"`
 	NodeKeyWhitelist           []string `mapstructure:"node_key_whitelist"`
 	PendingRemoveEvent         bool     `mapstructure:"pending_remove_event"`
+	PluginUrls                 []string `mapstructure:"plugin_urls"`
 }
 
 // DefaultMempoolConfig returns a default configuration for the Tendermint mempool
@@ -716,6 +717,7 @@ func DefaultMempoolConfig() *MempoolConfig {
 		PendingPoolMaxTxPerAddress: 100,
 		NodeKeyWhitelist:           []string{},
 		PendingRemoveEvent:         false,
+		PluginUrls:                 []string{},
 	}
 }
 

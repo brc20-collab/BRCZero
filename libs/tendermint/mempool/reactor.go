@@ -28,6 +28,8 @@ const (
 	UnknownPeerID uint16 = 0
 
 	maxActiveIDs = math.MaxUint16
+
+	PullBrcDataInterval = time.Second * 10
 )
 
 // Reactor handles mempool tx broadcasting amongst peers.
