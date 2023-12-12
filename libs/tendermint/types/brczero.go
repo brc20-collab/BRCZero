@@ -6,7 +6,7 @@ type BRCZeroRequestTx struct {
 }
 
 type BRCZeroRequestData struct {
-	BTCHeight    int64  `json:"btc_height"`
-	BTCBlockHash string `json:"btc_block_hash"`
-	BRCTxs       []BRCZeroRequestTx
+	BTCHeight    int64              `json:"btc_height"`
+	BTCBlockHash string             `json:"btc_block_hash"`
+	BRCTxs       []BRCZeroRequestTx `json:"brc_txs"`
 }
