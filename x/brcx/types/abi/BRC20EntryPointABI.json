@@ -486,9 +486,9 @@
             "type": "string"
           }
         ],
-        "internalType": "struct IBrc20EntryPoint.TransferableInscription",
-        "name": "tickInformation",
-        "type": "tuple"
+        "internalType": "struct IBrc20EntryPoint.TransferableInscription[]",
+        "name": "",
+        "type": "tuple[]"
       }
     ],
     "stateMutability": "view",

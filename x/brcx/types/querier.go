@@ -4,11 +4,13 @@ const (
 	//todo: fix p name
 	ProtocolBRC20 = "leotest2"
 
-	QueryTick             = "tick"
-	QueryAllTick          = "allTick"
-	QueryBalance          = "balance"
-	QueryAllBalance       = "allBalance"
-	QueryTotalTickHolders = "totalTickHolders"
+	QueryTick                = "tick"
+	QueryAllTick             = "allTick"
+	QueryBalance             = "balance"
+	QueryAllBalance          = "allBalance"
+	QueryTotalTickHolders    = "totalTickHolders"
+	QueryTransferableTick    = "transferableTick"
+	QueryAllTransferableTick = "allTransferableTick"
 )
 
 type QueryTickParams struct {
@@ -21,24 +23,24 @@ func NewQueryTickParams(name string) QueryTickParams {
 	}
 }
 
-type QueryBalanceParams struct {
+type QueryDataParams struct {
 	Addr string
 	Name string
 }
 
-func NewQueryBalanceParams(addr string, name string) QueryBalanceParams {
-	return QueryBalanceParams{
+func NewQueryDataParams(addr string, name string) QueryDataParams {
+	return QueryDataParams{
 		Addr: addr,
 		Name: name,
 	}
 }
 
-type QueryAllBalanceParams struct {
+type QueryAllDataParams struct {
 	Addr string
 }
 
-func NewQueryAllBalanceParams(addr string) QueryAllBalanceParams {
-	return QueryAllBalanceParams{
+func NewQueryAllDataParams(addr string) QueryAllDataParams {
+	return QueryAllDataParams{
 		Addr: addr,
 	}
 }

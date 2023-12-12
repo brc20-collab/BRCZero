@@ -123,7 +123,7 @@ func QueryBalanceByNameAndAddrHandlerFn(cliCtx context.CLIContext) http.HandlerF
 			return
 		}
 
-		params := types.NewQueryBalanceParams(addr, tickName)
+		params := types.NewQueryDataParams(addr, tickName)
 		bz, err := cliCtx.Codec.MarshalJSON(params)
 		if err != nil {
 			common.HandleErrorMsg(w, cliCtx, common.CodeMarshalJSONFailed, err.Error())
@@ -151,7 +151,7 @@ func QueryAllBalanceByAddrHandlerFn(cliCtx context.CLIContext) http.HandlerFunc 
 			return
 		}
 
-		params := types.NewQueryAllBalanceParams(addr)
+		params := types.NewQueryAllDataParams(addr)
 		bz, err := cliCtx.Codec.MarshalJSON(params)
 		if err != nil {
 			common.HandleErrorMsg(w, cliCtx, common.CodeMarshalJSONFailed, err.Error())
@@ -172,13 +172,58 @@ func QueryAllBalanceByAddrHandlerFn(cliCtx context.CLIContext) http.HandlerFunc 
 
 func QueryTransferableBalanceByNameAndAddrHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		tickName := mux.Vars(r)["tickName"]
+		addr := mux.Vars(r)["address"]
 
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		params := types.NewQueryDataParams(addr, tickName)
+		bz, err := cliCtx.Codec.MarshalJSON(params)
+		if err != nil {
+			common.HandleErrorMsg(w, cliCtx, common.CodeMarshalJSONFailed, err.Error())
+			return
+		}
+
+		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryTransferableTick), bz)
+		if err != nil {
+			sdkErr := common.ParseSDKError(err.Error())
+			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			return
+		}
+
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, res)
 	}
 }
 
 func QueryAllTransferableBalanceByAddrHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		addr := mux.Vars(r)["address"]
 
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		params := types.NewQueryAllDataParams(addr)
+		bz, err := cliCtx.Codec.MarshalJSON(params)
+		if err != nil {
+			common.HandleErrorMsg(w, cliCtx, common.CodeMarshalJSONFailed, err.Error())
+			return
+		}
+
+		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", types.QuerierRoute, types.QueryAllTransferableTick), bz)
+		if err != nil {
+			sdkErr := common.ParseSDKError(err.Error())
+			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			return
+		}
+
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, res)
 	}
 }
 

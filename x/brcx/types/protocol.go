@@ -11,13 +11,16 @@ import (
 )
 
 const (
-	EntryPointMethodName          = "entryPoint"
-	GetTickInfoMethodName         = "getTickInformation"
-	GetAllTickInfoMethodName      = "getAllTickInformation"
-	GetBalanceMethodName          = "getBalance"
-	GetAllBalanceMethodName       = "getAllBalance"
-	GetTotalTickHoldersMethodName = "getTotalTickHolders"
-	EventsName                    = "Events"
+	EntryPointMethodName             = "entryPoint"
+	GetTickInfoMethodName            = "getTickInformation"
+	GetAllTickInfoMethodName         = "getAllTickInformation"
+	GetBalanceMethodName             = "getBalance"
+	GetAllBalanceMethodName          = "getAllBalance"
+	GetTotalTickHoldersMethodName    = "getTotalTickHolders"
+	GetTransferableTickMethodName    = "getUserTransferableTickInformation"
+	GetAllTransferableTickMethodName = "getUserAllTransferableTickInformation"
+
+	EventsName = "Events"
 )
 
 var (
@@ -166,4 +169,38 @@ func UnpackEventContext(ret []byte) (WrappedEvent, error) {
 		return WrappedEvent{}, err
 	}
 	return ec, nil
+}
+
+func GetTransferableTickInput(addr string, tickName string) ([]byte, error) {
+	data, err := entryPointABI.Pack(GetTransferableTickMethodName, addr, tickName)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+func UnpackGetTransferableTickOutput(ret []byte) ([]TransferableInscription, error) {
+	var tc []TransferableInscription
+	err := entryPointABI.UnpackIntoInterface(&tc, GetTransferableTickMethodName, ret)
+	if err != nil {
+		return nil, err
+	}
+	return tc, nil
+}
+
+func GetAllTransferableTickInput(addr string) ([]byte, error) {
+	data, err := entryPointABI.Pack(GetAllTransferableTickMethodName, addr)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+func UnpackGetAllTransferableTickOutput(ret []byte) ([]TransferableInscription, error) {
+	var tc []TransferableInscription
+	err := entryPointABI.UnpackIntoInterface(&tc, GetAllTransferableTickMethodName, ret)
+	if err != nil {
+		return nil, err
+	}
+	return tc, nil
 }

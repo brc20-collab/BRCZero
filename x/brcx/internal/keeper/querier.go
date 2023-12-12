@@ -28,6 +28,10 @@ func NewQuerier(k Keeper) sdk.Querier {
 			return queryAllBalance(ctx, req, k)
 		case types.QueryTotalTickHolders:
 			return queryTotalTickHolders(ctx, req, k)
+		case types.QueryTransferableTick:
+			return queryTransferableTick(ctx, req, k)
+		case types.QueryAllTransferableTick:
+			return queryAllTransferableTick(ctx, req, k)
 		default:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unknown %s query endpoint: %s", types.ModuleName, path[0])
 		}
@@ -106,7 +110,7 @@ func queryAllTick(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, err
 }
 
 func queryBalance(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
-	var params types.QueryBalanceParams
+	var params types.QueryDataParams
 	err := types.ModuleCdc.UnmarshalJSON(req.Data, &params)
 	if err != nil {
 		return nil, common.ErrUnMarshalJSONFailed(err.Error())
@@ -142,7 +146,7 @@ func queryBalance(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, err
 }
 
 func queryAllBalance(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
-	var params types.QueryAllBalanceParams
+	var params types.QueryAllDataParams
 	err := types.ModuleCdc.UnmarshalJSON(req.Data, &params)
 	if err != nil {
 		return nil, common.ErrUnMarshalJSONFailed(err.Error())
@@ -210,5 +214,77 @@ func queryTotalTickHolders(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]
 	if err != nil {
 		return nil, common.ErrMarshalJSONFailed(err.Error())
 	}
+	return res, nil
+}
+
+func queryTransferableTick(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
+	var params types.QueryDataParams
+	err := types.ModuleCdc.UnmarshalJSON(req.Data, &params)
+	if err != nil {
+		return nil, common.ErrUnMarshalJSONFailed(err.Error())
+	}
+
+	from := ethcm.BytesToAddress(k.GetBRCXAddress().Bytes())
+	to, err := k.GetContractAddrByProtocol(ctx, types.ProtocolBRC20)
+	if err != nil {
+		return nil, types.ErrGetContractAddress(fmt.Sprintf("get contract address by protocol failed: %s", err))
+	}
+	input, err := types.GetTransferableTickInput(params.Addr, params.Name)
+	if err != nil {
+		return nil, types.ErrPackInput(fmt.Sprintf("pack input of getUserTransferableTickInformation failed: %s", err))
+	}
+
+	_, contractResult, err := k.CallEvm(ctx, from, &to, big.NewInt(0), input, &types.ResultInfo{})
+	if err != nil {
+		return nil, types.ErrCallMethod(fmt.Sprintf("call getUserTransferableTickInformation failed: %s", err))
+	}
+
+	tis, err := types.UnpackGetTransferableTickOutput(contractResult.Ret)
+	if err != nil {
+		return nil, types.ErrUnpackOutput(fmt.Sprintf("unpack output of getUserTransferableTickInformation failed: %s", err))
+	}
+
+	response := types.NewQueryTransferableInscriptionResponse(tis)
+	res, err := codec.MarshalJSONIndent(types.ModuleCdc, response)
+	if err != nil {
+		return nil, common.ErrMarshalJSONFailed(err.Error())
+	}
+
+	return res, nil
+}
+
+func queryAllTransferableTick(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
+	var params types.QueryAllDataParams
+	err := types.ModuleCdc.UnmarshalJSON(req.Data, &params)
+	if err != nil {
+		return nil, common.ErrUnMarshalJSONFailed(err.Error())
+	}
+
+	from := ethcm.BytesToAddress(k.GetBRCXAddress().Bytes())
+	to, err := k.GetContractAddrByProtocol(ctx, types.ProtocolBRC20)
+	if err != nil {
+		return nil, types.ErrGetContractAddress(fmt.Sprintf("get contract address by protocol failed: %s", err))
+	}
+	input, err := types.GetAllTransferableTickInput(params.Addr)
+	if err != nil {
+		return nil, types.ErrPackInput(fmt.Sprintf("pack input of getUserAllTransferableTickInformation failed: %s", err))
+	}
+
+	_, contractResult, err := k.CallEvm(ctx, from, &to, big.NewInt(0), input, &types.ResultInfo{})
+	if err != nil {
+		return nil, types.ErrCallMethod(fmt.Sprintf("call getUserAllTransferableTickInformation failed: %s", err))
+	}
+
+	tis, err := types.UnpackGetAllTransferableTickOutput(contractResult.Ret)
+	if err != nil {
+		return nil, types.ErrUnpackOutput(fmt.Sprintf("unpack output of getUserAllTransferableTickInformation failed: %s", err))
+	}
+
+	response := types.NewQueryTransferableInscriptionResponse(tis)
+	res, err := codec.MarshalJSONIndent(types.ModuleCdc, response)
+	if err != nil {
+		return nil, common.ErrMarshalJSONFailed(err.Error())
+	}
+
 	return res, nil
 }

@@ -153,3 +153,19 @@ type EventContext struct {
 type WrappedEvent struct {
 	EventContext `json:"events" yaml:"events"`
 }
+
+type TransferableInscription struct {
+	InscriptionId     string `json:"inscription_id" yaml:"inscription_id"`
+	InscriptionNumber int64  `json:"inscription_number" yaml:"inscription_number"`
+	Amount            string `json:"amount" yaml:"amount"`
+	Tick              string `json:"tick" yaml:"tick"`
+	Owner             string `json:"owner" yaml:"owner"`
+}
+
+type QueryTransferableInscriptionResponse struct {
+	Inscriptions []TransferableInscription `json:"inscriptions" yaml:"inscriptions"`
+}
+
+func NewQueryTransferableInscriptionResponse(tis []TransferableInscription) QueryTransferableInscriptionResponse {
+	return QueryTransferableInscriptionResponse{Inscriptions: tis}
+}
