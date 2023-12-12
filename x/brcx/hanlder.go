@@ -26,7 +26,15 @@ func NewHandler(k Keeper) sdk.Handler {
 					sdk.NewAttribute(AttributeBTCTXID, msg.InscriptionContext.Txid),
 				),
 			)
-			info := types.ResultInfo{BTCTxid: msg.InscriptionContext.Txid}
+
+			ctx.EventManager().EmitEvent(
+				sdk.NewEvent(
+					EventTypeBRCX,
+					sdk.NewAttribute(AttributeBTCBlockHash, msg.InscriptionContext.BlockHash),
+				),
+			)
+
+			info := types.ResultInfo{BTCTxid: msg.InscriptionContext.Txid, BTCBlockHash: msg.InscriptionContext.BlockHash}
 			result, err := handleInscription(ctx, msg, k, &info)
 			// json.Marshal can not be error. even if error it hash a few influence with execute of transaction.
 			buff, _ := json.Marshal(info)

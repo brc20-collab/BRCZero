@@ -25,6 +25,7 @@ const (
 	AttributeEvmOutput             = types.AttributeEvmOutput
 	AttributeManageLog             = types.AttributeManageLog
 	AttributeBTCTXID               = types.AttributeBTCTXID
+	AttributeBTCBlockHash          = types.AttributeBTCBlockHash
 )
 
 var (
