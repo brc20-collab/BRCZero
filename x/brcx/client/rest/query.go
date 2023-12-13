@@ -62,6 +62,11 @@ func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
 		QueryTxsEventsByBtcTxIDRequestHandlerFn(cliCtx),
 	).Methods("GET")
 
+	r.HandleFunc(
+		"/brc20/block/{btcBlockHash}/events",
+		QueryTxsEventsByBtcHashRequestHandlerFn(cliCtx),
+	).Methods("GET")
+
 }
 
 func QueryTickByNameHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
@@ -282,6 +287,54 @@ func QueryTxsEventsByBtcTxIDRequestHandlerFn(cliCtx context.CLIContext) http.Han
 
 		events := make([]string, 0)
 		tag := fmt.Sprintf("brcx.btc_txid='%s'", btcTxID)
+		events = append(events, tag)
+
+		searchResult, err := utils.QueryTxsByEvents(cliCtx, events, 1, 30)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		var eventsJsonStr string
+		// searchResult.Txs[0].Logs must not be nil
+		for _, e := range searchResult.Txs[0].Logs[0].Events {
+			if e.Type == "call_evm" {
+				for _, a := range e.Attributes {
+					if a.Key == "result" {
+						eventsJsonStr = a.Value
+					}
+				}
+			}
+		}
+
+		eventContextStr := gjson.Get(eventsJsonStr, "logs").Array()[0].Get("data").Str
+		eventContextBytes, err := hex.DecodeString(strings.TrimPrefix(eventContextStr, "0x"))
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		eventContext, err := types.UnpackEventContext(eventContextBytes)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+		rest.PostProcessResponseBare(w, cliCtx, eventContext)
+	}
+}
+
+func QueryTxsEventsByBtcHashRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		btcBlockHash := vars["btcBlockHash"]
+
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		events := make([]string, 0)
+		tag := fmt.Sprintf("brcx.btc_block_hash='%s'", btcBlockHash)
 		events = append(events, tag)
 
 		searchResult, err := utils.QueryTxsByEvents(cliCtx, events, 1, 30)
