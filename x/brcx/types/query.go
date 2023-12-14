@@ -146,12 +146,69 @@ type EventContext struct {
 	Amount            *big.Int `json:"amount" yaml:"amount"`
 	Sender            string   `json:"from" yaml:"from"`
 	Receiver          string   `json:"to" yaml:"to"`
-	Msg               string   `json:"msg" yaml:"msg"`
+	Msg               string   `json:"msg,omitempty" yaml:"msg,omitempty"`
 	Txid              string   `json:"txid" yaml:"txid"`
+}
+
+type EventResponse struct {
+	EventType         string   `json:"event" yaml:"event"`
+	Tick              string   `json:"tick" yaml:"tick"`
+	InscriptionId     string   `json:"inscription_id" yaml:"inscription_id"`
+	InscriptionNumber int64    `json:"inscription_number" yaml:"inscription_number"`
+	OldSatPoint       string   `json:"old_satpoint" yaml:"old_satpoint"`
+	NewSatPoint       string   `json:"new_satpoint" yaml:"new_satpoint"`
+	Supply            string   `json:"supply,omitempty" yaml:"supply,omitempty"`
+	Lim               string   `json:"lim_per_mint,omitempty" yaml:"lim_per_mint,omitempty"`
+	Dec               uint64   `json:"decimals,omitempty" yaml:"decimals,omitempty"`
+	Amount            *big.Int `json:"amount" yaml:"amount"`
+	Sender            string   `json:"from" yaml:"from"`
+	Receiver          string   `json:"to" yaml:"to"`
+	Valid             bool     `json:"valid" yaml:"valid"`
+	Msg               string   `json:"msg" yaml:"msg"`
 }
 
 type WrappedEvent struct {
 	EventContext `json:"events" yaml:"events"`
+}
+
+func (we WrappedEvent) ToEventResponse() EventResponse {
+	return EventResponse{
+		EventType:         we.EventType,
+		Tick:              we.Tick,
+		InscriptionId:     we.InscriptionId,
+		InscriptionNumber: we.InscriptionNumber,
+		OldSatPoint:       we.OldSatPoint,
+		NewSatPoint:       we.NewSatPoint,
+		Supply:            we.Supply.String(),
+		Lim:               we.Lim.String(),
+		Dec:               we.Dec.Uint64(),
+		Amount:            we.Amount,
+		Sender:            we.Sender,
+		Receiver:          we.Receiver,
+		//todo: judge valid field
+		Valid: true,
+		Msg:   we.Msg,
+	}
+}
+
+type QueryTxEventsResponse struct {
+	Events []EventResponse `json:"events" yaml:"events"`
+	Txid   string          `json:"txid" yaml:"txid"`
+}
+
+func NewQueryTxEventsResponse(e []EventResponse, txid string) QueryTxEventsResponse {
+	return QueryTxEventsResponse{
+		Events: e,
+		Txid:   txid,
+	}
+}
+
+type QueryTxEventsByBlockHashResponse struct {
+	BlockEvents []QueryTxEventsResponse `json:"block" yaml:"block"`
+}
+
+func NewQueryTxEventsByBlockHashResponse(be []QueryTxEventsResponse) QueryTxEventsByBlockHashResponse {
+	return QueryTxEventsByBlockHashResponse{BlockEvents: be}
 }
 
 type TransferableInscription struct {
@@ -168,4 +225,23 @@ type QueryTransferableInscriptionResponse struct {
 
 func NewQueryTransferableInscriptionResponse(tis []TransferableInscription) QueryTransferableInscriptionResponse {
 	return QueryTransferableInscriptionResponse{Inscriptions: tis}
+}
+
+type InscriptionInfo struct {
+	Action            string    `json:"action,omitempty" yaml:"action,omitempty"`
+	InscriptionNumber int64     `json:"inscription_number,omitempty" yaml:"inscription_number,omitempty"`
+	InscriptionId     string    `json:"inscription_id" yaml:"inscription_id"`
+	From              string    `json:"from" yaml:"from"`
+	To                string    `json:"to,omitempty" yaml:"to,omitempty"`
+	OldSatPoint       string    `json:"old_satpoint,omitempty" yaml:"old_satpoint,omitempty"`
+	NewSatPoint       string    `json:"new_satpoint,omitempty" yaml:"new_satpoint,omitempty"`
+	Operation         Operation `json:"operation,omitempty" yaml:"operation,omitempty"`
+}
+
+type Operation struct {
+	Tick string `json:"tick" yaml:"tick"`
+	Amt  string `json:"amt,omitempty" yaml:"amt,omitempty"`
+	Max  string `json:"max,omitempty" yaml:"max,omitempty"`
+	Lim  string `json:"lim,omitempty" yaml:"lim,omitempty"`
+	Dec  string `json:"dec,omitempty" yaml:"dec,omitempty"`
 }

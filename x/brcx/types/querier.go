@@ -1,8 +1,7 @@
 package types
 
 const (
-	//todo: fix p name
-	ProtocolBRC20 = "leotest2"
+	ProtocolBRC20 = "brc-20"
 
 	QueryTick                = "tick"
 	QueryAllTick             = "allTick"

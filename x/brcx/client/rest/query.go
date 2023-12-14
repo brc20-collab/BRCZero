@@ -2,6 +2,7 @@ package rest
 
 import (
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -10,6 +11,7 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
+	sdktypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/rest"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/client/utils"
 	"github.com/brc20-collab/brczero/x/brcx/types"
@@ -295,31 +297,14 @@ func QueryTxsEventsByBtcTxIDRequestHandlerFn(cliCtx context.CLIContext) http.Han
 			return
 		}
 
-		var eventsJsonStr string
-		// searchResult.Txs[0].Logs must not be nil
-		for _, e := range searchResult.Txs[0].Logs[0].Events {
-			if e.Type == "call_evm" {
-				for _, a := range e.Attributes {
-					if a.Key == "result" {
-						eventsJsonStr = a.Value
-					}
-				}
-			}
-		}
-
-		eventContextStr := gjson.Get(eventsJsonStr, "logs").Array()[0].Get("data").Str
-		eventContextBytes, err := hex.DecodeString(strings.TrimPrefix(eventContextStr, "0x"))
+		eventResp, err := extractEventResponseFromTxResponse(searchResult.Txs)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		eventContext, err := types.UnpackEventContext(eventContextBytes)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-		rest.PostProcessResponseBare(w, cliCtx, eventContext)
+		response := types.NewQueryTxEventsResponse(eventResp, btcTxID)
+		rest.PostProcessResponseBare(w, cliCtx, response)
 	}
 }
 
@@ -343,30 +328,99 @@ func QueryTxsEventsByBtcHashRequestHandlerFn(cliCtx context.CLIContext) http.Han
 			return
 		}
 
-		var eventsJsonStr string
-		// searchResult.Txs[0].Logs must not be nil
-		for _, e := range searchResult.Txs[0].Logs[0].Events {
+		sortedTxRespMap, err := sortSearchedTxByBtcTxId(searchResult.Txs)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		responses := make([]types.QueryTxEventsResponse, 0)
+		for txid, txs := range sortedTxRespMap {
+			eventResp, err := extractEventResponseFromTxResponse(txs)
+			if err != nil {
+				rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+				return
+			}
+			response := types.NewQueryTxEventsResponse(eventResp, txid)
+			responses = append(responses, response)
+		}
+
+		blockEvents := types.NewQueryTxEventsByBlockHashResponse(responses)
+
+		rest.PostProcessResponseBare(w, cliCtx, blockEvents)
+	}
+}
+
+func extractEventResponseFromTxResponse(txs []sdktypes.TxResponse) ([]types.EventResponse, error) {
+	eventsJsonBytes := make([][]byte, 0)
+	for _, tx := range txs {
+		// A tx must contain only one msg and one log
+		if len(tx.Logs) != 1 {
+			return nil, errors.New(fmt.Sprintf("len(txResponse.Logs) is %d, which is expected to be 1", len(tx.Logs)))
+		}
+
+		for _, e := range tx.Logs[0].Events {
 			if e.Type == "call_evm" {
 				for _, a := range e.Attributes {
 					if a.Key == "result" {
-						eventsJsonStr = a.Value
+						//eventsJsonStrs = append(eventsJsonStrs, a.Value)
+						eventsJsonStr := a.Value
+						logs := gjson.Get(eventsJsonStr, "logs").Array()
+						for _, l := range logs {
+							event := l.Get("data").Str
+							event = strings.TrimPrefix(event, "0x")
+
+							eventBytes, err := hex.DecodeString(event)
+							if err != nil {
+								return nil, err
+							}
+
+							eventsJsonBytes = append(eventsJsonBytes, eventBytes)
+						}
+					}
+				}
+			}
+		}
+	}
+
+	var resps []types.EventResponse
+	for _, eb := range eventsJsonBytes {
+		eventContext, err := types.UnpackEventContext(eb)
+		if err != nil {
+			return nil, err
+		}
+
+		resps = append(resps, eventContext.ToEventResponse())
+	}
+
+	return resps, nil
+}
+
+func sortSearchedTxByBtcTxId(txs []sdktypes.TxResponse) (map[string][]sdktypes.TxResponse, error) {
+	sortedMap := make(map[string][]sdktypes.TxResponse)
+
+	for _, tx := range txs {
+		// A tx must contain only one msg and one log
+		if len(tx.Logs) != 1 {
+			return nil, errors.New(fmt.Sprintf("len(txResponse.Logs) is %d, which is expected to be 1", len(tx.Logs)))
+		}
+
+		for _, e := range tx.Logs[0].Events {
+			if e.Type == types.ModuleName {
+				for _, a := range e.Attributes {
+					if a.Key == types.AttributeBTCTXID {
+						txid := a.Value
+						if _, ok := sortedMap[txid]; !ok {
+							sortedMap[txid] = make([]sdktypes.TxResponse, 0)
+						}
+
+						sortedMap[txid] = append(sortedMap[txid], tx)
 					}
 				}
 			}
 		}
 
-		eventContextStr := gjson.Get(eventsJsonStr, "logs").Array()[0].Get("data").Str
-		eventContextBytes, err := hex.DecodeString(strings.TrimPrefix(eventContextStr, "0x"))
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-
-		eventContext, err := types.UnpackEventContext(eventContextBytes)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-		rest.PostProcessResponseBare(w, cliCtx, eventContext)
 	}
+
+	return sortedMap, nil
 }
