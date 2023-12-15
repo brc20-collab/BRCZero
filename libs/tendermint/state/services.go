@@ -20,6 +20,7 @@ type BlockStore interface {
 
 	LoadBlockMeta(height int64) *types.BlockMeta
 	LoadBlock(height int64) *types.Block
+	LoadBTCMeta(height int64) (*types.BTCBlockMeta, error)
 
 	SaveBlock(block *types.Block, blockParts *types.PartSet, seenCommit *types.Commit)
 

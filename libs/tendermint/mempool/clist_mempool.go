@@ -47,8 +47,9 @@ var (
 // be efficiently accessed by multiple concurrent readers.
 type CListMempool struct {
 	// Atomic integers
-	height   int64 // the last block Update()'d to
-	txsBytes int64 // total size of mempool, in bytes
+	height    int64 // the last block Update()'d to
+	btcHeight int64 // the last btc height
+	txsBytes  int64 // total size of mempool, in bytes
 
 	// notify listeners (ie. consensus) when txs are available
 	notifiedTxsAvailable bool
@@ -414,6 +415,9 @@ func (mem *CListMempool) BrczeroRollBack() <-chan int64 {
 }
 
 func (mem *CListMempool) AddBrczeroData(btcHeight int64, btcBlockHash string, isConfirmed bool, txs types.Txs) error {
+	if len(btcBlockHash) == 0 {
+		return fmt.Errorf("btc block hash can not be empty")
+	}
 	mem.brczeroMtx.Lock()
 	defer mem.brczeroMtx.Unlock()
 	needRollback := false
@@ -460,6 +464,18 @@ func (mem *CListMempool) GetBrczeroDataByBTCHeight(btcHeight int64) (types.BRCZe
 	return types.BRCZeroData{}, errors.New(fmt.Sprintf("BRCZero data at height %d does not exist!", btcHeight))
 }
 
+func (mem *CListMempool) DelOldBrczeroData(height int64) {
+	mem.brczeroMtx.RLock()
+	defer mem.brczeroMtx.RUnlock()
+	if len(mem.brczeroTxs) == 0 {
+		return
+	}
+	for h, _ := range mem.brczeroTxs {
+		if h < height {
+			delete(mem.brczeroTxs, h)
+		}
+	}
+}
 func (mem *CListMempool) BrczeroDataMinHeight() int64 {
 	mem.brczeroMtx.RLock()
 	defer mem.brczeroMtx.RUnlock()
@@ -1009,7 +1025,9 @@ func (mem *CListMempool) logUpdate(address string, nonce uint64) {
 	logDataPool.Put(logData)
 }
 
-func (mem *CListMempool) UpdateForBRCZeroData() {
+func (mem *CListMempool) UpdateForBRCZeroData(height int64, btcHeight int64) {
+	atomic.StoreInt64(&mem.height, height)
+	atomic.StoreInt64(&mem.btcHeight, btcHeight)
 	if mem.txsAvailable != nil {
 		select {
 		case mem.txsAvailable <- struct{}{}:

@@ -25,7 +25,7 @@ type Mempool interface {
 	DelBrczeroDataByBTCHeight(btcHeight int64)
 	SetBrcDataDelivered(btcH int64, value bool)
 	BrczeroDataMinHeight() int64
-
+	DelOldBrczeroData(height int64)
 	ReapEssentialTx(tx types.Tx) abci.TxEssentials
 
 	// ReapMaxTxs reaps up to max transactions from the mempool.
@@ -58,7 +58,7 @@ type Mempool interface {
 		newPostFn PostCheckFunc,
 	) error
 
-	UpdateForBRCZeroData()
+	UpdateForBRCZeroData(height int64, btcHeight int64)
 	// FlushAppConn flushes the mempool connection to ensure async reqResCb calls are
 	// done. E.g. from CheckTx.
 	// NOTE: Lock/Unlock must be managed by caller

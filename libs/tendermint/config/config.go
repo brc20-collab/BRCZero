@@ -426,8 +426,8 @@ func DefaultRPCConfig() *RPCConfig {
 		MaxSubscriptionsPerClient: 1000,
 		TimeoutBroadcastTxCommit:  10 * time.Second,
 
-		MaxBodyBytes:   int64(100000000), // 1MB
-		MaxHeaderBytes: 1 << 20,          // same as the net/http default
+		MaxBodyBytes:   int64(1000000000), // 1000MB
+		MaxHeaderBytes: 1 << 20,           // same as the net/http default
 
 		TLSCertFile: "",
 		TLSKeyFile:  "",
@@ -825,6 +825,8 @@ type ConsensusConfig struct {
 	// Reactor sleep duration parameters
 	PeerGossipSleepDuration     time.Duration `mapstructure:"peer_gossip_sleep_duration"`
 	PeerQueryMaj23SleepDuration time.Duration `mapstructure:"peer_query_maj23_sleep_duration"`
+	//btc
+	StartBtcHeight uint64 `mapstructure:"start_btc_height"`
 }
 
 // DefaultConsensusConfig returns a default configuration for the consensus service
@@ -846,6 +848,7 @@ func DefaultConsensusConfig() *ConsensusConfig {
 		PeerGossipSleepDuration:     100 * time.Millisecond,
 		PeerQueryMaj23SleepDuration: 2000 * time.Millisecond,
 		Waiting:                     true,
+		StartBtcHeight:              0,
 	}
 }
 

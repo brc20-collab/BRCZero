@@ -43,3 +43,8 @@ func NewQueryAllDataParams(addr string) QueryAllDataParams {
 		Addr: addr,
 	}
 }
+
+var (
+	QueryProtocol = "protocol"
+)
+

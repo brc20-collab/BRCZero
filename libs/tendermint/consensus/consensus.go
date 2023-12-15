@@ -227,6 +227,10 @@ func NewState(
 	for _, option := range options {
 		option(cs)
 	}
+	cs.latestBTCHeight = int64(config.StartBtcHeight)
+	if btcmeta, err := blockStore.LoadBTCMeta(state.LastBlockHeight); err == nil {
+		cs.latestBTCHeight = btcmeta.BTCHeight
+	}
 	return cs
 }
 

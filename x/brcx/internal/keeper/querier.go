@@ -32,11 +32,14 @@ func NewQuerier(k Keeper) sdk.Querier {
 			return queryTransferableTick(ctx, req, k)
 		case types.QueryAllTransferableTick:
 			return queryAllTransferableTick(ctx, req, k)
+		case types.QueryProtocol:
+			return queryProtocol(ctx, req, k)
 		default:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unknown %s query endpoint: %s", types.ModuleName, path[0])
 		}
 	}
 }
+
 
 func queryTick(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
 	var params types.QueryTickParams
@@ -284,6 +287,15 @@ func queryAllTransferableTick(ctx sdk.Context, req abci.RequestQuery, k Keeper) 
 	res, err := codec.MarshalJSONIndent(types.ModuleCdc, response)
 	if err != nil {
 		return nil, common.ErrMarshalJSONFailed(err.Error())
+  }
+}
+
+func queryProtocol(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
+	name := string(req.Data)
+	addresses := k.GetContractAddressByName(ctx, name)
+	res, err := codec.MarshalJSONIndent(types.ModuleCdc, addresses)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
 
 	return res, nil

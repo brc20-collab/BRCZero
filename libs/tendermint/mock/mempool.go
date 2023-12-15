@@ -42,6 +42,7 @@ func (Mempool) GetBrczeroDataByBTCHeight(btcHeight int64) (types.BRCZeroData, er
 	return types.BRCZeroData{}, nil
 }
 func (Mempool) BrczeroDataMinHeight() int64                   { return 0 }
+func (Mempool) DelOldBrczeroData(height int64)                {}
 func (Mempool) DelBrczeroDataByBTCHeight(btcHeight int64)     {}
 func (Mempool) SetBrcDataDelivered(btcH int64, value bool)    {}
 func (Mempool) ReapEssentialTx(tx types.Tx) abci.TxEssentials { return nil }
@@ -64,12 +65,12 @@ func (Mempool) Update(
 	trace.GetElapsedInfo().AddInfo(trace.GasUsed, fmt.Sprintf("%d", gasUsed))
 	return nil
 }
-func (Mempool) UpdateForBRCZeroData()         {}
-func (Mempool) Flush()                        {}
-func (Mempool) FlushAppConn() error           { return nil }
-func (Mempool) TxsAvailable() <-chan struct{} { return make(chan struct{}) }
-func (Mempool) EnableTxsAvailable()           {}
-func (Mempool) TxsBytes() int64               { return 0 }
+func (Mempool) UpdateForBRCZeroData(height int64, btcHeight int64) {}
+func (Mempool) Flush()                                             {}
+func (Mempool) FlushAppConn() error                                { return nil }
+func (Mempool) TxsAvailable() <-chan struct{}                      { return make(chan struct{}) }
+func (Mempool) EnableTxsAvailable()                                {}
+func (Mempool) TxsBytes() int64                                    { return 0 }
 
 func (Mempool) TxsFront() *clist.CElement    { return nil }
 func (Mempool) TxsWaitChan() <-chan struct{} { return nil }

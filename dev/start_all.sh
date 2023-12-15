@@ -36,13 +36,15 @@ nohup ./target/debug/ord \
   --bitcoin-rpc-user bitcoinrpc \
   --bitcoin-rpc-pass bitcoinrpc \
   --brczero-rpc-url=http://127.0.0.1:26657 \
+  --first-brczero-height=120 \
   --first-brc20-height=120 \
+  --first-inscription-height=120 \
   server --http-port=80 >./ord.log 2>&1 &
 sleep 5
 
 echo "************* Start brczero node... *************"
 cd $self_path
-./testnet.sh -s -i -n 1 ## -r 1
+./start.sh
 #rm -rf ./_cache2
 #nohup ./target/debug/ord \
 #  --log-level=DEBUG \
