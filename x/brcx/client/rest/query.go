@@ -54,10 +54,11 @@ func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
 		QueryTotalTickHoldersHandlerFn(cliCtx),
 	).Methods("GET")
 
-	r.HandleFunc(
-		"/brc20/tx/{txid}",
-		QueryTxsByBtcTxIDRequestHandlerFn(cliCtx),
-	).Methods("GET")
+	// Temporarily disabled
+	//r.HandleFunc(
+	//	"/brc20/tx/{txid}",
+	//	QueryTxsByBtcTxIDRequestHandlerFn(cliCtx),
+	//).Methods("GET")
 
 	r.HandleFunc(
 		"/brc20/tx/{txid}/events",
