@@ -35,7 +35,7 @@ func BroadcastTxCommit(ctx *rpctypes.Context, tx types.Tx) (*ctypes.ResultBroadc
 	return nil, fmt.Errorf("BroadcastTxCommit is not provided yet")
 }
 
-func BroadcastBrczeroTxsAsync(ctx *rpctypes.Context, btcHeight int64, btcBlockHash string, isConfirmed bool, brczeroTxs []types.BRCZeroRequestTx) ([]*ctypes.ResultBroadcastTx, error) {
+func BroadcastBrczeroTxsAsync(ctx *rpctypes.Context, btcHeight int64, btcBlockHash string, isConfirmed bool, brczeroTxs []types.ZeroRequestTx) ([]*ctypes.ResultBroadcastTx, error) {
 	txs := make([]types.Tx, 0)
 	res := make([]*ctypes.ResultBroadcastTx, 0)
 	for _, s := range brczeroTxs {

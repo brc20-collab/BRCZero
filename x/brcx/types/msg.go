@@ -50,11 +50,11 @@ func (msg MsgInscription) ValidateBasic() error {
 
 // Decoder Try to decode as MsgInscription by json
 func Decoder(_ codec.CdcAbstraction, txBytes []byte) (tx sdk.Tx, err error) {
-	var brczeroTx types.BRCZeroRequestTx
+	var brczeroTx types.ZeroRequestTx
 
 	if err = rlp.DecodeBytes(txBytes, &brczeroTx); err == nil {
 		var msgInscription MsgInscription
-		if err = json.Unmarshal([]byte(brczeroTx.HexRlpEncodeTx), &msgInscription); err == nil {
+		if err = json.Unmarshal([]byte(brczeroTx.TxInfo), &msgInscription); err == nil {
 			// TODO 1000 is tmp
 			fee := authtypes.NewStdFee(50000000, nil)
 			return authtypes.NewStdTx([]sdk.Msg{msgInscription}, fee, nil, ""), nil

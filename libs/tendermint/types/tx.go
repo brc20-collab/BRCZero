@@ -48,9 +48,9 @@ type ethTxData struct {
 
 // Hash computes the TMHASH hash of the wire encoded transaction.
 func (tx Tx) Hash() []byte {
-	var brczeroMsg BRCZeroRequestTx
+	var brczeroMsg ZeroRequestTx
 	if err := rlp.DecodeBytes(tx, &brczeroMsg); err == nil {
-		buff, err := hex.DecodeString(brczeroMsg.HexRlpEncodeTx)
+		buff, err := hex.DecodeString(brczeroMsg.TxInfo)
 		if err != nil {
 			return tx.hash(tx)
 		}
