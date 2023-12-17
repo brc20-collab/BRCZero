@@ -50,7 +50,7 @@ func (msg MsgInscription) ValidateBasic() error {
 
 // Decoder Try to decode as MsgInscription by json
 func Decoder(_ codec.CdcAbstraction, txBytes []byte) (tx sdk.Tx, err error) {
-	var brczeroTx types.BRCZeroRequestTx
+	var brczeroTx types.ZeroRequestTx
 
 	if err = rlp.DecodeBytes(txBytes, &brczeroTx); err == nil {
 		var msgInscription MsgInscription

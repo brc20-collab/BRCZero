@@ -179,12 +179,14 @@ func (blockExec *BlockExecutor) CreateProposalBlock(
 	txs := make([]types.Tx, 0)
 	btcBlockHash := ""
 	btcHeight := latestBH + 1
-	if brczeroData, err := blockExec.mempool.GetBrczeroDataByBTCHeight(btcHeight); err == nil {
+	if brczeroData, err := blockExec.mempool.GetZeroDataByBTCHeight(btcHeight); err == nil {
 		if brczeroData.IsConfirmed {
 			txs = brczeroData.Txs
 			btcBlockHash = brczeroData.BTCBlockHash
 		} else {
-			if _, err := blockExec.mempool.GetBrczeroDataByBTCHeight(btcHeight + 6); err == nil {
+			if _, err := blockExec.mempool.GetZeroDataByBTCHeight(btcHeight + 6); err == nil {
+				//todo: In this version of the code, it might never enter this if branch.
+				// Maybe we should delete this branch
 				txs = brczeroData.Txs
 				btcBlockHash = brczeroData.BTCBlockHash
 			}
@@ -844,7 +846,7 @@ func (blockExec *BlockExecutor) FireBlockTimeEvents(height int64, txNum int, ava
 }
 
 func (blockExec *BlockExecutor) GetBrczeroDataByBTCHeight(btcHeight int64) (types.BRCZeroData, error) {
-	return blockExec.mempool.GetBrczeroDataByBTCHeight(btcHeight)
+	return blockExec.mempool.GetZeroDataByBTCHeight(btcHeight)
 }
 
 func (blockExec *BlockExecutor) BrczeroDataMinHeight() int64 {
@@ -855,8 +857,8 @@ func (BlockExec *BlockExecutor) SetBrcDataDelivered(btcH int64, value bool) {
 	BlockExec.mempool.SetBrcDataDelivered(btcH, value)
 }
 
-func (BlockExec *BlockExecutor) BrczeroRollback() <-chan int64 {
-	return BlockExec.mempool.BrczeroRollBack()
+func (BlockExec *BlockExecutor) ZeroReorgChain() <-chan int64 {
+	return BlockExec.mempool.ZeroReorgChan()
 }
 
 func (blockExec *BlockExecutor) CleanBrcRpcState() {
@@ -866,7 +868,7 @@ func (blockExec *BlockExecutor) CleanBrcRpcState() {
 func (blockExec *BlockExecutor) RpcRollbackRoutine() {
 	for {
 		select {
-		case <-blockExec.BrczeroRollback():
+		case <-blockExec.ZeroReorgChain():
 			blockExec.CleanBrcRpcState()
 		}
 	}

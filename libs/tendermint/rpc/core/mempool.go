@@ -4,8 +4,6 @@ import (
 	"crypto/sha256"
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/rlp"
-
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/baseapp"
 	ctypes "github.com/brc20-collab/brczero/libs/tendermint/rpc/core/types"
 	rpctypes "github.com/brc20-collab/brczero/libs/tendermint/rpc/jsonrpc/types"
@@ -35,22 +33,22 @@ func BroadcastTxCommit(ctx *rpctypes.Context, tx types.Tx) (*ctypes.ResultBroadc
 	return nil, fmt.Errorf("BroadcastTxCommit is not provided yet")
 }
 
-func BroadcastBrczeroTxsAsync(ctx *rpctypes.Context, btcHeight int64, btcBlockHash string, isConfirmed bool, brczeroTxs []types.BRCZeroRequestTx) ([]*ctypes.ResultBroadcastTx, error) {
-	txs := make([]types.Tx, 0)
+func BroadcastBrczeroTxsAsync(ctx *rpctypes.Context, btcHeight int64, btcBlockHash string, isConfirmed bool, brczeroTxs []types.ZeroRequestTx) ([]*ctypes.ResultBroadcastTx, error) {
+	//txs := make([]types.Tx, 0)
 	res := make([]*ctypes.ResultBroadcastTx, 0)
-	for _, s := range brczeroTxs {
-		tx, err := rlp.EncodeToBytes(s)
-		if err != nil {
-			return nil, err
-		}
-		txs = append(txs, tx)
-		res = append(res, &ctypes.ResultBroadcastTx{Hash: types.Tx(tx).Hash()})
-	}
-
-	err := env.Mempool.AddBrczeroData(btcHeight, btcBlockHash, isConfirmed, txs)
-	if err != nil {
-		return nil, err
-	}
+	//for _, s := range brczeroTxs {
+	//	tx, err := rlp.EncodeToBytes(s)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	txs = append(txs, tx)
+	//	res = append(res, &ctypes.ResultBroadcastTx{Hash: types.Tx(tx).Hash()})
+	//}
+	//
+	//err := env.Mempool.AddBrczeroData(btcHeight, btcBlockHash, isConfirmed, txs)
+	//if err != nil {
+	//	return nil, err
+	//}
 	return res, nil
 }
 

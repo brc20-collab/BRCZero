@@ -32,13 +32,13 @@ func (Mempool) Size() int { return 0 }
 func (Mempool) CheckTx(_ types.Tx, _ func(*abci.Response), _ mempl.TxInfo) error {
 	return nil
 }
-func (Mempool) BrczeroRollBack() <-chan int64 {
+func (Mempool) ZeroReorgChan() <-chan int64 {
 	return nil
 }
 func (Mempool) AddBrczeroData(height int64, btcBlockHash string, isConfirmed bool, txs types.Txs) error {
 	return nil
 }
-func (Mempool) GetBrczeroDataByBTCHeight(btcHeight int64) (types.BRCZeroData, error) {
+func (Mempool) GetZeroDataByBTCHeight(btcHeight int64) (types.BRCZeroData, error) {
 	return types.BRCZeroData{}, nil
 }
 func (Mempool) BrczeroDataMinHeight() int64                   { return 0 }

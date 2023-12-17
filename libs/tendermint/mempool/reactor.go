@@ -29,8 +29,8 @@ const (
 
 	maxActiveIDs = math.MaxUint16
 
-	PullBrcDataInterval = time.Second * 10
-	BtcConfirmedGap     = 6
+	PullZeroDataInterval = time.Second * 5
+	BtcConfirmedGap      = 6
 )
 
 // Reactor handles mempool tx broadcasting amongst peers.

@@ -121,7 +121,7 @@ type decodeFunc func(codec.CdcAbstraction, []byte) (sdk.Tx, error)
 
 // 1. Try to decode as MsgEthereumTx by RLP
 func evmDecoder(_ codec.CdcAbstraction, txBytes []byte) (tx sdk.Tx, err error) {
-	var brczeroTx types.BRCZeroRequestTx
+	var brczeroTx types.ZeroRequestTx
 	var ethbytes []byte
 	if err = rlp.DecodeBytes(txBytes, &brczeroTx); err == nil {
 		ethbytes, err = hex.DecodeString(brczeroTx.HexRlpEncodeTx)
