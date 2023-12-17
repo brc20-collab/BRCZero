@@ -25,7 +25,7 @@ docker exec -it local_bitcoin_node bitcoin-cli generatetoaddress 120 bcrt1qd28je
 docker exec -it local_bitcoin_node bitcoin-cli -rpcwallet=testwallet_01 getwalletinfo
 
 echo "************* Start ord... *************"
-cd cd /Users/oker/workspace/rust/okx/BRC20S
+cd /Users/oker/workspace/rust/okx/BRC20S
 cargo build
 rm -rf ./_cache1
 nohup ./target/debug/ord \
