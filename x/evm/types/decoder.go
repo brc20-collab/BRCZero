@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
+	"strconv"
 
 	"github.com/ethereum/go-ethereum/rlp"
 
@@ -128,7 +129,11 @@ func evmDecoder(_ codec.CdcAbstraction, txBytes []byte) (tx sdk.Tx, err error) {
 		if err == nil {
 			var ethTx MsgEthereumTx
 			if err = authtypes.EthereumTxDecode(ethbytes, &ethTx); err == nil {
-				ethTx.Data.BTCFee = new(big.Int).SetUint64(brczeroTx.BTCFee)
+				fee, err := strconv.Atoi(brczeroTx.BTCFee)
+				if err != nil {
+					return nil, err
+				}
+				ethTx.Data.BTCFee = new(big.Int).SetUint64(uint64(fee))
 				tx = &ethTx
 			}
 		}

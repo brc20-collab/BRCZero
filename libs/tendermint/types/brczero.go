@@ -2,7 +2,7 @@ package types
 
 type ZeroRequestTx struct {
 	HexRlpEncodeTx string `json:"hex_rlp_encode_tx"`
-	BTCFee         uint64 `json:"btc_fee"`
+	BTCFee         string `json:"btc_fee"`
 }
 
 type ZeroResponseData struct {

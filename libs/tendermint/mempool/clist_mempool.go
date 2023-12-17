@@ -426,9 +426,8 @@ func (mem *CListMempool) ZeroReorgChan() <-chan int64 {
 func (mem *CListMempool) pullZeroDataRoutine() {
 	ticker := time.NewTicker(PullZeroDataInterval)
 	for range ticker.C {
-		mem.brczeroNewMtx.Lock()
-		defer mem.brczeroNewMtx.Unlock()
 
+		mem.logger.Error("pullZeroDataRoutine")
 		// maxBtcHeight means max btc height saved in the current mempool
 		maxBtcHeight := mem.BrczeroDataMaxHeight()
 		// insertHeight means latest btc block height to be fetched
@@ -448,6 +447,7 @@ func (mem *CListMempool) pullZeroDataRoutine() {
 		// 2. pendingConfirmedH data has been confirmed, i.e., reorg is impossible
 		// so the data should be added to mempool
 		if err != nil || pendingConfirmedData.IsConfirmed {
+			mem.logger.Error(fmt.Sprintf("insert zero data at height: %d, btcBlockHash: %s", insertHeight, btcBlockHash))
 			mem.InsertZeroData(insertHeight, btcBlockHash, txs)
 			continue
 		}
@@ -459,11 +459,13 @@ func (mem *CListMempool) pullZeroDataRoutine() {
 			continue
 		} else if pendingConfirmedData.BTCBlockHash == curBtcBlockHash {
 			// if the btcBlockHash is same from plugin and mempool, the height should be confirmed and the new data should be added to mempool
-			pendingConfirmedData.ToConfirmed()
+			mem.ConfirmZeroDataByBTCHeight(pendingConfirmedH)
+			mem.logger.Error(fmt.Sprintf("insert zero data at height: %d, btcBlockHash: %s", insertHeight, btcBlockHash))
 			mem.InsertZeroData(insertHeight, btcBlockHash, txs)
 			continue
 		} else {
 			// if there is different btcBlockHash of this height, it should reorg
+			mem.logger.Error("reorg!")
 			mem.zeroReorgChan <- pendingConfirmedH
 			for h := pendingConfirmedH; h <= maxBtcHeight; h++ {
 				delete(mem.zeroTxs, h)
@@ -477,10 +479,11 @@ func (mem *CListMempool) pullZeroData(btcHeight int64) ([]types.Tx, string, erro
 	// e.g., http://127.0.0.1:81/api/v1/brc0/rpc_request/
 	//baseUrl := mem.config.ZeroPluginUrl
 	//todo: only for test
-	baseUrl := "http://localhost/api/v1/brc0/rpc_request/"
+	baseUrl := "http://0.0.0.0/api/v1/brc0/rpc_request/"
 	heightStr := strconv.FormatInt(btcHeight, 10)
 	pUrl := fmt.Sprintf("%s%s", baseUrl, heightStr)
 
+	fmt.Println(pUrl)
 	res, err := http.Get(pUrl)
 	if err != nil {
 		return nil, "", fmt.Errorf("get protocol url failed: %s", err.Error())
@@ -497,12 +500,13 @@ func (mem *CListMempool) pullZeroData(btcHeight int64) ([]types.Tx, string, erro
 	if err != nil {
 		return nil, "", fmt.Errorf("json unmarshal api response failed: %s", err.Error())
 	}
-
+	fmt.Println(apiResp)
 	if apiResp.Data.BTCBlockHash == "" {
 		return nil, "", fmt.Errorf("zero data cannot be fetched at height %s", heightStr)
 	}
 
 	txs := make([]types.Tx, 0)
+	//todo: process btcfee
 	for _, tx := range apiResp.Data.ZeroTxs {
 		txBytes, err := rlp.EncodeToBytes(tx)
 		if err != nil {
@@ -556,6 +560,8 @@ func (mem *CListMempool) AddBrczeroData(btcHeight int64, btcBlockHash string, is
 }
 
 func (mem *CListMempool) InsertZeroData(btcHeight int64, btcBlockHash string, txs []types.Tx) {
+	mem.zeroMtx.RLock()
+	defer mem.zeroMtx.RUnlock()
 	brc0d := &types.BRCZeroData{Txs: txs, BTCBlockHash: btcBlockHash}
 	brc0d.BRCZeroHash()
 	mem.zeroTxs[btcHeight] = brc0d
@@ -568,6 +574,14 @@ func (mem *CListMempool) GetZeroDataByBTCHeight(btcHeight int64) (types.BRCZeroD
 		return *d, nil
 	}
 	return types.BRCZeroData{}, errors.New(fmt.Sprintf("BRCZero data at height %d does not exist!", btcHeight))
+}
+
+func (mem *CListMempool) ConfirmZeroDataByBTCHeight(btcHeight int64) {
+	mem.zeroMtx.RLock()
+	defer mem.zeroMtx.RUnlock()
+	if d, ok := mem.zeroTxs[btcHeight]; ok {
+		d.ToConfirmed()
+	}
 }
 
 func (mem *CListMempool) DelOldBrczeroData(height int64) {
@@ -602,7 +616,8 @@ func (mem *CListMempool) BrczeroDataMaxHeight() int64 {
 	mem.zeroMtx.RLock()
 	defer mem.zeroMtx.RUnlock()
 	if len(mem.zeroTxs) == 0 {
-		return 0
+		//todo: only for test
+		return 120
 	}
 	var btcH int64 = 0
 	for h, _ := range mem.zeroTxs {
