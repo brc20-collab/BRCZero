@@ -596,7 +596,7 @@ func execBlockOnProxyApp(context *executionTask) (*ABCIResponses, error) {
 	count := 0
 	for realTx := range realTxCh {
 		if realTx != nil {
-			fmt.Printf("====fsc-test: execution. realTx:%v\n", realTx)
+			fmt.Printf("====fsc-test: execution. realTx:%v\n", len(realTx.GetRaw()))
 			proxyAppConn.DeliverRealTxAsync(realTx)
 		} else {
 			proxyAppConn.DeliverTxAsync(abci.RequestDeliverTx{Tx: block.Txs[count]})
