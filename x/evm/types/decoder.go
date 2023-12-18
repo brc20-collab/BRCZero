@@ -88,6 +88,8 @@ type Unmarshaler func(bytes []byte, ptr interface{}) error
 
 // 3. Try to decode with protobuf
 func ibcDecoder(cdcWrapper codec.CdcAbstraction, bytes []byte) (tx sdk.Tx, err error) {
+	fmt.Println("===========ibcDecoder============")
+
 	simReq := &typestx.SimulateRequest{}
 	txBytes := bytes
 
@@ -121,6 +123,7 @@ type decodeFunc func(codec.CdcAbstraction, []byte) (sdk.Tx, error)
 
 // 1. Try to decode as MsgEthereumTx by RLP
 func evmDecoder(_ codec.CdcAbstraction, txBytes []byte) (tx sdk.Tx, err error) {
+	fmt.Println("===========evmDecoder============")
 	var brczeroTx types.BRCZeroRequestTx
 	var ethbytes []byte
 	if err = rlp.DecodeBytes(txBytes, &brczeroTx); err == nil {
@@ -144,6 +147,8 @@ func evmDecoder(_ codec.CdcAbstraction, txBytes []byte) (tx sdk.Tx, err error) {
 
 // 2. Try to decode Tx by amino
 func aminoDecoder(cdc codec.CdcAbstraction, txBytes []byte) (tx sdk.Tx, err error) {
+	fmt.Println("===========aminoDecoder============")
+
 	var v interface{}
 	if v, err = cdc.UnmarshalBinaryLengthPrefixedWithRegisteredUbmarshaller(txBytes, &tx); err == nil {
 		return aminoSanityCheck(v.(sdk.Tx))

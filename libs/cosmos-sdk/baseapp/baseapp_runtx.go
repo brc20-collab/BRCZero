@@ -354,7 +354,6 @@ func (app *BaseApp) PreDeliverRealTx(tx []byte) abci.TxEssentials {
 
 		app.preDeliverTxHandler(ctx, realTx, true)
 	}
-	fmt.Printf("=====fsc-test: ccccc, realTx:%d\n", realTx)
 
 	return realTx
 }
