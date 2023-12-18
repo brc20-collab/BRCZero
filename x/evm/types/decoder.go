@@ -70,11 +70,13 @@ func TxDecoder(cdc codec.CdcAbstraction) sdk.TxDecoder {
 				if index > 0 && height > IGNORE_HEIGHT_CHECKING {
 					if sensitive, ok := tx.(sdk.HeightSensitive); ok {
 						if err := sensitive.ValidWithHeight(height); err != nil {
+							fmt.Println("decoder err:", err)
 							return nil, sdkerrors.Wrap(sdkerrors.ErrTxDecode, err.Error())
 						}
 					}
 				}
 
+				fmt.Println("decoder index:", index)
 				return tx, nil
 			}
 		}
