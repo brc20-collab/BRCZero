@@ -73,6 +73,7 @@ func (app *BaseApp) runTx(mode runTxMode,
 
 	info = &runTxInfo{}
 	err = app.runtxWithInfo(info, mode, txBytes, tx, height, from...)
+	fmt.Printf("===========fsc-test: runTx err: %v\n", err)
 	if app.watcherCollector != nil && mode == runTxModeDeliver {
 		app.watcherCollector(info.runMsgCtx.GetWatcher())
 	}
@@ -118,6 +119,7 @@ func (app *BaseApp) runtxWithInfo(info *runTxInfo, mode runTxMode, txBytes []byt
 		if r := recover(); r != nil {
 			err = app.runTx_defer_recover(r, info)
 			recoverd = true
+			fmt.Printf("========fsc-test: recoverd. r:%v, err:%v\n", r, err)
 		}
 		if recoverd {
 			info.msCache = nil //TODO msCache not write
