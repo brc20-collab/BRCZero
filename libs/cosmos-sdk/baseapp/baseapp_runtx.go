@@ -359,7 +359,7 @@ func (app *BaseApp) PreDeliverRealTx(tx []byte) abci.TxEssentials {
 func (app *BaseApp) DeliverRealTx(txes abci.TxEssentials) abci.ResponseDeliverTx {
 	var err error
 	realTx, _ := txes.(sdk.Tx)
-	fmt.Printf("=======fsc-test: txes:%d, realTx:%d\n", txes, realTx)
+	fmt.Printf("=======fsc-test: txes:%v, realTx:%v\n", txes, realTx)
 	if realTx == nil {
 		realTx, err = app.txDecoder(txes.GetRaw())
 		fmt.Printf("=======fsc-test: realTx==nil. txes-len:%d, realTx-len:%d\n", len(txes.GetRaw()), len(realTx.GetRaw()))
