@@ -458,6 +458,10 @@ func (mem *CListMempool) AddBrczeroData(btcHeight int64, btcBlockHash string, is
 func (mem *CListMempool) GetBrczeroDataByBTCHeight(btcHeight int64) (types.BRCZeroData, error) {
 	mem.brczeroMtx.RLock()
 	defer mem.brczeroMtx.RUnlock()
+	return mem.getBrczeroDataByBTCHeight(btcHeight)
+}
+
+func (mem *CListMempool) getBrczeroDataByBTCHeight(btcHeight int64) (types.BRCZeroData, error) {
 	if d, ok := mem.brczeroTxs[btcHeight]; ok {
 		return *d, nil
 	}
