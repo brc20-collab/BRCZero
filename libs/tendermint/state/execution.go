@@ -588,7 +588,7 @@ func execBlockOnProxyApp(context *executionTask) (*ABCIResponses, error) {
 		return nil, err
 	}
 
-	realTxCh := make(chan abci.TxEssentials, len(block.Txs))
+	realTxCh := make(chan abci.TxEssentials)
 	stopedCh := make(chan struct{}, 1)
 
 	go preDeliverRoutine(proxyAppConn, block.Txs, realTxCh, stopedCh)
