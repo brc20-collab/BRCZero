@@ -337,12 +337,14 @@ func (app *BaseApp) PreDeliverRealTx(tx []byte) abci.TxEssentials {
 	if mem := GetGlobalMempool(); mem != nil {
 		realTx, _ = mem.ReapEssentialTx(tx).(sdk.Tx)
 	}
+	fmt.Printf("=====fsc-test: aaaaa, realTx-len:%d\n", len(realTx.GetRaw()))
 	if realTx == nil {
 		realTx, err = app.txDecoder(tx)
 		if err != nil || realTx == nil {
 			return nil
 		}
 	}
+	fmt.Printf("=====fsc-test: bbbbb, realTx-len:%d\n", len(realTx.GetRaw()))
 	app.blockDataCache.SetTx(tx, realTx)
 
 	if realTx.GetType() == sdk.EvmTxType && app.preDeliverTxHandler != nil {
@@ -352,6 +354,7 @@ func (app *BaseApp) PreDeliverRealTx(tx []byte) abci.TxEssentials {
 
 		app.preDeliverTxHandler(ctx, realTx, true)
 	}
+	fmt.Printf("=====fsc-test: ccccc, realTx-len:%d\n", len(realTx.GetRaw()))
 
 	return realTx
 }
