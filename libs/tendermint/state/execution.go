@@ -251,6 +251,7 @@ func (blockExec *BlockExecutor) ApplyBlock(
 	//wait till the last block async write be saved
 	blockExec.tryWaitLastBlockSave(block.Height - 1)
 
+	fmt.Printf("========fsc-test:ApplyBlock txs num: %d\n", len(block.Txs))
 	types.RpcFlag = types.RpcApplyBlockMode
 	abciResponses, duration, err := blockExec.runAbci(block, deltaInfo)
 	types.RpcFlag = types.RpcDefaultMode

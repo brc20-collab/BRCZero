@@ -361,6 +361,7 @@ func (app *BaseApp) DeliverRealTx(txes abci.TxEssentials) abci.ResponseDeliverTx
 	realTx, _ := txes.(sdk.Tx)
 	if realTx == nil {
 		realTx, err = app.txDecoder(txes.GetRaw())
+		fmt.Printf("=======fsc-test: txes-len:%d, realTx-len:%d\n", txes.GetRaw(), realTx.GetRaw())
 		if err != nil {
 			return sdkerrors.ResponseDeliverTx(err, 0, 0, app.trace)
 		}
