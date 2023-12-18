@@ -337,7 +337,7 @@ func (app *BaseApp) PreDeliverRealTx(tx []byte) abci.TxEssentials {
 	if mem := GetGlobalMempool(); mem != nil {
 		realTx, _ = mem.ReapEssentialTx(tx).(sdk.Tx)
 	}
-	fmt.Printf("=====fsc-test: aaaaa, realTx-len:%d\n", len(realTx.GetRaw()))
+	fmt.Printf("=====fsc-test: aaaaa, realTx:%v\n", realTx)
 	if realTx == nil {
 		realTx, err = app.txDecoder(tx)
 		if err != nil || realTx == nil {
@@ -362,7 +362,7 @@ func (app *BaseApp) PreDeliverRealTx(tx []byte) abci.TxEssentials {
 func (app *BaseApp) DeliverRealTx(txes abci.TxEssentials) abci.ResponseDeliverTx {
 	var err error
 	realTx, _ := txes.(sdk.Tx)
-	fmt.Printf("=======fsc-test: txes:%v, realTx:%v\n", txes, realTx)
+	fmt.Printf("=======fsc-test: txes:%v, realTx:%v\n", len(txes.GetRaw()), len(realTx.GetRaw()))
 	if realTx == nil {
 		realTx, err = app.txDecoder(txes.GetRaw())
 		fmt.Printf("=======fsc-test: realTx==nil. txes-len:%d, realTx-len:%d\n", len(txes.GetRaw()), len(realTx.GetRaw()))
