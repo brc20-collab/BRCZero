@@ -633,7 +633,7 @@ func execBlockOnProxyApp(context *executionTask) (*ABCIResponses, error) {
 func preDeliverRoutine(proxyAppConn proxy.AppConnConsensus, txs types.Txs, realTxCh chan<- abci.TxEssentials, stopedCh <-chan struct{}) {
 	for _, tx := range txs {
 		realTx := proxyAppConn.PreDeliverRealTxAsync(tx)
-		fmt.Printf("====fsc-test:preDeliverRoutine. tx-len:%d, realTx:%v\n", len(tx), len(realTx.GetRaw()))
+		fmt.Printf("====fsc-test:preDeliverRoutine. tx-len:%d, realTx:%v\n", len(tx), realTx)
 		select {
 		case realTxCh <- realTx:
 		case <-stopedCh:

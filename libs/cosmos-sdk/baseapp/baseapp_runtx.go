@@ -344,7 +344,7 @@ func (app *BaseApp) PreDeliverRealTx(tx []byte) abci.TxEssentials {
 			return nil
 		}
 	}
-	fmt.Printf("=====fsc-test: bbbbb, realTx-len:%d\n", len(realTx.GetRaw()))
+	fmt.Printf("=====fsc-test: bbbbb, realTx:%d\n", realTx)
 	app.blockDataCache.SetTx(tx, realTx)
 
 	if realTx.GetType() == sdk.EvmTxType && app.preDeliverTxHandler != nil {
@@ -354,7 +354,7 @@ func (app *BaseApp) PreDeliverRealTx(tx []byte) abci.TxEssentials {
 
 		app.preDeliverTxHandler(ctx, realTx, true)
 	}
-	fmt.Printf("=====fsc-test: ccccc, realTx-len:%d\n", len(realTx.GetRaw()))
+	fmt.Printf("=====fsc-test: ccccc, realTx:%d\n", realTx)
 
 	return realTx
 }
