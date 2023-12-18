@@ -1,7 +1,6 @@
 package types
 
 import (
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 
@@ -53,7 +52,6 @@ func (msg MsgInscription) ValidateBasic() error {
 func Decoder(_ codec.CdcAbstraction, txBytes []byte) (tx sdk.Tx, err error) {
 	var brczeroTx types.BRCZeroRequestTx
 
-	fmt.Printf("txBytes:%s\n", hex.EncodeToString(txBytes))
 	if err = rlp.DecodeBytes(txBytes, &brczeroTx); err == nil {
 		var msgInscription MsgInscription
 		if err = json.Unmarshal([]byte(brczeroTx.HexRlpEncodeTx), &msgInscription); err == nil {

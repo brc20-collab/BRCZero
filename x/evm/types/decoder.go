@@ -78,6 +78,8 @@ func TxDecoder(cdc codec.CdcAbstraction) sdk.TxDecoder {
 
 				fmt.Println("decoder index:", index)
 				return tx, nil
+			} else {
+				fmt.Println("other decoder err:", err)
 			}
 		}
 
@@ -91,6 +93,7 @@ type Unmarshaler func(bytes []byte, ptr interface{}) error
 // 3. Try to decode with protobuf
 func ibcDecoder(cdcWrapper codec.CdcAbstraction, bytes []byte) (tx sdk.Tx, err error) {
 	fmt.Println("===========ibcDecoder============")
+	fmt.Printf("txBytes:%s\n", hex.EncodeToString(bytes))
 
 	simReq := &typestx.SimulateRequest{}
 	txBytes := bytes
