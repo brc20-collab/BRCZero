@@ -59,7 +59,7 @@ func TxDecoder(cdc codec.CdcAbstraction) sdk.TxDecoder {
 			evmDecoder,
 			// only use evmdecoder
 			aminoDecoder,
-			ibcDecoder,
+			//ibcDecoder,
 			brcxtypes.Decoder,
 		} {
 			if tx, err = f(cdc, txBytes); err == nil {
