@@ -92,6 +92,7 @@ type Unmarshaler func(bytes []byte, ptr interface{}) error
 
 // 3. Try to decode with protobuf
 func ibcDecoder(cdcWrapper codec.CdcAbstraction, bytes []byte) (tx sdk.Tx, err error) {
+	return nil, fmt.Errorf("no ibc")
 	fmt.Println("===========ibcDecoder============")
 	fmt.Printf("txBytes:%s\n", hex.EncodeToString(bytes))
 
