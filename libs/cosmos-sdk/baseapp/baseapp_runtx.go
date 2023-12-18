@@ -164,6 +164,7 @@ func (app *BaseApp) runtxWithInfo(info *runTxInfo, mode runTxMode, txBytes []byt
 	}()
 
 	if err := validateBasicTxMsgs(info.tx.GetMsgs()); err != nil {
+		fmt.Printf("======fsc-test: valid Tx. height:%d, txIndex:%d, Tx:%v,\n", info.ctx.BlockHeight(), info.txIndex, info.tx)
 		return err
 	}
 	app.pin(trace.ValTxMsgs, false, mode)
