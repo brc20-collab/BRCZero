@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/hex"
 	"fmt"
+
 	"github.com/ethereum/go-ethereum/common"
 )
 
@@ -13,15 +14,10 @@ type InscriptionContext struct {
 	Txid              string `json:"txid" yaml:"txid"`                             // 铭文的所在交易的txid
 	Sender            string `json:"sender" yaml:"sender"`                         // 铭文的发送者
 	Receiver          string `json:"receiver" yaml:"receiver"`                     // 铭文接收者
-	//todo: recover type
-	//CommitInput       []TxIn   `json:"commit_input" yaml:"commit_input"`             //提交交易的输入
-	//RevealOutput      []TxOut  `json:"reveal_output" yaml:"reveal_output"`           //揭示交易的输出
-	//OldSatPoint       SatPoint `json:"old_sat_point" yaml:"old_sat_point"`           // 转移前，铭文所在的聪
-	//NewSatPoint       SatPoint `json:"new_sat_point" yaml:"new_sat_point"`           // 转移后，铭文所在的聪
-	CommitInput  string `json:"commit_input" yaml:"commit_input"`   //提交交易的输入
-	RevealOutput string `json:"reveal_output" yaml:"reveal_output"` //揭示交易的输出
-	OldSatPoint  string `json:"old_sat_point" yaml:"old_sat_point"` // 转移前，铭文所在的聪
-	NewSatPoint  string `json:"new_sat_point" yaml:"new_sat_point"` // 转移后，铭文所在的聪
+	CommitInput       string `json:"commit_input" yaml:"commit_input"`             //提交交易的输入
+	RevealOutput      string `json:"reveal_output" yaml:"reveal_output"`           //揭示交易的输出
+	OldSatPoint       string `json:"old_sat_point" yaml:"old_sat_point"`           // 转移前，铭文所在的聪
+	NewSatPoint       string `json:"new_sat_point" yaml:"new_sat_point"`           // 转移后，铭文所在的聪
 
 	BlockHash   string `json:"block_hash" yaml:"block_hash"`     // btc block hash
 	BlockTime   uint32 `json:"block_time" yaml:"block_time"`     // btc block time

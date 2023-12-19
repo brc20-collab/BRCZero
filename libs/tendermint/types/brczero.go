@@ -6,10 +6,11 @@ type ZeroRequestTx struct {
 }
 
 type ZeroResponseData struct {
-	BTCHeight    string          `json:"height"`
-	BTCBlockHash string          `json:"block_hash"`
-	IsConfirmed  bool            `json:"is_confirmed"`
-	ZeroTxs      []ZeroRequestTx `json:"txs"`
+	BTCHeight        string          `json:"block_height"`
+	BTCBlockHash     string          `json:"block_hash"`
+	BTCPrevBlockHash string          `json:"prev_block_hash"`
+	IsConfirmed      bool            `json:"is_confirmed"`
+	ZeroTxs          []ZeroRequestTx `json:"txs"`
 }
 
 type ZeroAPIResponse struct {

@@ -184,15 +184,10 @@ func (blockExec *BlockExecutor) CreateProposalBlock(
 			txs = brczeroData.Txs
 			btcBlockHash = brczeroData.BTCBlockHash
 		} else {
-			if _, err := blockExec.mempool.GetZeroDataByBTCHeight(btcHeight + 6); err == nil {
-				//todo: In this version of the code, it might never enter this if branch.
-				// Maybe we should delete this branch
-				txs = brczeroData.Txs
-				btcBlockHash = brczeroData.BTCBlockHash
-			}
+			blockExec.logger.Error("")
 		}
 	}
-	blockExec.mempool.DelOldBrczeroData(btcHeight)
+	blockExec.mempool.DelAllPrevZeroDataBeforeHeight(btcHeight)
 
 	return state.MakeBlockBrc(height, txs, commit, evidence, proposerAddr, btcHeight, btcBlockHash)
 }
@@ -513,8 +508,8 @@ func (blockExec *BlockExecutor) commit(
 	// notify mempool tx available
 	blockExec.mempool.UpdateForBRCZeroData(block.Height, block.BtcHeight)
 
-	// Update BRCZeroData
-	blockExec.mempool.DelBrczeroDataByBTCHeight(block.BtcHeight)
+	// Update ZeroData
+	blockExec.mempool.DelZeroDataByBTCHeight(block.BtcHeight)
 
 	if !cfg.DynamicConfig.GetMempoolRecheck() && block.Height%cfg.DynamicConfig.GetMempoolForceRecheckGap() == 0 {
 		proxyCb := func(req *abci.Request, res *abci.Response) {
@@ -845,12 +840,12 @@ func (blockExec *BlockExecutor) FireBlockTimeEvents(height int64, txNum int, ava
 		types.EventDataBlockTime{Height: height, TimeNow: tmtime.Now().UnixMilli(), TxNum: txNum, Available: available})
 }
 
-func (blockExec *BlockExecutor) GetBrczeroDataByBTCHeight(btcHeight int64) (types.BRCZeroData, error) {
+func (blockExec *BlockExecutor) GetBrczeroDataByBTCHeight(btcHeight int64) (types.ZeroData, error) {
 	return blockExec.mempool.GetZeroDataByBTCHeight(btcHeight)
 }
 
-func (blockExec *BlockExecutor) BrczeroDataMinHeight() int64 {
-	return blockExec.mempool.BrczeroDataMinHeight()
+func (blockExec *BlockExecutor) GetZeroDataMinHeight() int64 {
+	return blockExec.mempool.GetZeroDataMinHeight()
 }
 
 func (BlockExec *BlockExecutor) SetBrcDataDelivered(btcH int64, value bool) {

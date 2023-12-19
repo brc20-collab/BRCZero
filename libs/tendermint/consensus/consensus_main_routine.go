@@ -389,9 +389,6 @@ func (cs *State) rpcDeliverTxs(btcHeight int64) {
 	if cs.isValidator() {
 		return
 	}
-	if btcHeight == 0 {
-		btcHeight = cs.blockExec.BrczeroDataMinHeight()
-	}
 
 	for h := btcHeight; h <= btcHeight+5; h++ {
 		brczeroData, err := cs.blockExec.GetBrczeroDataByBTCHeight(h)

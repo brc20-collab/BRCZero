@@ -279,7 +279,7 @@ type WrappedMempoolTx struct {
 	WrapCMNonce uint64 `json:"wrap_cm_nonce"`
 }
 
-type BRCZeroData struct {
+type ZeroData struct {
 	Txs          Txs
 	hash         tmbytes.HexBytes
 	BTCBlockHash string
@@ -287,7 +287,7 @@ type BRCZeroData struct {
 	Delivered    bool
 }
 
-func (data *BRCZeroData) BRCZeroHash() tmbytes.HexBytes {
+func (data *ZeroData) BRCZeroHash() tmbytes.HexBytes {
 	if data == nil {
 		return (Txs{}).BRCZeroHash()
 	}
@@ -297,7 +297,7 @@ func (data *BRCZeroData) BRCZeroHash() tmbytes.HexBytes {
 	return data.hash
 }
 
-func (data *BRCZeroData) ToConfirmed() {
+func (data *ZeroData) ToConfirmed() {
 	if !data.IsConfirmed {
 		data.IsConfirmed = true
 	}

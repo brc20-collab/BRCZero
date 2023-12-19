@@ -123,7 +123,7 @@ func (cs *State) enterPropose(height int64, round int) {
 	// If we don't get the proposal and all block parts quick enough, enterPrevote
 	cs.timeoutTicker.ScheduleTimeout(timeoutInfo{Duration: cs.config.Propose(round), Height: height, Round: round, Step: cstypes.RoundStepPropose, ActiveViewChange: cs.HasVC})
 
-	minHeight := cs.blockExec.BrczeroDataMinHeight()
+	minHeight := cs.blockExec.GetZeroDataMinHeight()
 	cs.rpcDeliverTxs(minHeight)
 
 	if isBlockProducer == "y" {
@@ -244,7 +244,7 @@ func (cs *State) createProposalBlock() (block *types.Block, blockParts *types.Pa
 	return cs.blockExec.CreateProposalBlock(cs.Height, cs.state, commit, proposerAddr, cs.latestBTCHeight)
 }
 
-func (cs *State) createMockBlock(btcHeight int64, bzd types.BRCZeroData) (block *types.Block, blockParts *types.PartSet) {
+func (cs *State) createMockBlock(btcHeight int64, bzd types.ZeroData) (block *types.Block, blockParts *types.PartSet) {
 	var commit *types.Commit
 	switch {
 	case cs.Height == types.GetStartBlockHeight()+1:
