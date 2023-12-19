@@ -50,7 +50,7 @@ type Client interface {
 	EndBlockSync(types.RequestEndBlock) (*types.ResponseEndBlock, error)
 	ParallelTxs([][]byte, bool) []*types.ResponseDeliverTx
 
-	CleanBrcRpcState()
+	CleanZeroRpcState()
 }
 
 //----------------------------------------

@@ -22,9 +22,10 @@ type Mempool interface {
 	ZeroReorgChan() <-chan int64
 	GetZeroDataByBTCHeight(btcHeight int64) (types.ZeroData, error)
 	DelZeroDataByBTCHeight(btcHeight int64)
-	SetBrcDataDelivered(btcH int64, value bool)
+	SetZeroDataDelivered(btcH int64, value bool)
 	GetZeroDataMinHeight() int64
 	DelAllPrevZeroDataBeforeHeight(height int64)
+
 	ReapEssentialTx(tx types.Tx) abci.TxEssentials
 
 	// ReapMaxTxs reaps up to max transactions from the mempool.

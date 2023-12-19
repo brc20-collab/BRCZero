@@ -78,7 +78,7 @@ func (cs *State) defaultDoPrevote(height int64, round int) {
 	// when block is received, verify the block data and ord data
 	brczeroData := types.ZeroData{}
 	for times := 1; times <= BrczeroRetryTimes; times++ {
-		brczeroData, err = cs.blockExec.GetBrczeroDataByBTCHeight(cs.ProposalBlock.BtcHeight)
+		brczeroData, err = cs.blockExec.GetZeroDataByBTCHeight(cs.ProposalBlock.BtcHeight)
 		if err == nil {
 			break
 		}

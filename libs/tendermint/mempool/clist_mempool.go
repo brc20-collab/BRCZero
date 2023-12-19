@@ -587,7 +587,7 @@ func (mem *CListMempool) BrczeroDataMaxHeight() int64 {
 	return btcH
 }
 
-func (mem *CListMempool) SetBrcDataDelivered(btcH int64, value bool) {
+func (mem *CListMempool) SetZeroDataDelivered(btcH int64, value bool) {
 	mem.zeroMtx.RLock()
 	defer mem.zeroMtx.RUnlock()
 	mem.zeroTxs[btcH].Delivered = value

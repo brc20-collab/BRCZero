@@ -42,7 +42,7 @@ func (Mempool) GetZeroDataByBTCHeight(btcHeight int64) (types.ZeroData, error) {
 func (Mempool) GetZeroDataMinHeight() int64                   { return 0 }
 func (Mempool) DelAllPrevZeroDataBeforeHeight(height int64)   {}
 func (Mempool) DelZeroDataByBTCHeight(btcHeight int64)        {}
-func (Mempool) SetBrcDataDelivered(btcH int64, value bool)    {}
+func (Mempool) SetZeroDataDelivered(btcH int64, value bool)   {}
 func (Mempool) ReapEssentialTx(tx types.Tx) abci.TxEssentials { return nil }
 func (Mempool) ReapMaxTxs(n int) types.Txs                    { return types.Txs{} }
 func (Mempool) ReapUserTxsCnt(address string) int             { return 0 }

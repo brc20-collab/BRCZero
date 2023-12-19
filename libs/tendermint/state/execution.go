@@ -120,7 +120,7 @@ func NewBlockExecutor(
 
 	res.initAsyncDBContext()
 
-	go res.RpcRollbackRoutine()
+	go res.RpcReorgRoutine()
 
 	return res
 }
@@ -840,7 +840,7 @@ func (blockExec *BlockExecutor) FireBlockTimeEvents(height int64, txNum int, ava
 		types.EventDataBlockTime{Height: height, TimeNow: tmtime.Now().UnixMilli(), TxNum: txNum, Available: available})
 }
 
-func (blockExec *BlockExecutor) GetBrczeroDataByBTCHeight(btcHeight int64) (types.ZeroData, error) {
+func (blockExec *BlockExecutor) GetZeroDataByBTCHeight(btcHeight int64) (types.ZeroData, error) {
 	return blockExec.mempool.GetZeroDataByBTCHeight(btcHeight)
 }
 
@@ -848,23 +848,23 @@ func (blockExec *BlockExecutor) GetZeroDataMinHeight() int64 {
 	return blockExec.mempool.GetZeroDataMinHeight()
 }
 
-func (BlockExec *BlockExecutor) SetBrcDataDelivered(btcH int64, value bool) {
-	BlockExec.mempool.SetBrcDataDelivered(btcH, value)
+func (BlockExec *BlockExecutor) SetZeroDataDelivered(btcH int64, value bool) {
+	BlockExec.mempool.SetZeroDataDelivered(btcH, value)
 }
 
 func (BlockExec *BlockExecutor) ZeroReorgChain() <-chan int64 {
 	return BlockExec.mempool.ZeroReorgChan()
 }
 
-func (blockExec *BlockExecutor) CleanBrcRpcState() {
-	blockExec.proxyApp.CleanBrcRpcState()
+func (blockExec *BlockExecutor) CleanZeroRpcState() {
+	blockExec.proxyApp.CleanZeroRpcState()
 }
 
-func (blockExec *BlockExecutor) RpcRollbackRoutine() {
+func (blockExec *BlockExecutor) RpcReorgRoutine() {
 	for {
 		select {
 		case <-blockExec.ZeroReorgChain():
-			blockExec.CleanBrcRpcState()
+			blockExec.CleanZeroRpcState()
 		}
 	}
 }

@@ -23,7 +23,7 @@ type AppConnConsensus interface {
 	SetOptionAsync(req types.RequestSetOption) *abcicli.ReqRes
 	ParallelTxs([][]byte, bool) []*types.ResponseDeliverTx
 	SetOptionSync(req types.RequestSetOption) (*types.ResponseSetOption, error)
-	CleanBrcRpcState()
+	CleanZeroRpcState()
 }
 
 type AppConnMempool interface {
@@ -107,8 +107,8 @@ func (app *appConnConsensus) SetOptionSync(req types.RequestSetOption) (*types.R
 	return app.appConn.SetOptionSync(req)
 }
 
-func (app *appConnConsensus) CleanBrcRpcState() {
-	app.appConn.CleanBrcRpcState()
+func (app *appConnConsensus) CleanZeroRpcState() {
+	app.appConn.CleanZeroRpcState()
 }
 
 //------------------------------------------------

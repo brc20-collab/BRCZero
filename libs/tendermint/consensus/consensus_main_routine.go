@@ -391,7 +391,7 @@ func (cs *State) rpcDeliverTxs(btcHeight int64) {
 	}
 
 	for h := btcHeight; h <= btcHeight+5; h++ {
-		brczeroData, err := cs.blockExec.GetBrczeroDataByBTCHeight(h)
+		brczeroData, err := cs.blockExec.GetZeroDataByBTCHeight(h)
 		if err != nil || brczeroData.IsConfirmed || brczeroData.Delivered {
 			continue
 		}
@@ -403,7 +403,7 @@ func (cs *State) rpcDeliverTxs(btcHeight int64) {
 
 		types.RpcFlag = types.RpcDefaultMode
 
-		cs.blockExec.SetBrcDataDelivered(h, true)
+		cs.blockExec.SetZeroDataDelivered(h, true)
 	}
 
 }
