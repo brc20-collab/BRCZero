@@ -48,12 +48,54 @@ func (msg MsgInscription) ValidateBasic() error {
 	return nil
 }
 
+// verify interface at compile time
+var _ sdk.Msg = &MsgBascisX{}
+
+type MsgBascisX struct {
+	ProtocolName string `json:"protocol_name" yaml:"protocol_name"`
+	// Inscription represents the inscription data of protocol operations on the chain.
+	Inscription string `json:"inscription" yaml:"inscription"`
+	BTCTxid     string `json:"btc_txid" yaml:"btc_txid"`
+	BTCFee      string `json:"btc_fee" yaml:"btc_fee"`
+	// Context represents the contextual data required for protocol operation execution.
+	Context string `json:"inscription_context" yaml:"inscription_context"`
+}
+
+// NewMsgBascisX creates a new MsgBascisX instance
+func NewMsgBascisX(protocolName string, inscription string, btcTxid string, btcFee string, ctx string) MsgBascisX {
+	return MsgBascisX{
+		ProtocolName: protocolName,
+		Inscription:  inscription,
+		BTCTxid:      btcTxid,
+		BTCFee:       btcFee,
+		Context:      ctx,
+	}
+}
+
+// nolint
+func (msg MsgBascisX) Route() string { return RouterKey }
+func (msg MsgBascisX) Type() string  { return MsgBascisXType }
+func (msg MsgBascisX) GetSigners() []sdk.AccAddress {
+	return nil
+}
+
+// GetSignBytes gets the bytes for the message signer to sign on
+func (msg MsgBascisX) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+// ValidateBasic validity check for the AnteHandler
+func (msg MsgBascisX) ValidateBasic() error {
+	return nil
+}
+
 // Decoder Try to decode as MsgInscription by json
 func Decoder(_ codec.CdcAbstraction, txBytes []byte) (tx sdk.Tx, err error) {
 	var brczeroTx types.ZeroRequestTx
 
 	if err = rlp.DecodeBytes(txBytes, &brczeroTx); err == nil {
-		var msgInscription MsgInscription
+		var msgInscription MsgBascisX
 		if err = json.Unmarshal([]byte(brczeroTx.TxInfo), &msgInscription); err == nil {
 			// TODO 1000 is tmp
 			fee := authtypes.NewStdFee(50000000, nil)

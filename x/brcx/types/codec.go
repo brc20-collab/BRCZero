@@ -5,6 +5,7 @@ import "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 // RegisterCodec registers concrete types on codec
 func RegisterCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(MsgInscription{}, "cosmos-sdk/MsgInscription", nil)
+	cdc.RegisterConcrete(MsgBascisX{}, "cosmos-sdk/MsgBascisX", nil)
 }
 
 // ModuleCdc defines the module codec

@@ -1,87 +1,42 @@
-package basicx
+package brcx
 
 import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"math/big"
-
-	"github.com/ethereum/go-ethereum/common"
-
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
-	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
 	"github.com/brc20-collab/brczero/x/brcx/types"
+	"github.com/ethereum/go-ethereum/common"
+	"math/big"
 )
 
-// NewHandler creates a sdk.Handler for all the slashing type messages
-func NewHandler(k Keeper) sdk.Handler {
-	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
-		ctx.SetEventManager(sdk.NewEventManager())
-
-		switch msg := msg.(type) {
-		case types.MsgInscription:
-			ctx.EventManager().EmitEvent(
-				sdk.NewEvent(
-					EventTypeBasicx,
-					sdk.NewAttribute(AttributeBTCTXID, msg.InscriptionContext.Txid),
-				),
-			)
-			info := types.ResultInfo{BTCTxid: msg.InscriptionContext.Txid}
-			result, err := handleInscription(ctx, msg, k, &info)
-			// json.Marshal can not be error. even if error it hash a few influence with execute of transaction.
-			buff, _ := json.Marshal(info)
-			if err != nil {
-				return &sdk.Result{Events: ctx.EventManager().Events(), Info: buff}, err
-			}
-			result.Events = append(result.Events, ctx.EventManager().Events()...)
-			result.Info = buff
-			return result, err
-
-		default:
-			return &sdk.Result{Events: ctx.EventManager().Events()}, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized %s message type: %T", ModuleName, msg)
-		}
-	}
-}
-
-func handleInscription(ctx sdk.Context, msg MsgInscription, k Keeper, info *ResultInfo) (*sdk.Result, error) {
-	inscription := make(map[string]interface{})
-	err := json.Unmarshal([]byte(msg.Inscription), &inscription)
-	if err != nil {
-		return &sdk.Result{}, ErrValidateInput("msg Inscription json marshal failed")
-	}
-	p, ok := inscription["p"]
-	if !ok {
-		return &sdk.Result{}, ErrValidateInput("can not anaylize protocol")
-	}
-	protocol, ok := p.(string)
-	if !ok {
-		return &sdk.Result{}, ErrValidateInput("the type of protocol must be string")
-	}
+func handleBascisXInscription(ctx sdk.Context, msg MsgBascisX, k Keeper, info *ResultInfo) (*sdk.Result, error) {
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
-			EventTypeBasicxProtocol,
-			sdk.NewAttribute(AttributeProtocol, protocol),
+			EventTypeBRCXProtocol,
+			sdk.NewAttribute(AttributeProtocol, msg.ProtocolName),
 		),
 	)
-	switch protocol {
+	switch msg.ProtocolName {
 	case ManageContractProtocolName:
-		result, err := handleManageContract(ctx, msg, k, info)
+		result, err := handleBascisXManageContract(ctx, msg, k, info)
 		if err != nil {
 			return result, err
 		}
 		return result, nil
 	default:
-		return handleEntryPoint(ctx, msg, protocol, k, info)
+		return handleBascisXEntryPoint(ctx, msg, msg.ProtocolName, k, info)
 	}
 }
 
-func handleManageContract(ctx sdk.Context, msg MsgInscription, k Keeper, info *ResultInfo) (*sdk.Result, error) {
-	if msg.InscriptionContext.IsTransfer {
-		return nil, ErrValidateInput("manageContract can't deal inscription of transfer")
+func handleBascisXManageContract(ctx sdk.Context, msg MsgBascisX, k Keeper, info *ResultInfo) (*sdk.Result, error) {
+	var context InscriptionContext
+	if err := json.Unmarshal([]byte(msg.Context), &context); err != nil {
+		return nil, ErrValidateInput(fmt.Sprintf("InscriptionContext json unmarshall is err: %s ", err))
 	}
-	from, err := ConvertBTCAddress(msg.InscriptionContext.Sender)
+	from, err := ConvertBTCAddress(context.Sender)
 	if err != nil {
-		return nil, ErrValidateInput(fmt.Sprintf("InscriptionContext.Sender %s is not address: %s ", msg.InscriptionContext.Sender, err))
+		return nil, ErrValidateInput(fmt.Sprintf("InscriptionContext.Sender %s is not address: %s ", context.Sender, err))
 	}
 	info.EvmCaller = from.String()
 
@@ -130,7 +85,7 @@ func handleManageContract(ctx sdk.Context, msg MsgInscription, k Keeper, info *R
 	return &result, nil
 }
 
-func handleEntryPoint(ctx sdk.Context, msg MsgInscription, protocol string, k Keeper, info *ResultInfo) (*sdk.Result, error) {
+func handleBascisXEntryPoint(ctx sdk.Context, msg MsgBascisX, protocol string, k Keeper, info *ResultInfo) (*sdk.Result, error) {
 	from := common.BytesToAddress(k.GetBRCXAddress().Bytes())
 	info.EvmCaller = from.String()
 	to, err := k.GetContractAddrByProtocol(ctx, protocol)
@@ -138,7 +93,7 @@ func handleEntryPoint(ctx sdk.Context, msg MsgInscription, protocol string, k Ke
 		return nil, ErrGetContractAddress(fmt.Sprintf("get contract address by protocol failed: %s", err))
 	}
 	info.EvmTo = to.String()
-	input, err := types.GetEntryPointInput(msg.InscriptionContext, msg.Inscription)
+	input, err := types.GetBascisXEntryPointInput(msg.Context, msg.Inscription)
 	if err != nil {
 		return nil, ErrPackInput(fmt.Sprintf("pack entry point input failed: %s", err))
 	}
