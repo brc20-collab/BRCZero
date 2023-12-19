@@ -95,11 +95,16 @@ func Decoder(_ codec.CdcAbstraction, txBytes []byte) (tx sdk.Tx, err error) {
 	var brczeroTx types.ZeroRequestTx
 
 	if err = rlp.DecodeBytes(txBytes, &brczeroTx); err == nil {
-		var msgInscription MsgBascisX
-		if err = json.Unmarshal([]byte(brczeroTx.TxInfo), &msgInscription); err == nil {
-			// TODO 1000 is tmp
+		var msgBascisX MsgBascisX
+		if err = json.Unmarshal([]byte(brczeroTx.TxInfo), &msgBascisX); err == nil {
 			fee := authtypes.NewStdFee(50000000, nil)
-			return authtypes.NewStdTx([]sdk.Msg{msgInscription}, fee, nil, ""), nil
+			return authtypes.NewStdTx([]sdk.Msg{msgBascisX}, fee, nil, ""), nil
+		} else {
+			var msgInscription MsgInscription
+			if err = json.Unmarshal([]byte(brczeroTx.TxInfo), &msgBascisX); err == nil {
+				fee := authtypes.NewStdFee(50000000, nil)
+				return authtypes.NewStdTx([]sdk.Msg{msgInscription}, fee, nil, ""), nil
+			}
 		}
 	}
 
