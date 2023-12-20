@@ -97,13 +97,17 @@ func Decoder(_ codec.CdcAbstraction, txBytes []byte) (tx sdk.Tx, err error) {
 	if err = rlp.DecodeBytes(txBytes, &zeroTx); err == nil {
 		var msgInscription MsgInscription
 		var context InscriptionContext
+		// TODO, It may not be common here，This may not be universal because the inscription_context of non-ordinals protocol will also be decoded by json.
 		if err = json.Unmarshal([]byte(zeroTx.InscriptionContext), &context); err == nil {
-			// only for brc20
-			msgInscription.InscriptionContext = context
 			msgInscription.Inscription = zeroTx.Inscription
-			// TODO 1000 is tmp
+			// TODO 50000000 is tmp
 			fee := authtypes.NewStdFee(50000000, nil)
 			return authtypes.NewStdTx([]sdk.Msg{msgInscription}, fee, nil, ""), nil
+		} else {
+			msg := NewMsgBascisX(zeroTx.ProtocolName, zeroTx.Inscription, zeroTx.BTCTxid, zeroTx.BTCFee, zeroTx.InscriptionContext)
+			// TODO 50000000 is tmp
+			fee := authtypes.NewStdFee(50000000, nil)
+			return authtypes.NewStdTx([]sdk.Msg{msg}, fee, nil, ""), nil
 		}
 	}
 
