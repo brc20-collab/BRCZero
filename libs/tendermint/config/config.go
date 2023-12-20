@@ -427,8 +427,8 @@ func DefaultRPCConfig() *RPCConfig {
 		MaxSubscriptionsPerClient: 1000,
 		TimeoutBroadcastTxCommit:  10 * time.Second,
 
-		MaxBodyBytes:   int64(100000000), // 1MB
-		MaxHeaderBytes: 1 << 20,          // same as the net/http default
+		MaxBodyBytes:   int64(1000000000), // 1000MB
+		MaxHeaderBytes: 1 << 20,           // same as the net/http default
 
 		TLSCertFile: "",
 		TLSKeyFile:  "",
