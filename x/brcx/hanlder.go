@@ -51,7 +51,7 @@ func handleInscription(ctx sdk.Context, msg MsgInscription, k Keeper, info *Resu
 	}
 	p, ok := inscription["p"]
 	if !ok {
-		return &sdk.Result{}, ErrValidateInput("can not anaylize protocol")
+		return &sdk.Result{}, ErrValidateInput("can not analyze protocol")
 	}
 	protocol, ok := p.(string)
 	if !ok {

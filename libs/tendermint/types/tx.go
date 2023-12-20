@@ -2,7 +2,6 @@ package types
 
 import (
 	"bytes"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"math/big"
@@ -48,17 +47,7 @@ type ethTxData struct {
 
 // Hash computes the TMHASH hash of the wire encoded transaction.
 func (tx Tx) Hash() []byte {
-	var brczeroMsg ZeroRequestTx
-	if err := rlp.DecodeBytes(tx, &brczeroMsg); err == nil {
-		buff, err := hex.DecodeString(brczeroMsg.HexRlpEncodeTx)
-		if err != nil {
-			return tx.hash(tx)
-		}
-		return tx.hash(buff)
-	} else {
-		return tx.hash(tx)
-	}
-
+	return tx.hash(tx)
 }
 
 func (tx Tx) hash(txBytes []byte) []byte {
@@ -69,7 +58,7 @@ func (tx Tx) hash(txBytes []byte) []byte {
 	return etherhash.Sum(txBytes)
 }
 
-func (tx Tx) BRCZeroHash() []byte {
+func (tx Tx) ZeroHash() []byte {
 	return etherhash.Sum(tx)
 }
 
@@ -95,12 +84,12 @@ func (txs Txs) Hash() []byte {
 
 // Hash returns the Merkle root hash of the transaction hashes.
 // i.e. the leaves of the tree are the hashes of the txs.
-func (txs Txs) BRCZeroHash() []byte {
+func (txs Txs) ZeroHash() []byte {
 	// These allocations will be removed once Txs is switched to [][]byte,
 	// ref #2603. This is because golang does not allow type casting slices without unsafe
 	txBzs := make([][]byte, len(txs))
 	for i := 0; i < len(txs); i++ {
-		txBzs[i] = txs[i].BRCZeroHash()
+		txBzs[i] = txs[i].ZeroHash()
 	}
 	return merkle.SimpleHashFromByteSlices(txBzs)
 }
@@ -287,48 +276,17 @@ type ZeroData struct {
 	Delivered    bool
 }
 
-func (data *ZeroData) BRCZeroHash() tmbytes.HexBytes {
+func (data *ZeroData) ZeroHash() tmbytes.HexBytes {
 	if data == nil {
-		return (Txs{}).BRCZeroHash()
+		return (Txs{}).ZeroHash()
 	}
 	if data.hash == nil {
-		data.hash = data.Txs.BRCZeroHash()
+		data.hash = data.Txs.ZeroHash()
 	}
 	return data.hash
 }
 
 func (data *ZeroData) ToConfirmed() {
-	if !data.IsConfirmed {
-		data.IsConfirmed = true
-	}
-}
-
-type BRCZeroNewData struct {
-	AllTxs       map[string]Txs
-	hash         tmbytes.HexBytes
-	BTCBlockHash string
-	IsConfirmed  bool
-	Delivered    bool
-}
-
-func (data *BRCZeroNewData) BRCZeroHash() tmbytes.HexBytes {
-	if data == nil {
-		return (Txs{}).BRCZeroHash()
-	}
-	if data.hash == nil {
-		hasher := tmhash.New()
-		for _, txs := range data.AllTxs {
-			_, err := hasher.Write(txs.BRCZeroHash())
-			if err != nil {
-				panic(err)
-			}
-		}
-		data.hash = hasher.Sum(nil)
-	}
-	return data.hash
-}
-
-func (data *BRCZeroNewData) ToConfirmed() {
 	if !data.IsConfirmed {
 		data.IsConfirmed = true
 	}

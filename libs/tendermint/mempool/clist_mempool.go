@@ -108,11 +108,9 @@ type CListMempool struct {
 	txs ITransactionQueue
 
 	// btc height -> brczero data
-	zeroTxs        map[int64]*types.ZeroData
-	brczeroNewData map[int64]*types.BRCZeroNewData
-	zeroMtx        sync.RWMutex
-	brczeroNewMtx  sync.RWMutex
-	zeroReorgChan  chan int64
+	zeroTxs       map[int64]*types.ZeroData
+	zeroMtx       sync.RWMutex
+	zeroReorgChan chan int64
 
 	simQueue chan *mempoolTx
 
@@ -426,64 +424,66 @@ func (mem *CListMempool) ZeroReorgChan() <-chan int64 {
 func (mem *CListMempool) pullZeroDataRoutine() {
 	ticker := time.NewTicker(PullZeroDataInterval)
 	for range ticker.C {
+		mem.zeroMtx.Lock()
+		mem.pullZeroDataTask()
+		mem.zeroMtx.Unlock()
+	}
+}
 
-		mem.logger.Error("pullZeroDataRoutine")
-		// maxBtcHeight means max btc height saved in the current mempool
-		maxBtcHeight := mem.BrczeroDataMaxHeight()
-		// insertHeight means latest btc block height to be fetched
-		insertHeight := maxBtcHeight + 1
-		txs, btcBlockHash, err := mem.pullZeroData(insertHeight)
-		if err != nil {
-			mem.logger.Error(fmt.Sprintf("pull zero data at height %d faild: %s", insertHeight, err.Error()))
-			continue
-		}
+func (mem *CListMempool) pullZeroDataTask() {
+	mem.logger.Info("start pullZeroDataTask")
+	// maxBtcHeight means max btc height saved in the current mempool
+	maxBtcHeight := mem.getZeroDataMaxHeight()
+	// insertHeight means latest btc block height to be fetched
+	insertHeight := maxBtcHeight + 1
+	txs, btcBlockHash, err := mem.pullZeroData(insertHeight)
+	if err != nil {
+		mem.logger.Error(fmt.Sprintf("pull zero data at height %d faild: %s", insertHeight, err.Error()))
+		return
+	}
 
-		// after success get data of new btc height
-		pendingConfirmedH := maxBtcHeight - BtcConfirmedGap
-		// note: pendingConfirmedData is local data, maybe different from btc node
-		pendingConfirmedData, err := mem.GetZeroDataByBTCHeight(pendingConfirmedH)
+	// after success get data of new btc height
+	pendingConfirmedH := maxBtcHeight - BtcConfirmedGap
+	// note: pendingConfirmedData is local data, maybe different from btc node
+	pendingConfirmedData, err := mem.getZeroDataByBTCHeight(pendingConfirmedH)
+
+	if err != nil || pendingConfirmedData.IsConfirmed {
 		// if
 		// 1. err!=nil means the early data has been ApplyBlock and clear
 		// 2. pendingConfirmedH data has been confirmed, i.e., reorg is impossible
 		// so the data should be added to mempool
-		if err != nil || pendingConfirmedData.IsConfirmed {
-			mem.logger.Error(fmt.Sprintf("insert zero data at height: %d, btcBlockHash: %s", insertHeight, btcBlockHash))
-			mem.InsertZeroData(insertHeight, btcBlockHash, txs)
-			continue
-		}
+		mem.logger.Error(fmt.Sprintf("insert zero data at height: %d, btcBlockHash: %s", insertHeight, btcBlockHash))
+		mem.insertZeroData(insertHeight, btcBlockHash, txs)
+		return
+	}
 
-		// judge if the pendingConfirmedH should be confirmed
-		_, curBtcBlockHash, err := mem.pullZeroData(pendingConfirmedH)
-		if err != nil {
-			mem.logger.Error(fmt.Sprintf("pull zero data at height %d, faild: %s", pendingConfirmedH, err.Error()))
-			continue
-		} else if pendingConfirmedData.BTCBlockHash == curBtcBlockHash {
-			// if the btcBlockHash is same from plugin and mempool, the height should be confirmed and the new data should be added to mempool
-			mem.ConfirmZeroDataByBTCHeight(pendingConfirmedH)
-			mem.logger.Error(fmt.Sprintf("insert zero data at height: %d, btcBlockHash: %s", insertHeight, btcBlockHash))
-			mem.InsertZeroData(insertHeight, btcBlockHash, txs)
-			continue
-		} else {
-			// if there is different btcBlockHash of this height, it should reorg
-			mem.logger.Error("reorg!")
-			mem.zeroReorgChan <- pendingConfirmedH
-			for h := pendingConfirmedH; h <= maxBtcHeight; h++ {
-				delete(mem.zeroTxs, h)
-			}
+	_, curBtcBlockHash, err := mem.pullZeroData(pendingConfirmedH)
+	// judge if the pendingConfirmedH should be confirmed
+	if err != nil {
+		mem.logger.Error(fmt.Sprintf("pull zero data at height %d, faild: %s", pendingConfirmedH, err.Error()))
+	} else if pendingConfirmedData.BTCBlockHash == curBtcBlockHash {
+		// if the btcBlockHash is same from plugin and mempool, the height should be confirmed and the new data should be added to mempool
+		mem.confirmZeroDataByBTCHeight(pendingConfirmedH)
+		mem.logger.Error(fmt.Sprintf("insert zero data at height: %d, btcBlockHash: %s", insertHeight, btcBlockHash))
+		mem.insertZeroData(insertHeight, btcBlockHash, txs)
+	} else {
+		// if there is different btcBlockHash of this height, it should reorg
+		mem.logger.Error("reorg!")
+		mem.zeroReorgChan <- pendingConfirmedH
+		for h := pendingConfirmedH; h <= maxBtcHeight; h++ {
+			delete(mem.zeroTxs, h)
 		}
 	}
 }
 
-// todo: add args of p name like brc20\brc30
 func (mem *CListMempool) pullZeroData(btcHeight int64) ([]types.Tx, string, error) {
-	// e.g., http://127.0.0.1:81/api/v1/brc0/rpc_request/
+	// e.g., http://127.0.0.1:81/api/v1/crawler/zeroindexer/
 	//baseUrl := mem.config.ZeroPluginUrl
-	//todo: only for test
-	baseUrl := "http://0.0.0.0/api/v1/brc0/rpc_request/"
+	// todo: only for test
+	baseUrl := "http://0.0.0.0/api/v1/crawler/zeroindexer/"
 	heightStr := strconv.FormatInt(btcHeight, 10)
 	pUrl := fmt.Sprintf("%s%s", baseUrl, heightStr)
 
-	fmt.Println(pUrl)
 	res, err := http.Get(pUrl)
 	if err != nil {
 		return nil, "", fmt.Errorf("get protocol url failed: %s", err.Error())
@@ -500,7 +500,7 @@ func (mem *CListMempool) pullZeroData(btcHeight int64) ([]types.Tx, string, erro
 	if err != nil {
 		return nil, "", fmt.Errorf("json unmarshal api response failed: %s", err.Error())
 	}
-	fmt.Println(apiResp)
+	//fmt.Println(apiResp)
 	if apiResp.Data.BTCBlockHash == "" {
 		return nil, "", fmt.Errorf("zero data cannot be fetched at height %s", heightStr)
 	}
@@ -519,25 +519,42 @@ func (mem *CListMempool) pullZeroData(btcHeight int64) ([]types.Tx, string, erro
 }
 
 func (mem *CListMempool) InsertZeroData(btcHeight int64, btcBlockHash string, txs []types.Tx) {
-	mem.zeroMtx.RLock()
-	defer mem.zeroMtx.RUnlock()
-	brc0d := &types.ZeroData{Txs: txs, BTCBlockHash: btcBlockHash}
-	brc0d.BRCZeroHash()
+	mem.zeroMtx.Lock()
+	defer mem.zeroMtx.Unlock()
+	mem.insertZeroData(btcHeight, btcBlockHash, txs)
+}
+
+func (mem *CListMempool) insertZeroData(btcHeight int64, btcBlockHash string, txs []types.Tx) {
+	brc0d := &types.ZeroData{
+		Txs:          txs,
+		BTCBlockHash: btcBlockHash,
+		IsConfirmed:  false,
+		Delivered:    false,
+	}
+	brc0d.ZeroHash()
 	mem.zeroTxs[btcHeight] = brc0d
 }
 
 func (mem *CListMempool) GetZeroDataByBTCHeight(btcHeight int64) (types.ZeroData, error) {
 	mem.zeroMtx.RLock()
 	defer mem.zeroMtx.RUnlock()
+	return mem.getZeroDataByBTCHeight(btcHeight)
+}
+
+func (mem *CListMempool) getZeroDataByBTCHeight(btcHeight int64) (types.ZeroData, error) {
 	if d, ok := mem.zeroTxs[btcHeight]; ok {
 		return *d, nil
 	}
-	return types.ZeroData{}, errors.New(fmt.Sprintf("BRCZero data at height %d does not exist!", btcHeight))
+	return types.ZeroData{}, errors.New(fmt.Sprintf("zero data at height %d does not exist!", btcHeight))
 }
 
 func (mem *CListMempool) ConfirmZeroDataByBTCHeight(btcHeight int64) {
 	mem.zeroMtx.Lock()
 	defer mem.zeroMtx.Unlock()
+	mem.confirmZeroDataByBTCHeight(btcHeight)
+}
+
+func (mem *CListMempool) confirmZeroDataByBTCHeight(btcHeight int64) {
 	if d, ok := mem.zeroTxs[btcHeight]; ok {
 		d.ToConfirmed()
 	}
@@ -546,6 +563,10 @@ func (mem *CListMempool) ConfirmZeroDataByBTCHeight(btcHeight int64) {
 func (mem *CListMempool) DelAllPrevZeroDataBeforeHeight(height int64) {
 	mem.zeroMtx.Lock()
 	defer mem.zeroMtx.Unlock()
+	mem.delAllPrevZeroDataBeforeHeight(height)
+}
+
+func (mem *CListMempool) delAllPrevZeroDataBeforeHeight(height int64) {
 	if len(mem.zeroTxs) == 0 {
 		return
 	}
@@ -559,6 +580,10 @@ func (mem *CListMempool) DelAllPrevZeroDataBeforeHeight(height int64) {
 func (mem *CListMempool) GetZeroDataMinHeight() int64 {
 	mem.zeroMtx.RLock()
 	defer mem.zeroMtx.RUnlock()
+	return mem.getZeroDataMinHeight()
+}
+
+func (mem *CListMempool) getZeroDataMinHeight() int64 {
 	if len(mem.zeroTxs) == 0 {
 		return 0
 	}
@@ -571,11 +596,15 @@ func (mem *CListMempool) GetZeroDataMinHeight() int64 {
 	return btcH
 }
 
-func (mem *CListMempool) BrczeroDataMaxHeight() int64 {
+func (mem *CListMempool) GetZeroDataMaxHeight() int64 {
 	mem.zeroMtx.RLock()
 	defer mem.zeroMtx.RUnlock()
+	return mem.getZeroDataMaxHeight()
+}
+
+func (mem *CListMempool) getZeroDataMaxHeight() int64 {
 	if len(mem.zeroTxs) == 0 {
-		//todo: only for test
+		//todo: start height, only for test
 		return 120
 	}
 	var btcH int64 = 0
@@ -588,14 +617,22 @@ func (mem *CListMempool) BrczeroDataMaxHeight() int64 {
 }
 
 func (mem *CListMempool) SetZeroDataDelivered(btcH int64, value bool) {
-	mem.zeroMtx.RLock()
-	defer mem.zeroMtx.RUnlock()
+	mem.zeroMtx.Lock()
+	defer mem.zeroMtx.Unlock()
+	mem.setZeroDataDelivered(btcH, value)
+}
+
+func (mem *CListMempool) setZeroDataDelivered(btcH int64, value bool) {
 	mem.zeroTxs[btcH].Delivered = value
 }
 
 func (mem *CListMempool) DelZeroDataByBTCHeight(btcHeight int64) {
 	mem.zeroMtx.Lock()
 	defer mem.zeroMtx.Unlock()
+	mem.delZeroDataByBTCHeight(btcHeight)
+}
+
+func (mem *CListMempool) delZeroDataByBTCHeight(btcHeight int64) {
 	if _, ok := mem.zeroTxs[btcHeight]; ok {
 		delete(mem.zeroTxs, btcHeight)
 	}

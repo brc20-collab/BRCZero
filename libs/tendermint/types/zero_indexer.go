@@ -1,15 +1,18 @@
 package types
 
 type ZeroRequestTx struct {
-	HexRlpEncodeTx string `json:"hex_rlp_encode_tx"`
-	BTCFee         string `json:"btc_fee"`
+	ProtocolName       string `json:"protocol_name"`
+	Inscription        string `json:"inscription"`
+	InscriptionContext string `json:"inscription_context"`
+	BTCTxid            string `json:"btc_txid"`
+	BTCFee             string `json:"btc_fee"`
 }
 
 type ZeroResponseData struct {
 	BTCHeight        string          `json:"block_height"`
 	BTCBlockHash     string          `json:"block_hash"`
 	BTCPrevBlockHash string          `json:"prev_block_hash"`
-	IsConfirmed      bool            `json:"is_confirmed"`
+	BTCBlockTime     string          `json:"block_time"`
 	ZeroTxs          []ZeroRequestTx `json:"txs"`
 }
 

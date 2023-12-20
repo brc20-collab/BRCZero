@@ -31,7 +31,7 @@ run() {
       --dynamic-gp-mode=2 \
       --consensus.timeout_commit 4000ms \
       --consensus.create_empty_blocks=false \
-      --consensus.start_btc_height=779831 \
+      --consensus.start_btc_height=120 \
       --tree-enable-async-commit=false \
       --enable-gid \
       --fast-query=false \

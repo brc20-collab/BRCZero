@@ -29,7 +29,7 @@ const (
 
 	maxActiveIDs = math.MaxUint16
 
-	PullZeroDataInterval = time.Second * 5
+	PullZeroDataInterval = time.Second * 10
 	BtcConfirmedGap      = 6
 )
 

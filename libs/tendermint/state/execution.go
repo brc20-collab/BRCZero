@@ -179,10 +179,10 @@ func (blockExec *BlockExecutor) CreateProposalBlock(
 	txs := make([]types.Tx, 0)
 	btcBlockHash := ""
 	btcHeight := latestBH + 1
-	if brczeroData, err := blockExec.mempool.GetZeroDataByBTCHeight(btcHeight); err == nil {
-		if brczeroData.IsConfirmed {
-			txs = brczeroData.Txs
-			btcBlockHash = brczeroData.BTCBlockHash
+	if zeroData, err := blockExec.mempool.GetZeroDataByBTCHeight(btcHeight); err == nil {
+		if zeroData.IsConfirmed {
+			txs = zeroData.Txs
+			btcBlockHash = zeroData.BTCBlockHash
 		} else {
 			blockExec.logger.Error("")
 		}
