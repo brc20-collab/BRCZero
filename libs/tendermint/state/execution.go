@@ -184,7 +184,7 @@ func (blockExec *BlockExecutor) CreateProposalBlock(
 			txs = zeroData.Txs
 			btcBlockHash = zeroData.BTCBlockHash
 		} else {
-			blockExec.logger.Error("")
+			blockExec.logger.Error(fmt.Sprintf("zero data have not been confirmed in height %d!", btcHeight))
 		}
 	}
 	blockExec.mempool.DelAllPrevZeroDataBeforeHeight(btcHeight)
