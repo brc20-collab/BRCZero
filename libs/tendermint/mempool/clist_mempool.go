@@ -119,6 +119,9 @@ type CListMempool struct {
 	gpo *Oracle
 
 	info pguInfo
+
+	pullTicker        *time.Ticker
+	fastsyncEndHeight int64
 }
 
 type pguInfo struct {
@@ -154,21 +157,22 @@ func NewCListMempool(
 	gpoConfig := NewGPOConfig(cfg.DynamicConfig.GetDynamicGpWeight(), cfg.DynamicConfig.GetDynamicGpCheckBlocks())
 	gpo := NewOracle(gpoConfig)
 	mempool := &CListMempool{
-		config:        config,
-		proxyAppConn:  proxyAppConn,
-		height:        height,
-		recheckCursor: nil,
-		recheckEnd:    nil,
-		eventBus:      types.NopEventBus{},
-		logger:        log.NewNopLogger(),
-		pguLogger:     log.NewNopLogger(),
-		metrics:       NopMetrics(),
-		txs:           txQueue,
-		zeroTxs:       make(map[int64]*types.ZeroData),
-		zeroReorgChan: make(chan int64),
-		simQueue:      make(chan *mempoolTx, 100000),
-		gpo:           gpo,
-		btcHeight:     latestBTCHeight,
+		config:            config,
+		proxyAppConn:      proxyAppConn,
+		height:            height,
+		recheckCursor:     nil,
+		recheckEnd:        nil,
+		eventBus:          types.NopEventBus{},
+		logger:            log.NewNopLogger(),
+		pguLogger:         log.NewNopLogger(),
+		metrics:           NopMetrics(),
+		txs:               txQueue,
+		zeroTxs:           make(map[int64]*types.ZeroData),
+		zeroReorgChan:     make(chan int64),
+		simQueue:          make(chan *mempoolTx, 100000),
+		gpo:               gpo,
+		btcHeight:         latestBTCHeight,
+		fastsyncEndHeight: 820000, //todo need use query crawler to init it when start
 	}
 
 	if config.PendingRemoveEvent {
@@ -200,7 +204,7 @@ func NewCListMempool(
 		mempool.consumePendingTxQueue = make(chan *AddressNonce, mempool.consumePendingTxQueueLimit)
 		go mempool.consumePendingTxQueueJob()
 	}
-
+	mempool.pullTicker = time.NewTicker(PullZeroDataInterval)
 	go mempool.pullZeroDataRoutine()
 
 	return mempool
@@ -424,11 +428,14 @@ func (mem *CListMempool) ZeroReorgChan() <-chan int64 {
 }
 
 func (mem *CListMempool) pullZeroDataRoutine() {
-	ticker := time.NewTicker(PullZeroDataInterval)
-	for range ticker.C {
-		mem.zeroMtx.Lock()
-		mem.pullZeroDataTask()
-		mem.zeroMtx.Unlock()
+	for {
+		select {
+		case <-mem.pullTicker.C:
+			mem.zeroMtx.Lock()
+			mem.pullZeroDataTask()
+			mem.zeroMtx.Unlock()
+		default:
+		}
 	}
 }
 
@@ -454,11 +461,17 @@ func (mem *CListMempool) pullZeroDataTask() {
 		// 1. err!=nil means the early data has been ApplyBlock and clear
 		// 2. pendingConfirmedH data has been confirmed, i.e., reorg is impossible
 		// so the data should be added to mempool
-		mem.logger.Error(fmt.Sprintf("insert zero data at height: %d, btcBlockHash: %s", insertHeight, btcBlockHash))
+		mem.logger.Debug(fmt.Sprintf("insert zero data at height: %d, btcBlockHash: %s", insertHeight, btcBlockHash))
 		mem.insertZeroData(insertHeight, btcBlockHash, txs)
 		return
 	}
 
+	if insertHeight <= mem.fastsyncEndHeight {
+		mem.confirmZeroDataByBTCHeight(pendingConfirmedH)
+		mem.insertZeroData(insertHeight, btcBlockHash, txs)
+		//fast sync mode 500ms pulldata
+		mem.pullTicker.Reset(time.Millisecond * 500)
+	}
 	_, curBtcBlockHash, err := mem.pullZeroData(pendingConfirmedH)
 	// judge if the pendingConfirmedH should be confirmed
 	if err != nil {
@@ -466,7 +479,7 @@ func (mem *CListMempool) pullZeroDataTask() {
 	} else if pendingConfirmedData.BTCBlockHash == curBtcBlockHash {
 		// if the btcBlockHash is same from plugin and mempool, the height should be confirmed and the new data should be added to mempool
 		mem.confirmZeroDataByBTCHeight(pendingConfirmedH)
-		mem.logger.Error(fmt.Sprintf("insert zero data at height: %d, btcBlockHash: %s", insertHeight, btcBlockHash))
+		mem.logger.Debug(fmt.Sprintf("insert zero data at height: %d, btcBlockHash: %s", insertHeight, btcBlockHash))
 		mem.insertZeroData(insertHeight, btcBlockHash, txs)
 	} else {
 		// if there is different btcBlockHash of this height, it should reorg
