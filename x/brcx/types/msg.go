@@ -87,6 +87,12 @@ func (msg MsgBascisX) GetSignBytes() []byte {
 
 // ValidateBasic validity check for the AnteHandler
 func (msg MsgBascisX) ValidateBasic() error {
+	if len(msg.ProtocolName) == 0 {
+		return ErrValidateBasic("msg.ProtocolName is empty")
+	}
+	if len(msg.BTCTxid) == 0 {
+		return ErrValidateBasic("msg.BTCTxid is empty")
+	}
 	return nil
 }
 
