@@ -471,6 +471,7 @@ func (mem *CListMempool) pullZeroDataTask() {
 		mem.insertZeroData(insertHeight, btcBlockHash, txs)
 		//fast sync mode 500ms pulldata
 		mem.pullTicker.Reset(time.Millisecond * 500)
+		return
 	}
 	_, curBtcBlockHash, err := mem.pullZeroData(pendingConfirmedH)
 	// judge if the pendingConfirmedH should be confirmed
