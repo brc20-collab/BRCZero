@@ -32,6 +32,7 @@ run() {
       --consensus.timeout_commit 4000ms \
       --consensus.create_empty_blocks=false \
       --consensus.start_btc_height=120 \
+      --zero-data-url="http://0.0.0.0/api/v1/crawler/zeroindexer/" \
       --tree-enable-async-commit=false \
       --enable-gid \
       --fast-query=false \
