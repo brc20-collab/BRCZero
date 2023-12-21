@@ -4,10 +4,12 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"math/big"
+
+	"github.com/ethereum/go-ethereum/common"
+
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/x/brcx/types"
-	"github.com/ethereum/go-ethereum/common"
-	"math/big"
 )
 
 func handleBascisXInscription(ctx sdk.Context, msg MsgBascisX, k Keeper, info *ResultInfo) (*sdk.Result, error) {
@@ -25,7 +27,7 @@ func handleBascisXInscription(ctx sdk.Context, msg MsgBascisX, k Keeper, info *R
 		}
 		return result, nil
 	default:
-		return handleBascisXEntryPoint(ctx, msg, msg.ProtocolName, k, info)
+		return handleBasicXEntryPoint(ctx, msg, msg.ProtocolName, k, info)
 	}
 }
 
@@ -85,7 +87,7 @@ func handleBascisXManageContract(ctx sdk.Context, msg MsgBascisX, k Keeper, info
 	return &result, nil
 }
 
-func handleBascisXEntryPoint(ctx sdk.Context, msg MsgBascisX, protocol string, k Keeper, info *ResultInfo) (*sdk.Result, error) {
+func handleBasicXEntryPoint(ctx sdk.Context, msg MsgBascisX, protocol string, k Keeper, info *ResultInfo) (*sdk.Result, error) {
 	from := common.BytesToAddress(k.GetBRCXAddress().Bytes())
 	info.EvmCaller = from.String()
 	to, err := k.GetContractAddrByProtocol(ctx, protocol)
