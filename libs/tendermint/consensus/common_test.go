@@ -193,7 +193,7 @@ func (vss ValidatorStubsByAddress) Swap(i, j int) {
 	vss[j].Index = j
 }
 
-//-------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------
 // Functions for transitioning the consensus state
 // timeoutRoutine: receive requests for timeouts on tickChan and fire timeouts on tockChan
 // receiveRoutine: serializes processing of proposoals, block parts, votes; coordinates state transitions
@@ -405,7 +405,7 @@ func newStateWithConfigAndBlockStore(
 	proxyAppConnCon := abcicli.NewLocalClient(mtx, app)
 
 	// Make Mempool
-	mempool := mempl.NewCListMempool(thisConfig.Mempool, proxyAppConnMem, 0)
+	mempool := mempl.NewCListMempool(thisConfig.Mempool, proxyAppConnMem, 0, 0)
 	mempool.SetLogger(log.TestingLogger().With("module", "mempool"))
 	if thisConfig.Consensus.WaitForTxs() {
 		mempool.EnableTxsAvailable()
@@ -418,7 +418,7 @@ func newStateWithConfigAndBlockStore(
 	stateDB := blockDB
 	sm.SaveState(stateDB, state) //for save height 1's validators info
 	blockExec := sm.NewBlockExecutor(stateDB, log.TestingLogger(), proxyAppConnCon, mempool, evpool)
-	cs := NewState(thisConfig.Consensus, state, blockExec, blockStore, mempool, evpool)
+	cs := NewState(thisConfig.Consensus, state, blockExec, blockStore, mempool, evpool, 0)
 	cs.SetLogger(log.TestingLogger().With("module", "consensus"))
 	cs.SetPrivValidator(pv)
 
@@ -839,8 +839,8 @@ func (m *mockTicker) Stop() error {
 	return nil
 }
 
-//add noop Reset function for TimeoutTicker interface
-//need to implement when used
+// add noop Reset function for TimeoutTicker interface
+// need to implement when used
 func (m *mockTicker) Reset() error {
 	return nil
 }

@@ -141,6 +141,7 @@ func NewCListMempool(
 	config *cfg.MempoolConfig,
 	proxyAppConn proxy.AppConnMempool,
 	height int64,
+	latestBTCHeight int64,
 	options ...CListMempoolOption,
 ) *CListMempool {
 	var txQueue ITransactionQueue
@@ -167,6 +168,7 @@ func NewCListMempool(
 		zeroReorgChan: make(chan int64),
 		simQueue:      make(chan *mempoolTx, 100000),
 		gpo:           gpo,
+		btcHeight:     latestBTCHeight,
 	}
 
 	if config.PendingRemoveEvent {
@@ -604,8 +606,7 @@ func (mem *CListMempool) GetZeroDataMaxHeight() int64 {
 
 func (mem *CListMempool) getZeroDataMaxHeight() int64 {
 	if len(mem.zeroTxs) == 0 {
-		//todo: start height, only for test
-		return 120
+		return atomic.LoadInt64(&mem.btcHeight)
 	}
 	var btcH int64 = 0
 	for h, _ := range mem.zeroTxs {

@@ -359,12 +359,13 @@ func onlyValidatorIsUs(state sm.State, pubKey crypto.PubKey) bool {
 }
 
 func createMempoolAndMempoolReactor(config *cfg.Config, proxyApp proxy.AppConns,
-	state sm.State, memplMetrics *mempl.Metrics, logger log.Logger) (*mempl.Reactor, *mempl.CListMempool) {
+	state sm.State, memplMetrics *mempl.Metrics, logger log.Logger, latestBTCHeight int64) (*mempl.Reactor, *mempl.CListMempool) {
 
 	mempool := mempl.NewCListMempool(
 		config.Mempool,
 		proxyApp.Mempool(),
 		state.LastBlockHeight,
+		latestBTCHeight,
 		mempl.WithMetrics(memplMetrics),
 		mempl.WithPreCheck(sm.TxPreCheck(state)),
 		mempl.WithPostCheck(sm.TxPostCheck(state)),
@@ -427,7 +428,8 @@ func createConsensusReactor(config *cfg.Config,
 	fastSync bool,
 	autoFastSync bool,
 	eventBus *types.EventBus,
-	consensusLogger log.Logger) (*consensus.Reactor, *consensus.State) {
+	consensusLogger log.Logger,
+	latestBTCHeight int64) (*consensus.Reactor, *consensus.State) {
 
 	consensusState := cs.NewState(
 		config.Consensus,
@@ -436,6 +438,7 @@ func createConsensusReactor(config *cfg.Config,
 		blockStore,
 		mempool,
 		evidencePool,
+		latestBTCHeight,
 		cs.StateMetrics(csMetrics),
 	)
 	consensusState.SetLogger(consensusLogger)
@@ -655,7 +658,10 @@ func NewNode(config *cfg.Config,
 	// Handshake, and may have other modifications as well (ie. depending on
 	// what happened during block replay).
 	state = sm.LoadState(stateDB)
-
+	latestBTCHeight := int64(config.Consensus.StartBtcHeight)
+	if btcmeta, err := blockStore.LoadBTCMeta(state.LastBlockHeight); err == nil {
+		latestBTCHeight = btcmeta.BTCHeight
+	}
 	// If an address is provided, listen on the socket for a connection from an
 	// external signing process.
 	if config.PrivValidatorListenAddr != "" {
@@ -681,7 +687,7 @@ func NewNode(config *cfg.Config,
 	csMetrics, p2pMetrics, memplMetrics, smMetrics := metricsProvider(genDoc.ChainID)
 
 	// Make MempoolReactor
-	mempoolReactor, mempool := createMempoolAndMempoolReactor(config, proxyApp, state, memplMetrics, logger)
+	mempoolReactor, mempool := createMempoolAndMempoolReactor(config, proxyApp, state, memplMetrics, logger, latestBTCHeight)
 	mempoolReactor.SetNodeKey(nodeKey)
 	// Make Evidence Reactor
 	evidenceReactor, evidencePool, err := createEvidenceReactor(config, dbProvider, stateDB, logger)
@@ -712,7 +718,7 @@ func NewNode(config *cfg.Config,
 	// Make ConsensusReactor
 	consensusReactor, consensusState := createConsensusReactor(
 		config, state, blockExec, blockStore, mempool, evidencePool,
-		privValidator, csMetrics, fastSync, autoFastSync, eventBus, consensusLogger,
+		privValidator, csMetrics, fastSync, autoFastSync, eventBus, consensusLogger, latestBTCHeight,
 	)
 
 	nodeInfo, err := makeNodeInfo(config, nodeKey, txIndexer, genDoc, state)
@@ -864,13 +870,17 @@ func NewLRPNode(config *cfg.Config,
 	consensusLogger := logger.With("module", "consensus")
 
 	state = sm.LoadState(stateDB)
-	mempoolReactor, mempool := createMempoolAndMempoolReactor(config, proxyApp, state, nil, logger)
+	latestBTCHeight := int64(config.Consensus.StartBtcHeight)
+	if btcmeta, err := blockStore.LoadBTCMeta(state.LastBlockHeight); err == nil {
+		latestBTCHeight = btcmeta.BTCHeight
+	}
+	mempoolReactor, mempool := createMempoolAndMempoolReactor(config, proxyApp, state, nil, logger, latestBTCHeight)
 	mempoolReactor.SetNodeKey(nodeKey)
 
 	// Make ConsensusReactor
 	consensusReactor, consensusState := createConsensusReactor(
 		config, state, nil, blockStore, nil, nil,
-		nil, nil, false, false, nil, consensusLogger,
+		nil, nil, false, false, nil, consensusLogger, latestBTCHeight,
 	)
 
 	nodeInfo, err := makeNodeInfo(config, nodeKey, nil, genDoc, state)

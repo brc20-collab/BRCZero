@@ -185,6 +185,7 @@ func NewState(
 	blockStore sm.BlockStore,
 	txNotifier txNotifier,
 	evpool evidencePool,
+	latestBTCHeight int64,
 	options ...StateOption,
 ) *State {
 	cs := &State{
@@ -208,6 +209,7 @@ func NewState(
 		vcHeight:         make(map[int64]string),
 		taskResultChan:   make(chan *preBlockTaskRes, 1),
 		preBlockTaskChan: make(chan *preBlockTask, 1),
+		latestBTCHeight:  latestBTCHeight,
 	}
 	// set function defaults (may be overwritten before calling Start)
 	cs.decideProposal = cs.defaultDecideProposal
@@ -227,10 +229,7 @@ func NewState(
 	for _, option := range options {
 		option(cs)
 	}
-	cs.latestBTCHeight = int64(config.StartBtcHeight)
-	if btcmeta, err := blockStore.LoadBTCMeta(state.LastBlockHeight); err == nil {
-		cs.latestBTCHeight = btcmeta.BTCHeight
-	}
+
 	return cs
 }
 

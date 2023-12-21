@@ -130,6 +130,7 @@ func NewMockClient(chainId string, chain apptesting.TestChainI, app abci.Applica
 		config.Mempool,
 		proxyApp.Mempool(),
 		mc.state.LastBlockHeight,
+		mc.state.LastBlockHeight,
 	)
 	mc.env.Mempool = mempool
 	mc.env.PubKey = chain.SenderAccount().GetPubKey()
