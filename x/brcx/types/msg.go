@@ -100,6 +100,7 @@ func Decoder(_ codec.CdcAbstraction, txBytes []byte) (tx sdk.Tx, err error) {
 		// TODO, It may not be common here，This may not be universal because the inscription_context of non-ordinals protocol will also be decoded by json.
 		if err = json.Unmarshal([]byte(zeroTx.InscriptionContext), &context); err == nil {
 			msgInscription.Inscription = zeroTx.Inscription
+			msgInscription.InscriptionContext = context
 			// TODO 50000000 is tmp
 			fee := authtypes.NewStdFee(50000000, nil)
 			return authtypes.NewStdTx([]sdk.Msg{msgInscription}, fee, nil, ""), nil
