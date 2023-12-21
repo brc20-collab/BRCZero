@@ -313,7 +313,7 @@ func (cs *State) unmarshalBlock() error {
 	_, err = cdc.UnmarshalBinaryLengthPrefixedReader(
 		pbpReader,
 		&cs.ProposalBlock,
-		cs.state.ConsensusParams.Block.MaxBytes*10,
+		cs.state.ConsensusParams.Block.MaxBytes*1000,
 	)
 	return err
 }

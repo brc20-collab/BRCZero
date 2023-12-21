@@ -36,7 +36,23 @@ func NewHandler(k Keeper) sdk.Handler {
 			result.Events = append(result.Events, ctx.EventManager().Events()...)
 			result.Info = buff
 			return result, err
-
+		case types.MsgBascisX:
+			ctx.EventManager().EmitEvent(
+				sdk.NewEvent(
+					EventTypeBRCX,
+					sdk.NewAttribute(AttributeBTCTXID, msg.BTCTxid),
+				),
+			)
+			info := types.ResultInfo{BTCTxid: msg.BTCTxid}
+			result, err := handleBascisXInscription(ctx, msg, k, &info)
+			// json.Marshal can not be error. even if error it hash a few influence with execute of transaction.
+			buff, _ := json.Marshal(info)
+			if err != nil {
+				return &sdk.Result{Events: ctx.EventManager().Events(), Info: buff}, err
+			}
+			result.Events = append(result.Events, ctx.EventManager().Events()...)
+			result.Info = buff
+			return result, err
 		default:
 			return &sdk.Result{Events: ctx.EventManager().Events()}, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized %s message type: %T", ModuleName, msg)
 		}
