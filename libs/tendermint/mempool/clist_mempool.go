@@ -482,7 +482,7 @@ func (mem *CListMempool) pullZeroData(btcHeight int64) ([]types.Tx, string, erro
 	// e.g., http://127.0.0.1:81/api/v1/crawler/zeroindexer/
 	//baseUrl := mem.config.ZeroPluginUrl
 	// todo: only for test
-	baseUrl := "http://0.0.0.0/api/v1/crawler/zeroindexer/"
+	baseUrl := cfg.DynamicConfig.GetZeroDataUrl()
 	heightStr := strconv.FormatInt(btcHeight, 10)
 	pUrl := fmt.Sprintf("%s%s", baseUrl, heightStr)
 
