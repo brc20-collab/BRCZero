@@ -44,7 +44,7 @@ func GetEVMABIConfig(data []byte) abi.ABI {
 }
 
 func GetBascisXEntryPointInput(context string, inscription string) ([]byte, error) {
-	data, err := EvmABI.Pack(BrczeroCalledMethodName, context, inscription)
+	data, err := BascisXABI.Pack(BrczeroCalledMethodName, context, inscription)
 	if err != nil {
 		return nil, err
 	}

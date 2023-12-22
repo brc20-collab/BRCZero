@@ -94,16 +94,17 @@ func handleBasicXEntryPoint(ctx sdk.Context, msg MsgBascisX, protocol string, k 
 	if err != nil {
 		return nil, ErrGetContractAddress(fmt.Sprintf("get contract address by protocol failed: %s", err))
 	}
+
 	info.EvmTo = to.String()
 	input, err := types.GetBascisXEntryPointInput(msg.Context, msg.Inscription)
 	if err != nil {
-		return nil, ErrPackInput(fmt.Sprintf("pack entry point input failed: %s", err))
+		return nil, ErrPackInput(fmt.Sprintf("pack basicX entry point input failed: %s", err))
 	}
 
 	info.CallData = hex.EncodeToString(input)
 	executionResult, contractResult, err := k.CallEvm(ctx, from, &to, big.NewInt(0), input, info)
 	if err != nil {
-		return nil, ErrCallEntryPoint(fmt.Sprintf("call entryPoint failed: %s", err))
+		return nil, ErrCallEntryPoint(fmt.Sprintf("call basicX entryPoint failed: %s", err))
 	}
 
 	ctx.EventManager().EmitEvent(sdk.NewEvent(types.EventTypeEntryPoint, sdk.NewAttribute(AttributeEvmOutput, hex.EncodeToString(contractResult.Ret))))
