@@ -141,6 +141,52 @@ func pruneAllCmd(ctx *server.Context) *cobra.Command {
 	return cmd
 }
 
+func pruneAllFromTopCmd(ctx *server.Context) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "all",
+		Short: "Compact both application states and blocks",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			config := ctx.Config
+			config.SetRoot(viper.GetString(flags.FlagHome))
+			reorgHeight := viper.GetInt64(flags.FlagHeight)
+
+			if err := checkBackend(dbm.BackendType(ctx.Config.DBBackend)); err != nil {
+				return err
+			}
+
+			blockStoreDB := initDB(config, blockDBName)
+			stateDB := initDB(config, stateDBName)
+			appDB := initDB(config, appDBName)
+
+			if viper.GetBool(flagPruning) {
+				baseHeight, topHeight := getBlockBaseAndTop(blockStoreDB)
+
+				log.Println("--------- pruning start... ---------")
+				wg.Add(4)
+				go pruneBlocksFromTop(blockStoreDB, baseHeight, reorgHeight)
+				go pruneStates(stateDB, reorgHeight, topHeight)
+				go pruneAppReorg(appDB, reorgHeight)
+				go pruneMptReorg(uint64(reorgHeight))
+				wg.Wait()
+				log.Println("--------- pruning end!!!   ---------")
+			}
+
+			log.Println("--------- compact start... ---------")
+			wg.Add(4)
+			go compactDB(blockStoreDB, blockDBName, dbm.BackendType(ctx.Config.DBBackend))
+			go compactDB(stateDB, stateDBName, dbm.BackendType(ctx.Config.DBBackend))
+			go compactDB(appDB, appDBName, dbm.BackendType(ctx.Config.DBBackend))
+			go compactMpt()
+			wg.Wait()
+			log.Println("--------- compact end!!!   ---------")
+
+			return nil
+		},
+	}
+
+	return cmd
+}
+
 func pruneAppCmd(ctx *server.Context) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "state",
@@ -377,6 +423,26 @@ func pruneBlocks(blockStoreDB dbm.DB, baseHeight, retainHeight int64) {
 	log.Printf("Prune blocks done in %v \n", time.Since(start))
 }
 
+func pruneBlocksFromTop(blockStoreDB dbm.DB, baseHeight, retainHeight int64) {
+	defer wg.Done()
+
+	log.Printf("Prune blocks [%d,%d)...", baseHeight, retainHeight)
+	if retainHeight <= baseHeight {
+		return
+	}
+
+	baseHeightBefore, sizeBefore := getBlockInfo(blockStoreDB)
+	start := time.Now()
+	_, err := store.NewBlockStore(blockStoreDB).DeleteBlocksFromTop(retainHeight)
+	if err != nil {
+		panic(fmt.Errorf("failed to prune block store: %w", err))
+	}
+
+	baseHeightAfter, sizeAfter := getBlockInfo(blockStoreDB)
+	log.Printf("Block db info [baseHeight,size]: [%d,%d] --> [%d,%d]\n", baseHeightBefore, sizeBefore, baseHeightAfter, sizeAfter)
+	log.Printf("Prune blocks done in %v \n", time.Since(start))
+}
+
 // pruneStates deletes states between the given heights (including from, excluding to).
 func pruneStates(stateDB dbm.DB, from, to int64) {
 	defer wg.Done()
@@ -428,6 +494,61 @@ func pruneApp(appDB dbm.DB, from, to int64) {
 
 	for _, v := range versions {
 		if v >= to || v < from {
+			newVersions = append(newVersions, v)
+			continue
+		}
+		deleteVersions = append(deleteVersions, v)
+	}
+	log.Printf("Prune application: Versions=%v, PruneVersions=%v", len(versions)+len(pruneHeights), len(deleteVersions))
+
+	keysNumBefore, kvSizeBefore := calcKeysNum(appDB)
+	start := time.Now()
+	for key, store := range rs.GetStores() {
+		if store.GetStoreType() == types.StoreTypeIAVL {
+			// If the store is wrapped with an inter-block cache, we must first unwrap
+			// it to get the underlying IAVL store.
+			store = rs.GetCommitKVStore(key)
+
+			if err := store.(*iavl.Store).DeleteVersions(deleteVersions...); err != nil {
+				log.Printf("failed to delete version: %s", err)
+			}
+		}
+	}
+
+	rs.FlushPruneHeights(newPruneHeights, newVersions)
+
+	keysNumAfter, kvSizeAfter := calcKeysNum(appDB)
+	log.Printf("Application db key info [keysNum,kvSize]: [%d,%d] --> [%d,%d]\n", keysNumBefore, kvSizeBefore, keysNumAfter, kvSizeAfter)
+	log.Printf("Prune application done in %v \n", time.Since(start))
+}
+
+func pruneAppReorg(appDB dbm.DB, from int64) {
+	defer wg.Done()
+
+	log.Printf("Prune applcation [%d,%d)...", from)
+
+	rs := initAppStore(appDB)
+
+	versions := rs.GetVersions()
+	if len(versions) == 0 {
+		return
+	}
+	pruneHeights := rs.GetPruningHeights()
+
+	newVersions := make([]int64, 0)
+	newPruneHeights := make([]int64, 0)
+	deleteVersions := make([]int64, 0)
+
+	for _, v := range pruneHeights {
+		if v < from {
+			newPruneHeights = append(newPruneHeights, v)
+			continue
+		}
+		deleteVersions = append(deleteVersions, v)
+	}
+
+	for _, v := range versions {
+		if v < from {
 			newVersions = append(newVersions, v)
 			continue
 		}
@@ -523,6 +644,13 @@ func getBlockInfo(blockStoreDB dbm.DB) (baseHeight, size int64) {
 	return
 }
 
+func getBlockBaseAndTop(blockStoreDB dbm.DB) (baseHeight, topHeight int64) {
+	blockStore := store.NewBlockStore(blockStoreDB)
+	baseHeight = blockStore.Base()
+	topHeight = blockStore.Height()
+	return
+}
+
 func queryCmd(ctx *server.Context) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "query",
@@ -598,6 +726,19 @@ func pruneMpt() {
 	panicError(err)
 	latestHeight := binary.BigEndian.Uint64(heightBytes)
 	hhash := sdk.Uint64ToBigEndian(latestHeight)
+	rootHashValue, err := accMptDb.TrieDB().DiskDB().Get(append(mpt.KeyPrefixAccRootMptHash, hhash...))
+	rootHash := ethcmn.BytesToHash(rootHashValue)
+	p, err := pruner.NewPrunerCustom(mpt.GetEthDB(), "", "", 256, rootHash, base.AccountStateRootRetriever{})
+	panicError(err)
+	log.Printf("Prune mpt %v...\n", rootHash.String())
+	err = p.Prune(rootHash)
+	panicError(err)
+}
+
+func pruneMptReorg(height uint64) {
+	defer wg.Done()
+	accMptDb := mpt.InstanceOfMptStore()
+	hhash := sdk.Uint64ToBigEndian(height)
 	rootHashValue, err := accMptDb.TrieDB().DiskDB().Get(append(mpt.KeyPrefixAccRootMptHash, hhash...))
 	rootHash := ethcmn.BytesToHash(rootHashValue)
 	p, err := pruner.NewPrunerCustom(mpt.GetEthDB(), "", "", 256, rootHash, base.AccountStateRootRetriever{})
