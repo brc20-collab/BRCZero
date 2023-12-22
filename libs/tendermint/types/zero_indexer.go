@@ -9,10 +9,10 @@ type ZeroRequestTx struct {
 }
 
 type ZeroResponseData struct {
-	BTCHeight        string          `json:"block_height"`
+	BTCHeight        uint64          `json:"block_height"`
 	BTCBlockHash     string          `json:"block_hash"`
 	BTCPrevBlockHash string          `json:"prev_block_hash"`
-	BTCBlockTime     string          `json:"block_time"`
+	BTCBlockTime     uint32          `json:"block_time"`
 	ZeroTxs          []ZeroRequestTx `json:"txs"`
 }
 
