@@ -3,6 +3,7 @@ package rpctest
 import (
 	"context"
 	"fmt"
+	dbm "github.com/brc20-collab/brczero/libs/tm-db"
 	"os"
 	"path/filepath"
 	"strings"
@@ -172,7 +173,8 @@ func NewTendermint(app abci.Application, opts *Options) *nm.Node {
 		nm.DefaultGenesisDocProviderFunc(config),
 		nm.DefaultDBProvider,
 		nm.DefaultMetricsProvider(config.Instrumentation),
-		logger)
+		logger,
+		dbm.NewMemDB())
 	if err != nil {
 		panic(err)
 	}

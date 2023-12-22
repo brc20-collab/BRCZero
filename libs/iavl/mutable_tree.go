@@ -915,9 +915,9 @@ func (tree *MutableTree) deleteVersionPreCheck(version int64, versions map[int64
 	if version == 0 {
 		return errors.New("version must be greater than 0")
 	}
-	if version == tree.version {
-		return errors.Errorf("cannot delete latest saved version (%d)", version)
-	}
+	//if version == tree.version {
+	//	return errors.Errorf("cannot delete latest saved version (%d)", version)
+	//}
 	if _, ok := versions[version]; !ok {
 		var logStr string
 		for v, isTrue := range versions {

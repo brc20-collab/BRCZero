@@ -108,6 +108,7 @@ func DefaultNewNode(config *cfg.Config, logger log.Logger) (*Node, error) {
 		DefaultDBProvider,
 		DefaultMetricsProvider(config.Instrumentation),
 		logger,
+		dbm.NewMemDB(),
 	)
 }
 
@@ -203,6 +204,7 @@ func initDBs(config *cfg.Config, dbProvider DBProvider) (blockStore *store.Block
 		return
 	}
 	blockStore = store.NewBlockStore(blockStoreDB)
+	fmt.Printf("===node=======[%d ~ %d]\n", blockStore.Base(), blockStore.Height())
 
 	stateDB, err = dbProvider(&DBContext{"state", config})
 	if err != nil {
@@ -609,12 +611,15 @@ func NewNode(config *cfg.Config,
 	dbProvider DBProvider,
 	metricsProvider MetricsProvider,
 	logger log.Logger,
+	appDB dbm.DB,
 	options ...Option) (*Node, error) {
 
 	blockStore, stateDB, err := initDBs(config, dbProvider)
 	if err != nil {
 		return nil, err
 	}
+
+	handleReorg(blockStore, appDB, config)
 
 	state, genDoc, err := LoadStateFromDBOrGenesisDocProvider(stateDB, genesisDocProvider)
 	if err != nil {

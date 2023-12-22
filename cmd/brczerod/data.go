@@ -101,6 +101,7 @@ func pruneAllCmd(ctx *server.Context) *cobra.Command {
 		Use:   "all",
 		Short: "Compact both application states and blocks",
 		RunE: func(cmd *cobra.Command, args []string) error {
+
 			config := ctx.Config
 			config.SetRoot(viper.GetString(flags.FlagHome))
 
@@ -397,6 +398,7 @@ func initDB(config *cfg.Config, dbName string) dbm.DB {
 	}
 
 	db, err := node.DefaultDBProvider(&node.DBContext{dbName, config})
+
 	panicError(err)
 
 	return db
@@ -404,6 +406,8 @@ func initDB(config *cfg.Config, dbName string) dbm.DB {
 
 // pruneBlocks deletes blocks between the given heights (including from, excluding to).
 func pruneBlocks(blockStoreDB dbm.DB, baseHeight, retainHeight int64) {
+	blockStore := store.NewBlockStore(blockStoreDB)
+	fmt.Printf("==========[%d ~ %d]\n", blockStore.Base(), blockStore.Height())
 	defer wg.Done()
 
 	log.Printf("Prune blocks [%d,%d)...", baseHeight, retainHeight)
