@@ -91,7 +91,11 @@ func (cs *State) defaultDoPrevote(height int64, round int) {
 	}
 
 	if !bytes.Equal(brczeroData.ZeroHash(), cs.ProposalBlock.Txs.ZeroHash()) || brczeroData.BTCBlockHash != cs.ProposalBlock.BtcBlockHash {
-		cs.Logger.Error("BRCZero data not equal!", "BTCHeight", cs.ProposalBlock.BtcHeight, "localORDBlockHash: ", brczeroData.BTCBlockHash, "BTCBlockHash", cs.ProposalBlock.BtcBlockHash)
+		if cs.ProposalBlock.BtcBlockHash == "" {
+			cs.Logger.Error("ProposalBlock.BtcBlockHash is empty!", "BTCHeight")
+		} else {
+			cs.Logger.Error("Zero data not equal!", "BTCHeight", cs.ProposalBlock.BtcHeight, "localORDBlockHash: ", brczeroData.BTCBlockHash, "BTCBlockHash", cs.ProposalBlock.BtcBlockHash)
+		}
 		cs.signAddVote(types.PrevoteType, nil, types.PartSetHeader{})
 		return
 	}
