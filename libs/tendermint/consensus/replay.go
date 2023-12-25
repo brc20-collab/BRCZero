@@ -274,6 +274,8 @@ func (h *Handshaker) Handshake(proxyApp proxy.AppConns) error {
 	h.logger.Info("Completed ABCI Handshake - Tendermint and App are synced",
 		"appHeight", blockHeight, "appHash", fmt.Sprintf("%X", appHash))
 
+	sm.SetIgnoreSmbCheck(false)
+
 	// TODO: (on restart) replay mempool
 
 	return nil

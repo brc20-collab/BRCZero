@@ -24,7 +24,7 @@ func handleReorgBlock(blockStore *store.BlockStore, stateDB, appDB dbm.DB, confi
 	}
 	pruneBlocksFromTop(blockStore, pruneH)
 	log.Println("===========finish prune block!!!===========")
-	pruneStates(stateDB, pruneH, blockStore.Height())
+	//pruneStates(stateDB, pruneH, blockStore.Height())
 	//pruneApp(pruneH, appDB, config)
 }
 
