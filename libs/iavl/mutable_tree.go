@@ -815,7 +815,8 @@ func (tree *MutableTree) SaveVersion(useDeltas bool) ([]byte, int64, TreeDelta, 
 			newHash = tree.WorkingHash()
 		}
 
-		if bytes.Equal(existingHash, newHash) {
+		//if bytes.Equal(existingHash, newHash) {
+		{
 			tree.version = version
 			tree.ImmutableTree = tree.ImmutableTree.clone()
 			tree.lastSaved = tree.ImmutableTree.clone()

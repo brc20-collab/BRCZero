@@ -8,6 +8,7 @@ import (
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/types"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	cfg "github.com/brc20-collab/brczero/libs/tendermint/config"
+	sm "github.com/brc20-collab/brczero/libs/tendermint/state"
 	"github.com/brc20-collab/brczero/libs/tendermint/store"
 	dbm "github.com/brc20-collab/brczero/libs/tm-db"
 	"log"
@@ -16,14 +17,15 @@ import (
 
 var pruneH int64 = 50
 
-func handleReorg(blockStore *store.BlockStore, appDB dbm.DB, config *cfg.Config) {
+func handleReorgBlock(blockStore *store.BlockStore, stateDB, appDB dbm.DB, config *cfg.Config) {
 	log.Printf("start height [%d,%d)...", blockStore.Base(), blockStore.Height())
 	if blockStore.Height() < pruneH {
 		return
 	}
 	pruneBlocksFromTop(blockStore, pruneH)
 	log.Println("===========finish prune block!!!===========")
-	pruneApp(pruneH, appDB, config)
+	pruneStates(stateDB, pruneH, blockStore.Height())
+	//pruneApp(pruneH, appDB, config)
 }
 
 func pruneBlocksFromTop(blockStore *store.BlockStore, retainHeight int64) {
@@ -147,4 +149,44 @@ func calcKeysNum(db dbm.DB) (keys, kvSize uint64) {
 	}
 	iter.Close()
 	return
+}
+
+// pruneStates deletes states between the given heights (including from, excluding to).
+func pruneStates(stateDB dbm.DB, from, to int64) {
+	log.Printf("Prune states [%d,%d)...", from, to)
+	if to <= from {
+		return
+	}
+
+	start := time.Now()
+	if err := sm.PruneStates(stateDB, from, to); err != nil {
+		panic(fmt.Errorf("failed to prune state database: %w", err))
+	}
+
+	log.Printf("Prune states done in %v \n", time.Since(start))
+}
+
+func constructStartState(state sm.State, stateStoreDB dbm.DB, startHeight int64) sm.State {
+	sm.SetIgnoreSmbCheck(true)
+	stateCopy := state.Copy()
+	validators, lastStoredHeight, err := sm.LoadValidatorsWithStoredHeight(stateStoreDB, startHeight+1)
+	lastValidators, err := sm.LoadValidators(stateStoreDB, startHeight)
+	if err != nil {
+		return stateCopy
+	}
+	nextValidators, err := sm.LoadValidators(stateStoreDB, startHeight+2)
+	if err != nil {
+		return stateCopy
+	}
+	consensusParams, err := sm.LoadConsensusParams(stateStoreDB, startHeight+1)
+	if err != nil {
+		return stateCopy
+	}
+	stateCopy.Validators = validators
+	stateCopy.LastValidators = lastValidators
+	stateCopy.NextValidators = nextValidators
+	stateCopy.ConsensusParams = consensusParams
+	stateCopy.LastBlockHeight = startHeight
+	stateCopy.LastHeightValidatorsChanged = lastStoredHeight
+	return stateCopy
 }

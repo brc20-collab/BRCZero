@@ -207,8 +207,8 @@ func (rs *Store) LoadVersionAndUpgrade(ver int64, upgrades *types.StoreUpgrades)
 
 // LoadLatestVersion implements CommitMultiStore.
 func (rs *Store) LoadLatestVersion() error {
-	ver := getLatestVersion(rs.db)
-	return rs.loadVersion(ver, nil)
+	//ver := getLatestVersion(rs.db)
+	return rs.loadVersion(49, nil)
 }
 
 func (rs *Store) GetLatestVersion() int64 {

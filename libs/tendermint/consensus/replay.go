@@ -365,6 +365,7 @@ func (h *Handshaker) ReplayBlocks(
 		panic(fmt.Sprintf("StoreBlockHeight (%d) > StateBlockHeight + 1 (%d)", storeBlockHeight, stateBlockHeight+1))
 	}
 
+	//time.Sleep(time.Second * 20)
 	var err error
 	// Now either store is equal to state, or one ahead.
 	// For each, consider all cases of where the app could be, given app <= store

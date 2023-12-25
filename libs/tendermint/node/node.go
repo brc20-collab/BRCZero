@@ -619,12 +619,14 @@ func NewNode(config *cfg.Config,
 		return nil, err
 	}
 
-	handleReorg(blockStore, appDB, config)
+	handleReorgBlock(blockStore, stateDB, appDB, config)
 
 	state, genDoc, err := LoadStateFromDBOrGenesisDocProvider(stateDB, genesisDocProvider)
 	if err != nil {
 		return nil, err
 	}
+
+	state = constructStartState(state, stateDB, pruneH-1)
 
 	global.SetGlobalHeight(state.LastBlockHeight)
 
