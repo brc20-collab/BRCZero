@@ -43,6 +43,11 @@ var (
 	IsCongested         = false
 )
 
+const (
+	ZeroTxPath        = "/crawler/zeroindexer/"
+	CrawlerHeightPath = "/crawler/height"
+)
+
 //--------------------------------------------------------------------------------
 
 // CListMempool is an ordered in-memory pool for transactions before they are
@@ -172,7 +177,14 @@ func NewCListMempool(
 		simQueue:          make(chan *mempoolTx, 100000),
 		gpo:               gpo,
 		btcHeight:         latestBTCHeight,
-		fastsyncEndHeight: 820000, //todo need use query crawler to init it when start
+		fastsyncEndHeight: 0,
+	}
+
+	crawlerH, err := mempool.pullCrawlerHeight()
+	if err != nil {
+		mempool.logger.Error(fmt.Sprintf("pull crawler height faild: %s", err.Error()))
+	} else if h := int64(crawlerH) - mempool.config.FastSyncHeightGap; h > 0 {
+		mempool.fastsyncEndHeight = h
 	}
 
 	if config.PendingRemoveEvent {
@@ -492,17 +504,52 @@ func (mem *CListMempool) pullZeroDataTask() {
 	}
 }
 
+// pullCrawlerHeight is used for fast sync
+func (mem *CListMempool) pullCrawlerHeight() (uint64, error) {
+	baseUrl := mem.config.ZeroDataUrl
+	hUrl := fmt.Sprintf("%s%s", baseUrl, CrawlerHeightPath)
+
+	res, err := http.Get(hUrl)
+	if err != nil {
+		return 0, fmt.Errorf("get crawler height url %s failed: %s", hUrl, err.Error())
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return 0, fmt.Errorf("read all body failed: %s", err.Error())
+	}
+
+	var apiResp types.ZeroAPIResponse
+	err = json.Unmarshal(body, &apiResp)
+	if err != nil {
+		return 0, fmt.Errorf("json unmarshal api response failed: %s", err.Error())
+	}
+
+	dataJson, err := json.Marshal(apiResp.Data)
+	if err != nil {
+		return 0, fmt.Errorf("json marshal api response data failed: %s", err.Error())
+	}
+
+	var chd types.CrawlerHeightData
+	err = json.Unmarshal(dataJson, &chd)
+	if err != nil {
+		return 0, fmt.Errorf("josn unmarshal unmarshal crawler height data failed")
+	}
+
+	return chd.CrawlerHeight, nil
+}
+
 func (mem *CListMempool) pullZeroData(btcHeight int64) ([]types.Tx, string, error) {
 	// e.g., http://127.0.0.1:81/api/v1/crawler/zeroindexer/
-	//baseUrl := mem.config.ZeroPluginUrl
 	// todo: only for test
-	baseUrl := cfg.DynamicConfig.GetZeroDataUrl()
+	baseUrl := mem.config.ZeroDataUrl
 	heightStr := strconv.FormatInt(btcHeight, 10)
-	pUrl := fmt.Sprintf("%s%s", baseUrl, heightStr)
+	pUrl := fmt.Sprintf("%s%s%s", baseUrl, ZeroTxPath, heightStr)
 
 	res, err := http.Get(pUrl)
 	if err != nil {
-		return nil, "", fmt.Errorf("get protocol url failed: %s", err.Error())
+		return nil, "", fmt.Errorf("get protocol url %s failed: %s", pUrl, err.Error())
 	}
 	defer res.Body.Close()
 
@@ -516,14 +563,25 @@ func (mem *CListMempool) pullZeroData(btcHeight int64) ([]types.Tx, string, erro
 	if err != nil {
 		return nil, "", fmt.Errorf("json unmarshal api response failed: %s", err.Error())
 	}
-	//fmt.Println(apiResp)
-	if apiResp.Data.BTCBlockHash == "" {
+
+	dataJson, err := json.Marshal(apiResp.Data)
+	if err != nil {
+		return nil, "", fmt.Errorf("json marshal api response data failed: %s", err.Error())
+	}
+
+	var zeroRespData types.ZeroResponseData
+	err = json.Unmarshal(dataJson, &zeroRespData)
+	if err != nil {
+		return nil, "", fmt.Errorf("josn unmarshal zero tx response data failed")
+	}
+
+	if zeroRespData.BTCBlockHash == "" {
 		return nil, "", fmt.Errorf("zero data cannot be fetched at height %s", heightStr)
 	}
 
 	txs := make([]types.Tx, 0)
 	//todo: process btcfee
-	for _, tx := range apiResp.Data.ZeroTxs {
+	for _, tx := range zeroRespData.ZeroTxs {
 		txBytes, err := rlp.EncodeToBytes(tx)
 		if err != nil {
 			return nil, "", fmt.Errorf("rlp encode zero tx failed: %s", err.Error())
@@ -531,7 +589,7 @@ func (mem *CListMempool) pullZeroData(btcHeight int64) ([]types.Tx, string, erro
 		txs = append(txs, txBytes)
 	}
 
-	return txs, apiResp.Data.BTCBlockHash, nil
+	return txs, zeroRespData.BTCBlockHash, nil
 }
 
 func (mem *CListMempool) InsertZeroData(btcHeight int64, btcBlockHash string, txs []types.Tx) {

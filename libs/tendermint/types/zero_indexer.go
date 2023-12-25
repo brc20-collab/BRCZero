@@ -8,6 +8,12 @@ type ZeroRequestTx struct {
 	BTCFee             string `json:"btc_fee"`
 }
 
+type ZeroAPIResponse struct {
+	Code int32       `json:"code"`
+	Msg  string      `json:"msg"`
+	Data interface{} `json:"data"`
+}
+
 type ZeroResponseData struct {
 	BTCHeight        uint64          `json:"block_height"`
 	BTCBlockHash     string          `json:"block_hash"`
@@ -16,8 +22,6 @@ type ZeroResponseData struct {
 	ZeroTxs          []ZeroRequestTx `json:"txs"`
 }
 
-type ZeroAPIResponse struct {
-	Code int32            `json:"code"`
-	Msg  string           `json:"msg"`
-	Data ZeroResponseData `json:"data"`
+type CrawlerHeightData struct {
+	CrawlerHeight uint64 `json:"crawler_height"`
 }

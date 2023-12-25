@@ -133,8 +133,6 @@ type BRCZeroConfig struct {
 	commitGapOffset int64
 
 	maxSubscriptionClients int
-
-	zeroDataUrl string
 }
 
 const (
@@ -177,7 +175,6 @@ const (
 	FlagDebugGcInterval            = "debug.gc-interval"
 	FlagCommitGapOffset            = "commit-gap-offset"
 	FlagMaxSubscriptionClients     = "max-subscription-clients"
-	FlagZeroDataUrl                = "zero-data-url"
 )
 
 var (
@@ -336,7 +333,6 @@ func (c *BRCZeroConfig) loadFromConfig() {
 	c.SetGcInterval(viper.GetInt(FlagDebugGcInterval))
 	c.SetIavlAcNoBatch(viper.GetBool(tmiavl.FlagIavlCommitAsyncNoBatch))
 	c.SetMaxSubscriptionClients(viper.GetInt(FlagMaxSubscriptionClients))
-	c.SetZeroDataUrl(viper.GetString(FlagZeroDataUrl))
 }
 
 func resolveNodeKeyWhitelist(plain string) []string {
@@ -411,8 +407,7 @@ func (c *BRCZeroConfig) format() string {
 	enable-analyzer: %v
     iavl-commit-async-no-batch: %v
 	active-view-change: %v
-	max_subscription_clients: %v
-	zero-data-url: %v`, system.ChainName,
+	max_subscription_clients: %v`, system.ChainName,
 		c.GetMempoolRecheck(),
 		c.GetMempoolForceRecheckGap(),
 		c.GetMempoolSize(),
@@ -444,7 +439,6 @@ func (c *BRCZeroConfig) format() string {
 		c.GetIavlAcNoBatch(),
 		c.GetActiveVC(),
 		c.GetMaxSubscriptionClients(),
-		c.GetZeroDataUrl(),
 	)
 }
 
@@ -719,8 +713,6 @@ func (c *BRCZeroConfig) updateFromKVStr(k, v string) {
 			return
 		}
 		c.SetMaxSubscriptionClients(r)
-	case FlagZeroDataUrl:
-		c.SetZeroDataUrl(v)
 	}
 
 }
@@ -1183,12 +1175,4 @@ func (c *BRCZeroConfig) SetPendingPoolBlacklist(v string) {
 
 func (c *BRCZeroConfig) GetPendingPoolBlacklist() string {
 	return c.pendingPoolBlacklist
-}
-
-func (c *BRCZeroConfig) SetZeroDataUrl(url string) {
-	c.zeroDataUrl = url
-}
-
-func (c *BRCZeroConfig) GetZeroDataUrl() string {
-	return c.zeroDataUrl
 }
