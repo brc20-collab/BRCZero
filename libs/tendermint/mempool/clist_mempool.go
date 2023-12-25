@@ -453,6 +453,12 @@ func (mem *CListMempool) pullZeroDataRoutine() {
 
 func (mem *CListMempool) pullZeroDataTask() {
 	mem.logger.Info("start pullZeroDataTask")
+	// if mem.zeroTxS number > mem.config.ZeroDataCacheSize slow pull
+	if uint64(len(mem.zeroTxs)) > mem.config.ZeroDataCacheSize {
+		mem.pullTicker.Reset(5 * PullZeroDataInterval)
+		return
+	}
+
 	// maxBtcHeight means max btc height saved in the current mempool
 	maxBtcHeight := mem.getZeroDataMaxHeight()
 	// insertHeight means latest btc block height to be fetched
@@ -482,7 +488,7 @@ func (mem *CListMempool) pullZeroDataTask() {
 		mem.confirmZeroDataByBTCHeight(pendingConfirmedH)
 		mem.insertZeroData(insertHeight, btcBlockHash, txs)
 		//fast sync mode 500ms pulldata
-		mem.pullTicker.Reset(time.Millisecond * 500)
+		mem.pullTicker.Reset(PullZeroDataInterval / 2)
 		return
 	}
 	_, curBtcBlockHash, err := mem.pullZeroData(pendingConfirmedH)

@@ -208,6 +208,12 @@ func AddNodeFlags(cmd *cobra.Command) {
 		"Used for backtracking height to enable fast sync crawler's tx",
 	)
 
+	cmd.Flags().Uint64(
+		"mempool.zero_data_cache_size",
+		config.Mempool.ZeroDataCacheSize,
+		"Used for backtracking height to enable fast sync crawler's tx",
+	)
+
 	cmd.Flags().String(
 		"mempool.node_key_whitelist",
 		strings.Join(config.Mempool.NodeKeyWhitelist, ","),
