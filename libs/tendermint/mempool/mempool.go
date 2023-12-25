@@ -19,13 +19,13 @@ type Mempool interface {
 	// its validity and whether it should be added to the mempool.
 	CheckTx(tx types.Tx, callback func(*abci.Response), txInfo TxInfo) error
 
-	BrczeroRollBack() <-chan int64
-	AddBrczeroData(btcHeight int64, btcBlockHash string, isConfirmed bool, txs types.Txs) error
-	GetBrczeroDataByBTCHeight(btcHeight int64) (types.BRCZeroData, error)
-	DelBrczeroDataByBTCHeight(btcHeight int64)
-	SetBrcDataDelivered(btcH int64, value bool)
-	BrczeroDataMinHeight() int64
-	DelOldBrczeroData(height int64)
+	ZeroReorgChan() <-chan int64
+	GetZeroDataByBTCHeight(btcHeight int64) (types.ZeroData, error)
+	DelZeroDataByBTCHeight(btcHeight int64)
+	SetZeroDataDelivered(btcH int64, value bool)
+	GetZeroDataMinHeight() int64
+	DelAllPrevZeroDataBeforeHeight(height int64)
+
 	ReapEssentialTx(tx types.Tx) abci.TxEssentials
 
 	// ReapMaxTxs reaps up to max transactions from the mempool.

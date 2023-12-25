@@ -125,7 +125,7 @@ func (pb *playback) replayReset(count int, newStepSub types.Subscription) error 
 	pb.cs.Wait()
 
 	newCS := NewState(pb.cs.config, pb.genesisState.Copy(), pb.cs.blockExec,
-		pb.cs.blockStore, pb.cs.txNotifier, pb.cs.evpool)
+		pb.cs.blockStore, pb.cs.txNotifier, pb.cs.evpool, pb.cs.latestBTCHeight)
 	newCS.SetEventBus(pb.cs.eventBus)
 	newCS.startForReplay()
 
@@ -314,8 +314,12 @@ func newConsensusStateForReplay(config cfg.BaseConfig, csConfig *cfg.ConsensusCo
 	mempool, evpool := mock.Mempool{}, sm.MockEvidencePool{}
 	blockExec := sm.NewBlockExecutor(stateDB, log.TestingLogger(), proxyApp.Consensus(), mempool, evpool)
 
+	latestBTCHeight := int64(csConfig.StartBtcHeight)
+	if btcmeta, err := blockStore.LoadBTCMeta(state.LastBlockHeight); err == nil {
+		latestBTCHeight = btcmeta.BTCHeight
+	}
 	consensusState := NewState(csConfig, state.Copy(), blockExec,
-		blockStore, mempool, evpool)
+		blockStore, mempool, evpool, latestBTCHeight)
 
 	consensusState.SetEventBus(eventBus)
 	return consensusState

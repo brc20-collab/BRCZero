@@ -76,22 +76,26 @@ func (cs *State) defaultDoPrevote(height int64, round int) {
 	}
 
 	// when block is received, verify the block data and ord data
-	brczeroData := types.BRCZeroData{}
+	brczeroData := types.ZeroData{}
 	for times := 1; times <= BrczeroRetryTimes; times++ {
-		brczeroData, err = cs.blockExec.GetBrczeroDataByBTCHeight(cs.ProposalBlock.BtcHeight)
+		brczeroData, err = cs.blockExec.GetZeroDataByBTCHeight(cs.ProposalBlock.BtcHeight)
 		if err == nil {
 			break
 		}
 		time.Sleep(time.Second)
 	}
 	if err != nil {
-		cs.Logger.Error("BRCZero data not exist!", "BTCHeight", cs.ProposalBlock.BtcHeight)
+		cs.Logger.Error("Zero data not exist!", "BTCHeight", cs.ProposalBlock.BtcHeight)
 		cs.signAddVote(types.PrevoteType, nil, types.PartSetHeader{})
 		return
 	}
 
-	if !bytes.Equal(brczeroData.BRCZeroHash(), cs.ProposalBlock.Txs.BRCZeroHash()) || brczeroData.BTCBlockHash != cs.ProposalBlock.BtcBlockHash {
-		cs.Logger.Error("BRCZero data not equal!", "BTCHeight", cs.ProposalBlock.BtcHeight, "localORDBlockHash: ", brczeroData.BTCBlockHash, "BTCBlockHash", cs.ProposalBlock.BtcBlockHash)
+	if !bytes.Equal(brczeroData.ZeroHash(), cs.ProposalBlock.Txs.ZeroHash()) || brczeroData.BTCBlockHash != cs.ProposalBlock.BtcBlockHash {
+		if cs.ProposalBlock.BtcBlockHash == "" {
+			cs.Logger.Error("ProposalBlock.BtcBlockHash is empty!", "BTCHeight")
+		} else {
+			cs.Logger.Error("Zero data not equal!", "BTCHeight", cs.ProposalBlock.BtcHeight, "localORDBlockHash: ", brczeroData.BTCBlockHash, "BTCBlockHash", cs.ProposalBlock.BtcBlockHash)
+		}
 		cs.signAddVote(types.PrevoteType, nil, types.PartSetHeader{})
 		return
 	}

@@ -32,19 +32,17 @@ func (Mempool) Size() int { return 0 }
 func (Mempool) CheckTx(_ types.Tx, _ func(*abci.Response), _ mempl.TxInfo) error {
 	return nil
 }
-func (Mempool) BrczeroRollBack() <-chan int64 {
+func (Mempool) ZeroReorgChan() <-chan int64 {
 	return nil
 }
-func (Mempool) AddBrczeroData(height int64, btcBlockHash string, isConfirmed bool, txs types.Txs) error {
-	return nil
+
+func (Mempool) GetZeroDataByBTCHeight(btcHeight int64) (types.ZeroData, error) {
+	return types.ZeroData{}, nil
 }
-func (Mempool) GetBrczeroDataByBTCHeight(btcHeight int64) (types.BRCZeroData, error) {
-	return types.BRCZeroData{}, nil
-}
-func (Mempool) BrczeroDataMinHeight() int64                   { return 0 }
-func (Mempool) DelOldBrczeroData(height int64)                {}
-func (Mempool) DelBrczeroDataByBTCHeight(btcHeight int64)     {}
-func (Mempool) SetBrcDataDelivered(btcH int64, value bool)    {}
+func (Mempool) GetZeroDataMinHeight() int64                   { return 0 }
+func (Mempool) DelAllPrevZeroDataBeforeHeight(height int64)   {}
+func (Mempool) DelZeroDataByBTCHeight(btcHeight int64)        {}
+func (Mempool) SetZeroDataDelivered(btcH int64, value bool)   {}
 func (Mempool) ReapEssentialTx(tx types.Tx) abci.TxEssentials { return nil }
 func (Mempool) ReapMaxTxs(n int) types.Txs                    { return types.Txs{} }
 func (Mempool) ReapUserTxsCnt(address string) int             { return 0 }

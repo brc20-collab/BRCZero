@@ -16,10 +16,15 @@ var (
 	EvmABI abi.ABI
 	//go:embed abi.json
 	abiJson []byte
+
+	BascisXABI abi.ABI
+	//go:embed bascis_abi.json
+	bascisXABIJson []byte
 )
 
 func init() {
 	EvmABI = GetEVMABIConfig(abiJson)
+	BascisXABI = GetEVMABIConfig(bascisXABIJson)
 }
 
 func GetEntryPointInput(context InscriptionContext, inscription string) ([]byte, error) {
@@ -36,4 +41,12 @@ func GetEVMABIConfig(data []byte) abi.ABI {
 		panic(fmt.Errorf("json decode failed: %s", err.Error()))
 	}
 	return ret
+}
+
+func GetBascisXEntryPointInput(context string, inscription string) ([]byte, error) {
+	data, err := BascisXABI.Pack(BrczeroCalledMethodName, context, inscription)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }

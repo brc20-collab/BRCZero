@@ -197,6 +197,18 @@ func AddNodeFlags(cmd *cobra.Command) {
 	)
 
 	cmd.Flags().String(
+		"mempool.zero_data_url",
+		config.Mempool.ZeroDataUrl,
+		"URL of pulling crawler's data, format: e.g. http://0.0.0.0:80",
+	)
+
+	cmd.Flags().Int64(
+		"mempool.fast_sync_height_gap",
+		config.Mempool.FastSyncHeightGap,
+		"Used for backtracking height to enable fast sync crawler's tx",
+	)
+
+	cmd.Flags().String(
 		"mempool.node_key_whitelist",
 		strings.Join(config.Mempool.NodeKeyWhitelist, ","),
 		"The whitelist of nodes whose wtx is confident",

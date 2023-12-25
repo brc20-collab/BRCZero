@@ -1,12 +1,8 @@
 package types
 
 import (
-	"encoding/hex"
 	"errors"
 	"fmt"
-	"math/big"
-
-	"github.com/ethereum/go-ethereum/rlp"
 
 	"github.com/golang/protobuf/proto"
 
@@ -121,24 +117,10 @@ type decodeFunc func(codec.CdcAbstraction, []byte) (sdk.Tx, error)
 
 // 1. Try to decode as MsgEthereumTx by RLP
 func evmDecoder(_ codec.CdcAbstraction, txBytes []byte) (tx sdk.Tx, err error) {
-	var brczeroTx types.BRCZeroRequestTx
-	var ethbytes []byte
-	if err = rlp.DecodeBytes(txBytes, &brczeroTx); err == nil {
-		ethbytes, err = hex.DecodeString(brczeroTx.HexRlpEncodeTx)
-		if err == nil {
-			var ethTx MsgEthereumTx
-			if err = authtypes.EthereumTxDecode(ethbytes, &ethTx); err == nil {
-				ethTx.Data.BTCFee = new(big.Int).SetUint64(brczeroTx.BTCFee)
-				tx = &ethTx
-			}
-		}
-	} else {
-		var ethTx MsgEthereumTx
-		if err = authtypes.EthereumTxDecode(txBytes, &ethTx); err == nil {
-			tx = &ethTx
-		}
+	var ethTx MsgEthereumTx
+	if err = authtypes.EthereumTxDecode(txBytes, &ethTx); err == nil {
+		tx = &ethTx
 	}
-
 	return
 }
 

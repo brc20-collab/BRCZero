@@ -48,6 +48,7 @@ var (
 type (
 	Keeper             = keeper.Keeper
 	MsgInscription     = types.MsgInscription
+	MsgBascisX         = types.MsgBascisX
 	ManageContract     = types.ManageContract
 	ResultInfo         = types.ResultInfo
 	InscriptionContext = types.InscriptionContext

@@ -120,7 +120,7 @@ func NewBlockExecutor(
 
 	res.initAsyncDBContext()
 
-	go res.RpcRollbackRoutine()
+	go res.RpcReorgRoutine()
 
 	return res
 }
@@ -179,18 +179,15 @@ func (blockExec *BlockExecutor) CreateProposalBlock(
 	txs := make([]types.Tx, 0)
 	btcBlockHash := ""
 	btcHeight := latestBH + 1
-	if brczeroData, err := blockExec.mempool.GetBrczeroDataByBTCHeight(btcHeight); err == nil {
-		if brczeroData.IsConfirmed {
-			txs = brczeroData.Txs
-			btcBlockHash = brczeroData.BTCBlockHash
+	if zeroData, err := blockExec.mempool.GetZeroDataByBTCHeight(btcHeight); err == nil {
+		if zeroData.IsConfirmed {
+			txs = zeroData.Txs
+			btcBlockHash = zeroData.BTCBlockHash
 		} else {
-			if _, err := blockExec.mempool.GetBrczeroDataByBTCHeight(btcHeight + 6); err == nil {
-				txs = brczeroData.Txs
-				btcBlockHash = brczeroData.BTCBlockHash
-			}
+			blockExec.logger.Error(fmt.Sprintf("zero data have not been confirmed in height %d!", btcHeight))
 		}
 	}
-	blockExec.mempool.DelOldBrczeroData(btcHeight)
+	blockExec.mempool.DelAllPrevZeroDataBeforeHeight(btcHeight)
 
 	return state.MakeBlockBrc(height, txs, commit, evidence, proposerAddr, btcHeight, btcBlockHash)
 }
@@ -511,8 +508,8 @@ func (blockExec *BlockExecutor) commit(
 	// notify mempool tx available
 	blockExec.mempool.UpdateForBRCZeroData(block.Height, block.BtcHeight)
 
-	// Update BRCZeroData
-	blockExec.mempool.DelBrczeroDataByBTCHeight(block.BtcHeight)
+	// Update ZeroData
+	blockExec.mempool.DelZeroDataByBTCHeight(block.BtcHeight)
 
 	if !cfg.DynamicConfig.GetMempoolRecheck() && block.Height%cfg.DynamicConfig.GetMempoolForceRecheckGap() == 0 {
 		proxyCb := func(req *abci.Request, res *abci.Response) {
@@ -843,31 +840,31 @@ func (blockExec *BlockExecutor) FireBlockTimeEvents(height int64, txNum int, ava
 		types.EventDataBlockTime{Height: height, TimeNow: tmtime.Now().UnixMilli(), TxNum: txNum, Available: available})
 }
 
-func (blockExec *BlockExecutor) GetBrczeroDataByBTCHeight(btcHeight int64) (types.BRCZeroData, error) {
-	return blockExec.mempool.GetBrczeroDataByBTCHeight(btcHeight)
+func (blockExec *BlockExecutor) GetZeroDataByBTCHeight(btcHeight int64) (types.ZeroData, error) {
+	return blockExec.mempool.GetZeroDataByBTCHeight(btcHeight)
 }
 
-func (blockExec *BlockExecutor) BrczeroDataMinHeight() int64 {
-	return blockExec.mempool.BrczeroDataMinHeight()
+func (blockExec *BlockExecutor) GetZeroDataMinHeight() int64 {
+	return blockExec.mempool.GetZeroDataMinHeight()
 }
 
-func (BlockExec *BlockExecutor) SetBrcDataDelivered(btcH int64, value bool) {
-	BlockExec.mempool.SetBrcDataDelivered(btcH, value)
+func (BlockExec *BlockExecutor) SetZeroDataDelivered(btcH int64, value bool) {
+	BlockExec.mempool.SetZeroDataDelivered(btcH, value)
 }
 
-func (BlockExec *BlockExecutor) BrczeroRollback() <-chan int64 {
-	return BlockExec.mempool.BrczeroRollBack()
+func (BlockExec *BlockExecutor) ZeroReorgChain() <-chan int64 {
+	return BlockExec.mempool.ZeroReorgChan()
 }
 
-func (blockExec *BlockExecutor) CleanBrcRpcState() {
-	blockExec.proxyApp.CleanBrcRpcState()
+func (blockExec *BlockExecutor) CleanZeroRpcState() {
+	blockExec.proxyApp.CleanZeroRpcState()
 }
 
-func (blockExec *BlockExecutor) RpcRollbackRoutine() {
+func (blockExec *BlockExecutor) RpcReorgRoutine() {
 	for {
 		select {
-		case <-blockExec.BrczeroRollback():
-			blockExec.CleanBrcRpcState()
+		case <-blockExec.ZeroReorgChain():
+			blockExec.CleanZeroRpcState()
 		}
 	}
 }

@@ -2,11 +2,12 @@ package config
 
 import (
 	"fmt"
-	"github.com/brc20-collab/brczero/libs/system"
 	"net/http"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/brc20-collab/brczero/libs/system"
 
 	"github.com/brc20-collab/brczero/libs/tendermint/types"
 
@@ -690,6 +691,8 @@ type MempoolConfig struct {
 	PendingPoolMaxTxPerAddress int      `mapstructure:"pending_pool_max_tx_per_address"`
 	NodeKeyWhitelist           []string `mapstructure:"node_key_whitelist"`
 	PendingRemoveEvent         bool     `mapstructure:"pending_remove_event"`
+	ZeroDataUrl                string   `mapstructure:"zero_data_url"`
+	FastSyncHeightGap          int64    `mapstructure:"fast_sync_height_gap"`
 }
 
 // DefaultMempoolConfig returns a default configuration for the Tendermint mempool
@@ -716,6 +719,8 @@ func DefaultMempoolConfig() *MempoolConfig {
 		PendingPoolMaxTxPerAddress: 100,
 		NodeKeyWhitelist:           []string{},
 		PendingRemoveEvent:         false,
+		ZeroDataUrl:                "",
+		FastSyncHeightGap:          0,
 	}
 }
 
