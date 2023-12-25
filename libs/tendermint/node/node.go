@@ -621,6 +621,8 @@ func NewNode(config *cfg.Config,
 		return nil, err
 	}
 
+	state = handleReorgBlock(blockStore, stateDB, state, config)
+
 	global.SetGlobalHeight(state.LastBlockHeight)
 
 	// Create the proxyApp and establish connections to the ABCI app (consensus, mempool, query).

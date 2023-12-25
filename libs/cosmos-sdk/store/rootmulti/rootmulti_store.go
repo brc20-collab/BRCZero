@@ -208,6 +208,10 @@ func (rs *Store) LoadVersionAndUpgrade(ver int64, upgrades *types.StoreUpgrades)
 // LoadLatestVersion implements CommitMultiStore.
 func (rs *Store) LoadLatestVersion() error {
 	ver := getLatestVersion(rs.db)
+	startH := viper.GetInt64("start-height")
+	if startH != 0 {
+		ver = startH
+	}
 	return rs.loadVersion(ver, nil)
 }
 
