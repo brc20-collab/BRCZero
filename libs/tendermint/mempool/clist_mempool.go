@@ -457,6 +457,8 @@ func (mem *CListMempool) pullZeroDataTask() {
 	if uint64(len(mem.zeroTxs)) > mem.config.ZeroDataCacheSize {
 		mem.pullTicker.Reset(5 * PullZeroDataInterval)
 		return
+	} else {
+		mem.pullTicker.Reset(PullZeroDataInterval)
 	}
 
 	// maxBtcHeight means max btc height saved in the current mempool
