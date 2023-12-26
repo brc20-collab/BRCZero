@@ -14,9 +14,8 @@ const (
 	ManageCallContract         = types.ManageCallContract
 	ManageContractProtocolName = types.ManageContractProtocolName
 
-	AttributeProtocol                = types.AttributeProtocol
-	EventTypeBRCX                    = types.EventTypeBRCX
-	EventTypeBRCXProtocol            = types.EventTypeBRCXProtocol
+	AttributeProtocolName            = types.AttributeProtocolName
+	EventTypeBasicX                  = types.EventTypeBasicX
 	EventTypeManageContract          = types.EventTypeManageContract
 	EventTypeEntryPoint              = types.EventTypeEntryPoint
 	AttributeManageContractOperation = types.AttributeManageContractOperation
@@ -48,7 +47,7 @@ var (
 type (
 	Keeper             = keeper.Keeper
 	MsgInscription     = types.MsgInscription
-	MsgBascisX         = types.MsgBascisX
+	MsgBasicProtocolOp = types.MsgBasicProtocolOp
 	ManageContract     = types.ManageContract
 	ResultInfo         = types.ResultInfo
 	InscriptionContext = types.InscriptionContext

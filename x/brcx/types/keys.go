@@ -14,7 +14,7 @@ const (
 	QuerierRoute = ModuleName
 
 	MsgInscriptionType = "inscription"
-	MsgBascisXType     = "bascis_x"
+	MsgBasicXType      = "basic_x"
 )
 
 var (

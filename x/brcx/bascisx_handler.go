@@ -12,16 +12,16 @@ import (
 	"github.com/brc20-collab/brczero/x/brcx/types"
 )
 
-func handleBascisXInscription(ctx sdk.Context, msg MsgBascisX, k Keeper, info *ResultInfo) (*sdk.Result, error) {
+func handleBasicXInscription(ctx sdk.Context, msg MsgBasicProtocolOp, k Keeper, info *ResultInfo) (*sdk.Result, error) {
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
-			EventTypeBRCXProtocol,
-			sdk.NewAttribute(AttributeProtocol, msg.ProtocolName),
+			EventTypeBasicX,
+			sdk.NewAttribute(AttributeProtocolName, msg.ProtocolName),
 		),
 	)
 	switch msg.ProtocolName {
 	case ManageContractProtocolName:
-		result, err := handleBascisXManageContract(ctx, msg, k, info)
+		result, err := handleBasicXManageContract(ctx, msg, k, info)
 		if err != nil {
 			return result, err
 		}
@@ -31,7 +31,7 @@ func handleBascisXInscription(ctx sdk.Context, msg MsgBascisX, k Keeper, info *R
 	}
 }
 
-func handleBascisXManageContract(ctx sdk.Context, msg MsgBascisX, k Keeper, info *ResultInfo) (*sdk.Result, error) {
+func handleBasicXManageContract(ctx sdk.Context, msg MsgBasicProtocolOp, k Keeper, info *ResultInfo) (*sdk.Result, error) {
 	var context InscriptionContext
 	if err := json.Unmarshal([]byte(msg.Context), &context); err != nil {
 		return nil, ErrValidateInput(fmt.Sprintf("InscriptionContext json unmarshall is err: %s ", err))
@@ -87,7 +87,7 @@ func handleBascisXManageContract(ctx sdk.Context, msg MsgBascisX, k Keeper, info
 	return &result, nil
 }
 
-func handleBasicXEntryPoint(ctx sdk.Context, msg MsgBascisX, protocol string, k Keeper, info *ResultInfo) (*sdk.Result, error) {
+func handleBasicXEntryPoint(ctx sdk.Context, msg MsgBasicProtocolOp, protocol string, k Keeper, info *ResultInfo) (*sdk.Result, error) {
 	from := common.BytesToAddress(k.GetBRCXAddress().Bytes())
 	info.EvmCaller = from.String()
 	to, err := k.GetContractAddrByProtocol(ctx, protocol)

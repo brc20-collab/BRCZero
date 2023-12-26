@@ -22,7 +22,7 @@ func NewHandler(k Keeper) sdk.Handler {
 		case types.MsgInscription:
 			ctx.EventManager().EmitEvent(
 				sdk.NewEvent(
-					EventTypeBRCX,
+					EventTypeBasicX,
 					sdk.NewAttribute(AttributeBTCTXID, msg.InscriptionContext.Txid),
 				),
 			)
@@ -36,15 +36,15 @@ func NewHandler(k Keeper) sdk.Handler {
 			result.Events = append(result.Events, ctx.EventManager().Events()...)
 			result.Info = buff
 			return result, err
-		case types.MsgBascisX:
+		case types.MsgBasicProtocolOp:
 			ctx.EventManager().EmitEvent(
 				sdk.NewEvent(
-					EventTypeBRCX,
+					EventTypeBasicX,
 					sdk.NewAttribute(AttributeBTCTXID, msg.BTCTxid),
 				),
 			)
 			info := types.ResultInfo{BTCTxid: msg.BTCTxid}
-			result, err := handleBascisXInscription(ctx, msg, k, &info)
+			result, err := handleBasicXInscription(ctx, msg, k, &info)
 			// json.Marshal can not be error. even if error it hash a few influence with execute of transaction.
 			buff, _ := json.Marshal(info)
 			if err != nil {
@@ -75,8 +75,8 @@ func handleInscription(ctx sdk.Context, msg MsgInscription, k Keeper, info *Resu
 	}
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
-			EventTypeBRCXProtocol,
-			sdk.NewAttribute(AttributeProtocol, protocol),
+			EventTypeBasicX,
+			sdk.NewAttribute(AttributeProtocolName, protocol),
 		),
 	)
 	switch protocol {
