@@ -9,30 +9,19 @@ import (
 )
 
 const (
-	BrczeroCalledMethodName = "entryPoint"
+	EntryPointMethodName = "entryPoint"
+
+	EventsName = "Events"
 )
 
 var (
-	EvmABI abi.ABI
-	//go:embed abi.json
-	abiJson []byte
-
-	BascisXABI abi.ABI
-	//go:embed bascis_abi.json
-	bascisXABIJson []byte
+	basicXEntryPointABI abi.ABI
+	//go:embed abi/basicXEntryPoint.json
+	basicXEntryPointABIJson []byte
 )
 
 func init() {
-	EvmABI = GetEVMABIConfig(abiJson)
-	BascisXABI = GetEVMABIConfig(bascisXABIJson)
-}
-
-func GetEntryPointInput(context InscriptionContext, inscription string) ([]byte, error) {
-	data, err := EvmABI.Pack(BrczeroCalledMethodName, context, inscription)
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
+	basicXEntryPointABI = GetEVMABIConfig(basicXEntryPointABIJson)
 }
 
 func GetEVMABIConfig(data []byte) abi.ABI {
@@ -43,8 +32,8 @@ func GetEVMABIConfig(data []byte) abi.ABI {
 	return ret
 }
 
-func GetBascisXEntryPointInput(context string, inscription string) ([]byte, error) {
-	data, err := BascisXABI.Pack(BrczeroCalledMethodName, context, inscription)
+func GetBasicXEntryPointInput(context string, inscription string) ([]byte, error) {
+	data, err := basicXEntryPointABI.Pack(EntryPointMethodName, context, inscription)
 	if err != nil {
 		return nil, err
 	}

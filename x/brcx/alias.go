@@ -40,7 +40,7 @@ var (
 	ErrValidateInput      = types.ErrValidateInput
 	ErrExecute            = types.ErrExecute
 	ErrGetContractAddress = types.ErrGetContractAddress
-	ErrCallEntryPoint     = types.ErrCallEntryPoint
+	ErrCallMethod         = types.ErrCallMethod
 	ErrPackInput          = types.ErrPackInput
 )
 
