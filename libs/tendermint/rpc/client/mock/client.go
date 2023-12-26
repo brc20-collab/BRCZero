@@ -145,6 +145,10 @@ func (c Client) LatestBlockNumber() (int64, error) {
 	return core.LatestBlockNumber()
 }
 
+func (c *Client) HeightByBtcHash(btcHash string) (int64, error) {
+	return core.HeightByBtcHash(nil, btcHash)
+}
+
 func (c Client) Genesis() (*ctypes.ResultGenesis, error) {
 	return core.Genesis(&rpctypes.Context{})
 }

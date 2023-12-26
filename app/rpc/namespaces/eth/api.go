@@ -1692,3 +1692,11 @@ func (api *PublicEthereumAPI) JudgeEvm2CmTx(toAddr, payLoad []byte) bool {
 	}
 	return false
 }
+
+func (api *PublicEthereumAPI) GetLogsByBtcHash(btcHash string) ([][]*ethtypes.Log, error) {
+	h, err := api.backend.HeightByBtcHash(btcHash)
+	if err != nil {
+		return nil, err
+	}
+	return api.backend.GetLogs(h)
+}

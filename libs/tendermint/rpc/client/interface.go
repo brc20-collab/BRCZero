@@ -80,6 +80,7 @@ type HistoryClient interface {
 	Genesis() (*ctypes.ResultGenesis, error)
 	BlockchainInfo(minHeight, maxHeight int64) (*ctypes.ResultBlockchainInfo, error)
 	LatestBlockNumber() (int64, error)
+	HeightByBtcHash(string) (int64, error)
 }
 
 // StatusClient provides access to general chain info.

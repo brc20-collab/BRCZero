@@ -28,6 +28,7 @@ type BlockStore interface {
 	DeleteBlocksFromTop(height int64) (uint64, error)
 
 	LoadBlockByHash(hash []byte) *types.Block
+	LoadZeroHeightByBtcHash(hash string) (int64, error)
 	LoadBlockPart(height int64, index int) *types.Part
 
 	LoadBlockCommit(height int64) *types.Commit

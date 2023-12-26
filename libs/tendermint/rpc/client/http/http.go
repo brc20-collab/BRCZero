@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"crypto/sha256"
+	"fmt"
 	"net/http"
 	"strings"
 	"sync"
@@ -71,6 +72,10 @@ type HTTP struct {
 
 func (c *HTTP) GetUnconfirmedTxByHash(hash [sha256.Size]byte) (types.Tx, error) {
 	return nil, errors.New("unhandled method")
+}
+
+func (c *HTTP) HeightByBtcHash(btcHash string) (int64, error) {
+	return 0, errors.New("HTTP")
 }
 
 // BatchHTTP provides the same interface as `HTTP`, but allows for batching of
@@ -389,6 +394,10 @@ func (c *baseRPCClient) LatestBlockNumber() (int64, error) {
 		return 0, err
 	}
 	return info.LastHeight, nil
+}
+
+func (c *baseRPCClient) HeightByBtcHash(btcHash string) (int64, error) {
+	return 0, fmt.Errorf("baseRPCClient")
 }
 
 func (c *baseRPCClient) Genesis() (*ctypes.ResultGenesis, error) {
