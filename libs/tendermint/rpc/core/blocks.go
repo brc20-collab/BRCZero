@@ -116,6 +116,10 @@ func HeightByBtcHash(ctx *rpctypes.Context, btcHash string) (int64, error) {
 	return env.BlockStore.LoadZeroHeightByBtcHash(btcHash)
 }
 
+func MapTxhashTxid(bctx *rpctypes.Context, btcHash string) (map[string]string, error) {
+	return env.BlockStore.LoadMapTxhashTxidByBtcHash(btcHash)
+}
+
 // Commit gets block commit at a given height.
 // If no height is provided, it will fetch the commit for the latest block.
 // More: https://docs.tendermint.com/master/rpc/#/Info/commit
