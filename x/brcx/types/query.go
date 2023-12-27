@@ -5,3 +5,19 @@ type ApiResult struct {
 	Msg  string      `json:"msg" yaml:"msg"`
 	Data interface{} `json:"data" yaml:"data"`
 }
+
+func NewOKApiResult(data interface{}) ApiResult {
+	return ApiResult{
+		Code: 0,
+		Msg:  "ok",
+		Data: data,
+	}
+}
+
+func NewErrApiResult(err error) ApiResult {
+	return ApiResult{
+		Code: 1,
+		Msg:  err.Error(),
+		Data: nil,
+	}
+}

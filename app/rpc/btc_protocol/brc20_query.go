@@ -2,6 +2,7 @@ package btc_protocol
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 
@@ -32,42 +33,49 @@ func QueryTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *eth.P
 			return
 		}
 
-		//m: map[zeroTxHash]BtcTxid
 		node, err := cliCtx.GetNode()
 		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
-		m, err := node.MapTxhashTxid(btcBlockHash)
-
-		type ResBlock struct {
-			event []brcxtypes.EventResponse
-			txid  string
+		zeroTxHashBtcTxidMap, err := node.MapTxhashTxid(btcBlockHash)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
 		}
-		// tmp := map[txid][]event
-		tmp := map[string][]brcxtypes.EventResponse{}
+
+		resMap := map[string][]brcxtypes.EventResponse{}
 		for _, txLogs := range blockLogs {
 			for _, l := range txLogs {
 				if len(l.Data) == 0 {
 					// means this tx has no events
 					continue
 				}
-				txid := m[l.TxHash.String()]
+
+				zeroTxhash := strings.TrimPrefix(l.TxHash.String(), "0x")
+				txid := zeroTxHashBtcTxidMap[zeroTxhash]
 
 				eventContext, err := brcxtypes.UnpackBrc20EventContext(l.Data)
 				if err != nil {
 					rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 					return
 				}
-				//todo if ok=tmp[txid]
-				tmp[txid] = append(tmp[txid], eventContext.ToEventResponse())
+
+				if _, ok := resMap[txid]; !ok {
+					resMap[txid] = make([]brcxtypes.EventResponse, 0, 1)
+				}
+				resMap[txid] = append(resMap[txid], eventContext.ToEventResponse())
 			}
 		}
 
-		var res []ResBlock
-		for txid, events := range tmp {
-			res = append(res, ResBlock{txid: txid, event: events})
+		txEventsResp := make([]brcxtypes.QueryTxEventsResponse, 0)
+		for txid, events := range resMap {
+			txEventsResp = append(txEventsResp, brcxtypes.NewQueryTxEventsResponse(events, txid))
 		}
 
+		blockEventsResp := brcxtypes.NewQueryTxEventsByBlockHashResponse(txEventsResp)
+
+		res := brcxtypes.NewOKApiResult(blockEventsResp)
 		rest.PostProcessResponseBare(w, cliCtx, res)
 	}
 }

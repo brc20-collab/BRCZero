@@ -147,50 +147,6 @@ func (bs *BlockStore) LoadMapTxhashTxidByBtcHash(btcHash string) (map[string]str
 	return res, nil
 }
 
-func (bs *BlockStore) LoadSortedZeroTxsMapByBtcHash(btcHash string) (map[string][]types.ZeroRequestTx, error) {
-	res := make(map[string][]types.ZeroRequestTx)
-	zeroH, err := bs.LoadZeroHeightByBtcHash(btcHash)
-	if err != nil {
-		return nil, err
-	}
-	block := bs.LoadBlock(zeroH)
-	for _, tx := range block.Txs {
-		var ztx types.ZeroRequestTx
-		if err = rlp.DecodeBytes(tx, &ztx); err == nil {
-			if _, ok := res[ztx.BTCTxid]; ok {
-				res[ztx.BTCTxid] = append(res[ztx.BTCTxid], ztx)
-			} else {
-				txs := make([]types.ZeroRequestTx, 0, 1)
-				txs = append(txs, ztx)
-				res[ztx.BTCTxid] = txs
-			}
-		}
-	}
-	return res, nil
-}
-
-func (bs *BlockStore) LoadBtcTxid2ZeroTxHashMap(btcHash string) (map[string][][]byte, error) {
-	res := make(map[string][][]byte)
-	zeroH, err := bs.LoadZeroHeightByBtcHash(btcHash)
-	if err != nil {
-		return nil, err
-	}
-	block := bs.LoadBlock(zeroH)
-	for _, tx := range block.Txs {
-		var ztx types.ZeroRequestTx
-		if err = rlp.DecodeBytes(tx, &ztx); err == nil {
-			if _, ok := res[ztx.BTCTxid]; ok {
-				res[ztx.BTCTxid] = append(res[ztx.BTCTxid], tx.Hash())
-			} else {
-				txs := make([][]byte, 0, 1)
-				txs = append(txs, tx.Hash())
-				res[ztx.BTCTxid] = txs
-			}
-		}
-	}
-	return res, nil
-}
-
 // LoadBlockWithExInfo returns the block with the given height.
 // and the BlockPartInfo is used to make block parts
 func (bs *BlockStore) LoadBlockWithExInfo(height int64) (*types.Block, *types.BlockExInfo) {
