@@ -113,6 +113,9 @@ func (bs *BlockStore) LoadZeroHeightByBtcHeight(btcHeight int64) (int64, error) 
 	if err != nil {
 		return 0, err
 	}
+	if len(zeroHeight) == 0 {
+		return 0, fmt.Errorf("cannot get zero height using btc height %d", btcHeight)
+	}
 	return strconv.ParseInt(string(zeroHeight), 10, 64)
 }
 
@@ -120,6 +123,9 @@ func (bs *BlockStore) LoadZeroHeightByBtcHash(btcHash string) (int64, error) {
 	zeroHeight, err := bs.db.Get(calcBTCBlockHashKey(btcHash))
 	if err != nil {
 		return 0, err
+	}
+	if len(zeroHeight) == 0 {
+		return 0, fmt.Errorf("cannot get zero height using btc hash %s", btcHash)
 	}
 	return strconv.ParseInt(string(zeroHeight), 10, 64)
 }
@@ -139,6 +145,28 @@ func (bs *BlockStore) LoadSortedZeroTxsMapByBtcHash(btcHash string) (map[string]
 			} else {
 				txs := make([]types.ZeroRequestTx, 0, 1)
 				txs = append(txs, ztx)
+				res[ztx.BTCTxid] = txs
+			}
+		}
+	}
+	return res, nil
+}
+
+func (bs *BlockStore) LoadBtcTxid2ZeroTxHashMap(btcHash string) (map[string][][]byte, error) {
+	res := make(map[string][][]byte)
+	zeroH, err := bs.LoadZeroHeightByBtcHash(btcHash)
+	if err != nil {
+		return nil, err
+	}
+	block := bs.LoadBlock(zeroH)
+	for _, tx := range block.Txs {
+		var ztx types.ZeroRequestTx
+		if err = rlp.DecodeBytes(tx, &ztx); err == nil {
+			if _, ok := res[ztx.BTCTxid]; ok {
+				res[ztx.BTCTxid] = append(res[ztx.BTCTxid], tx.Hash())
+			} else {
+				txs := make([][]byte, 0, 1)
+				txs = append(txs, tx.Hash())
 				res[ztx.BTCTxid] = txs
 			}
 		}

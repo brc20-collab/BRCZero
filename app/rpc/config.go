@@ -3,31 +3,25 @@ package rpc
 import (
 	"bufio"
 	"fmt"
-	"net/http"
 	"os"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/gorilla/mux"
+	"github.com/spf13/viper"
 
 	"github.com/brc20-collab/brczero/app/crypto/ethsecp256k1"
 	"github.com/brc20-collab/brczero/app/crypto/hd"
+	"github.com/brc20-collab/brczero/app/rpc/btc_protocol"
 	"github.com/brc20-collab/brczero/app/rpc/nacos"
-	"github.com/brc20-collab/brczero/app/rpc/namespaces/eth"
 	"github.com/brc20-collab/brczero/app/rpc/pendingtx"
 	"github.com/brc20-collab/brczero/app/rpc/websockets"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/flags"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/input"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/lcd"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/crypto/keys"
 	cmserver "github.com/brc20-collab/brczero/libs/cosmos-sdk/server"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/rest"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
-	brcxtypes "github.com/brc20-collab/brczero/x/brcx/types"
-
-	"github.com/spf13/viper"
 )
 
 const (
@@ -98,7 +92,9 @@ func RegisterRoutes(rs *lcd.RestServer) {
 
 	// Web3 RPC API route
 	rs.Mux.HandleFunc("/", server.ServeHTTP).Methods("POST", "OPTIONS")
-	rs.Mux.HandleFunc("/brc20/block/{btcBlockHash}/events", QueryTxsEventsByBtcHashHandlerFunc(rs.CliCtx, ethApi)).Methods("Get")
+
+	// BTC protocol RPC API route
+	btc_protocol.RegisterBtcProtocolRoutes(rs.CliCtx, rs.Mux, ethApi)
 
 	// start websockets server
 	websocketAddr := viper.GetString(FlagWebsocket)
@@ -112,39 +108,6 @@ func RegisterRoutes(rs *lcd.RestServer) {
 		kafkaClient := pendingtx.NewKafkaClient(strings.Split(kafkaAddrs, ","), kafkaTopic)
 		ptw := pendingtx.NewWatcher(rs.CliCtx, rs.Logger(), kafkaClient)
 		ptw.Start()
-	}
-}
-
-func QueryTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *eth.PublicEthereumAPI) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		btcBlockHash := vars["btcBlockHash"]
-
-		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
-		if !ok {
-			return
-		}
-
-		blockLogs, err := ethApi.GetLogsByBtcHash(btcBlockHash)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-
-		var resps []brcxtypes.EventResponse
-		for _, txLogs := range blockLogs {
-			for _, l := range txLogs {
-				eventContext, err := brcxtypes.UnpackEventContext(l.Data)
-				if err != nil {
-					rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-					return
-				}
-				resps = append(resps, eventContext.ToEventResponse())
-			}
-
-		}
-
-		rest.PostProcessResponseBare(w, cliCtx, resps)
 	}
 }
 
