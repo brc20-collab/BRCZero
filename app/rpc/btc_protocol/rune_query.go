@@ -12,12 +12,12 @@ import (
 	brcxtypes "github.com/brc20-collab/brczero/x/brcx/types"
 )
 
-func registerBrc20QueryRoutes(cliCtx context.CLIContext, r *mux.Router, ethApi *eth.PublicEthereumAPI) {
-	r.HandleFunc("/brc20/block/{btcBlockHash}/events", QueryBrc20TxsEventsByBtcHashHandlerFunc(cliCtx, ethApi)).Methods("Get")
+func registerRuneQueryRoutes(cliCtx context.CLIContext, r *mux.Router, ethApi *eth.PublicEthereumAPI) {
+	r.HandleFunc("/rune/block/{btcBlockHash}/events", QueryRuneTxsEventsByBtcHashHandlerFunc(cliCtx, ethApi)).Methods("Get")
 
 }
 
-func QueryBrc20TxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *eth.PublicEthereumAPI) http.HandlerFunc {
+func QueryRuneTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *eth.PublicEthereumAPI) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		btcBlockHash := vars["btcBlockHash"]
