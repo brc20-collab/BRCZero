@@ -1,23 +1,15 @@
 package types
 
-type ApiResult struct {
-	Code int32                                 `json:"code" yaml:"code"`
-	Msg  string                                `json:"msg" yaml:"msg"`
-	Data QueryBrc20TxEventsByBlockHashResponse `json:"data" yaml:"data"`
+type ApiResult[T interface{}] struct {
+	Code int32  `json:"code" yaml:"code"`
+	Msg  string `json:"msg" yaml:"msg"`
+	Data T      `json:"data" yaml:"data"`
 }
 
-func NewOKApiResult(data QueryBrc20TxEventsByBlockHashResponse) ApiResult {
-	return ApiResult{
+func NewOKApiResult[T interface{}](data T) ApiResult[T] {
+	return ApiResult[T]{
 		Code: 0,
 		Msg:  "ok",
 		Data: data,
-	}
-}
-
-func NewErrApiResult(err error) ApiResult {
-	return ApiResult{
-		Code: 1,
-		Msg:  err.Error(),
-		Data: QueryBrc20TxEventsByBlockHashResponse{},
 	}
 }
