@@ -31,8 +31,12 @@ func QueryTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *eth.P
 			return
 		}
 
-		//m := map[zeroHash]txid
-		m := map[string]string{}
+		//m: map[zeroTxHash]BtcTxid
+		node, err := cliCtx.GetNode()
+		if err != nil {
+			return
+		}
+		m, err := node.MapTxhashTxid(btcBlockHash)
 
 		type ResBlock struct {
 			event []brcxtypes.EventResponse
@@ -63,6 +67,6 @@ func QueryTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *eth.P
 			res = append(res, ResBlock{txid: txid, event: events})
 		}
 
-		rest.PostProcessResponseBare(w, cliCtx, resps)
+		rest.PostProcessResponseBare(w, cliCtx, res)
 	}
 }

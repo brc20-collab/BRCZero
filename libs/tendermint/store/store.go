@@ -2,6 +2,7 @@ package store
 
 import (
 	"bytes"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -128,6 +129,22 @@ func (bs *BlockStore) LoadZeroHeightByBtcHash(btcHash string) (int64, error) {
 		return 0, fmt.Errorf("cannot get zero height using btc hash %s", btcHash)
 	}
 	return strconv.ParseInt(string(zeroHeight), 10, 64)
+}
+
+func (bs *BlockStore) LoadMapTxhashTxidByBtcHash(btcHash string) (map[string]string, error) {
+	res := make(map[string]string)
+	zeroH, err := bs.LoadZeroHeightByBtcHash(btcHash)
+	if err != nil {
+		return nil, err
+	}
+	block := bs.LoadBlock(zeroH)
+	for _, tx := range block.Txs {
+		var ztx types.ZeroRequestTx
+		if err = rlp.DecodeBytes(tx, &ztx); err == nil {
+			res[hex.EncodeToString(tx.Hash())] = ztx.BTCTxid
+		}
+	}
+	return res, nil
 }
 
 func (bs *BlockStore) LoadSortedZeroTxsMapByBtcHash(btcHash string) (map[string][]types.ZeroRequestTx, error) {
