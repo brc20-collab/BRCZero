@@ -44,7 +44,7 @@ func QueryBrc20TxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *
 			return
 		}
 
-		resMap := map[string][]brcxtypes.EventResponse{}
+		resMap := map[string][]brcxtypes.Brc20EventResponse{}
 		for _, txLogs := range blockLogs {
 			for _, l := range txLogs {
 				if len(l.Data) == 0 {
@@ -62,20 +62,20 @@ func QueryBrc20TxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *
 				}
 
 				if _, ok := resMap[txid]; !ok {
-					resMap[txid] = make([]brcxtypes.EventResponse, 0, 1)
+					resMap[txid] = make([]brcxtypes.Brc20EventResponse, 0, 1)
 				}
 				resMap[txid] = append(resMap[txid], eventContext.ToEventResponse())
 			}
 		}
 
-		txEventsResp := make([]brcxtypes.QueryTxEventsResponse, 0)
+		txEventsResp := make([]brcxtypes.QueryBrc20TxEventsResponse, 0)
 		for txid, events := range resMap {
-			txEventsResp = append(txEventsResp, brcxtypes.NewQueryTxEventsResponse(events, txid))
+			txEventsResp = append(txEventsResp, brcxtypes.NewQueryBrc20TxEventsResponse(events, txid))
 		}
 
-		blockEventsResp := brcxtypes.NewQueryTxEventsByBlockHashResponse(txEventsResp)
+		blockEventsResp := brcxtypes.NewQueryBrc20TxEventsByBlockHashResponse(txEventsResp)
 
-		response := brcxtypes.NewOKApiResult(&blockEventsResp)
+		response := brcxtypes.NewOKApiResult(blockEventsResp)
 		resp, err := cliCtx.Codec.MarshalJSON(response)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())

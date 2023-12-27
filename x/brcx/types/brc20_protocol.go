@@ -149,11 +149,11 @@ func UnpackGetBrc20TotalTickHoldersOutput(ret []byte) (*big.Int, error) {
 	return holders, nil
 }
 
-func UnpackBrc20EventContext(ret []byte) (WrappedEvent, error) {
-	var ec WrappedEvent
+func UnpackBrc20EventContext(ret []byte) (Brc20WrappedEvent, error) {
+	var ec Brc20WrappedEvent
 	err := brc20ABI.UnpackIntoInterface(&ec, EventsName, ret)
 	if err != nil {
-		return WrappedEvent{}, err
+		return Brc20WrappedEvent{}, err
 	}
 	return ec, nil
 }
@@ -166,8 +166,8 @@ func GetBrc20TransferableTickInput(addr string, tickName string) ([]byte, error)
 	return data, nil
 }
 
-func UnpackGetBrc20TransferableTickOutput(ret []byte) ([]TransferableInscription, error) {
-	var tc []TransferableInscription
+func UnpackGetBrc20TransferableTickOutput(ret []byte) ([]Brc20TransferableInscription, error) {
+	var tc []Brc20TransferableInscription
 	err := brc20EntryPointABI.UnpackIntoInterface(&tc, Brc20GetTransferableTickMethod, ret)
 	if err != nil {
 		return nil, err
@@ -183,8 +183,8 @@ func GetBrc20AllTransferableTickInput(addr string) ([]byte, error) {
 	return data, nil
 }
 
-func UnpackBrc20GetAllTransferableTickOutput(ret []byte) ([]TransferableInscription, error) {
-	var tc []TransferableInscription
+func UnpackBrc20GetAllTransferableTickOutput(ret []byte) ([]Brc20TransferableInscription, error) {
+	var tc []Brc20TransferableInscription
 	err := brc20EntryPointABI.UnpackIntoInterface(&tc, Brc20GetAllTransferableTickMethod, ret)
 	if err != nil {
 		return nil, err

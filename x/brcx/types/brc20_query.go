@@ -13,8 +13,8 @@ type BRC20Balance struct {
 	TransferableBalance *big.Int
 }
 
-func (b BRC20Balance) ToResponse() QueryBalanceResponse {
-	return QueryBalanceResponse{
+func (b BRC20Balance) ToResponse() QueryBrc20BalanceResponse {
+	return QueryBrc20BalanceResponse{
 		Tick:                b.Tick,
 		AvailableBalance:    b.AvailableBalance.String(),
 		TransferableBalance: b.TransferableBalance.String(),
@@ -22,15 +22,15 @@ func (b BRC20Balance) ToResponse() QueryBalanceResponse {
 	}
 }
 
-type QueryBalanceResponse struct {
+type QueryBrc20BalanceResponse struct {
 	Tick                string `json:"tick" yaml:"tick"`
 	AvailableBalance    string `json:"available_balance" yaml:"available_balance"`
 	TransferableBalance string `json:"transferable_balance" yaml:"transferable_balance"`
 	OverallBalance      string `json:"overall_balance" yaml:"overall_balance"`
 }
 
-func NewQueryBalanceResponse(tick string, ab string, tb string, ob string) QueryBalanceResponse {
-	return QueryBalanceResponse{
+func NewQueryBrc20BalanceResponse(tick string, ab string, tb string, ob string) QueryBrc20BalanceResponse {
+	return QueryBrc20BalanceResponse{
 		Tick:                tick,
 		AvailableBalance:    ab,
 		TransferableBalance: tb,
@@ -38,12 +38,12 @@ func NewQueryBalanceResponse(tick string, ab string, tb string, ob string) Query
 	}
 }
 
-type QueryAllBalanceResponse struct {
-	Balance []QueryBalanceResponse `json:"balance" yaml:"balance"`
+type QueryBrc20AllBalanceResponse struct {
+	Balance []QueryBrc20BalanceResponse `json:"balance" yaml:"balance"`
 }
 
-func NewQueryAllBalanceResponse(balance []QueryBalanceResponse) QueryAllBalanceResponse {
-	return QueryAllBalanceResponse{
+func NewQueryBrc20AllBalanceResponse(balance []QueryBrc20BalanceResponse) QueryBrc20AllBalanceResponse {
+	return QueryBrc20AllBalanceResponse{
 		Balance: balance,
 	}
 }
@@ -63,8 +63,8 @@ type BRC20Information struct {
 	BlockHeight       uint64
 }
 
-func (info BRC20Information) ToResponse() QueryTickInfoResponse {
-	return QueryTickInfoResponse{
+func (info BRC20Information) ToResponse() QueryBrc20TickInfoResponse {
+	return QueryBrc20TickInfoResponse{
 		Tick:              info.Tick,
 		InscriptionId:     info.InscriptionId,
 		InscriptionNumber: info.InscriptionNumber,
@@ -83,7 +83,7 @@ type WrappedBRC20Information struct {
 	BRC20Information
 }
 
-type QueryTickInfoResponse struct {
+type QueryBrc20TickInfoResponse struct {
 	Tick              string `json:"tick" yaml:"tick"`
 	InscriptionId     string `json:"inscription_id" yaml:"inscription_id"`
 	InscriptionNumber int64  `json:"inscription_number" yaml:"inscription_number"`
@@ -97,8 +97,8 @@ type QueryTickInfoResponse struct {
 	BlockTime         uint32 `json:"deploy_blocktime" yaml:"deploy_blocktime"`
 }
 
-func NewQueryTickInfoResponse(info WrappedBRC20Information) QueryTickInfoResponse {
-	return QueryTickInfoResponse{
+func NewQueryBrc20TickInfoResponse(info WrappedBRC20Information) QueryBrc20TickInfoResponse {
+	return QueryBrc20TickInfoResponse{
 		Tick:              info.Tick,
 		InscriptionId:     info.InscriptionId,
 		InscriptionNumber: info.InscriptionNumber,
@@ -113,27 +113,27 @@ func NewQueryTickInfoResponse(info WrappedBRC20Information) QueryTickInfoRespons
 	}
 }
 
-type QueryAllTickInfoResponse struct {
-	Tokens []QueryTickInfoResponse `json:"tokens" yaml:"tokens"`
+type QueryBrc20AllTickInfoResponse struct {
+	Tokens []QueryBrc20TickInfoResponse `json:"tokens" yaml:"tokens"`
 }
 
-func NewQueryAllTickInfoResponse(infos []QueryTickInfoResponse) QueryAllTickInfoResponse {
-	return QueryAllTickInfoResponse{
+func NewQueryBrc20AllTickInfoResponse(infos []QueryBrc20TickInfoResponse) QueryBrc20AllTickInfoResponse {
+	return QueryBrc20AllTickInfoResponse{
 		Tokens: infos,
 	}
 }
 
-type QueryTotalTickHoldersResponse struct {
+type QueryBrc20TotalTickHoldersResponse struct {
 	Holders string `json:"total_tick_holders" yaml:"total_tick_holders"`
 }
 
-func NewQueryTotalTickHoldersResponse(h string) QueryTotalTickHoldersResponse {
-	return QueryTotalTickHoldersResponse{
+func NewQueryBrc20TotalTickHoldersResponse(h string) QueryBrc20TotalTickHoldersResponse {
+	return QueryBrc20TotalTickHoldersResponse{
 		Holders: h,
 	}
 }
 
-type EventContext struct {
+type Brc20EventContext struct {
 	EventType         string   `json:"event" yaml:"event"`
 	Tick              string   `json:"tick" yaml:"tick"`
 	InscriptionId     string   `json:"inscription_id" yaml:"inscription_id"`
@@ -150,7 +150,7 @@ type EventContext struct {
 	Txid              string   `json:"txid" yaml:"txid"`
 }
 
-type EventResponse struct {
+type Brc20EventResponse struct {
 	EventType         string   `json:"event" yaml:"event"`
 	Tick              string   `json:"tick" yaml:"tick"`
 	InscriptionId     string   `json:"inscription_id" yaml:"inscription_id"`
@@ -167,12 +167,12 @@ type EventResponse struct {
 	Msg               string   `json:"msg" yaml:"msg"`
 }
 
-type WrappedEvent struct {
-	EventContext `json:"events" yaml:"events"`
+type Brc20WrappedEvent struct {
+	Brc20EventContext `json:"events" yaml:"events"`
 }
 
-func (we WrappedEvent) ToEventResponse() EventResponse {
-	return EventResponse{
+func (we Brc20WrappedEvent) ToEventResponse() Brc20EventResponse {
+	return Brc20EventResponse{
 		EventType:         we.EventType,
 		Tick:              we.Tick,
 		InscriptionId:     we.InscriptionId,
@@ -191,27 +191,27 @@ func (we WrappedEvent) ToEventResponse() EventResponse {
 	}
 }
 
-type QueryTxEventsResponse struct {
-	Events []EventResponse `json:"events" yaml:"events"`
-	Txid   string          `json:"txid" yaml:"txid"`
+type QueryBrc20TxEventsResponse struct {
+	Events []Brc20EventResponse `json:"events" yaml:"events"`
+	Txid   string               `json:"txid" yaml:"txid"`
 }
 
-func NewQueryTxEventsResponse(e []EventResponse, txid string) QueryTxEventsResponse {
-	return QueryTxEventsResponse{
+func NewQueryBrc20TxEventsResponse(e []Brc20EventResponse, txid string) QueryBrc20TxEventsResponse {
+	return QueryBrc20TxEventsResponse{
 		Events: e,
 		Txid:   txid,
 	}
 }
 
-type QueryTxEventsByBlockHashResponse struct {
-	BlockEvents []QueryTxEventsResponse `json:"block" yaml:"block"`
+type QueryBrc20TxEventsByBlockHashResponse struct {
+	BlockEvents []QueryBrc20TxEventsResponse `json:"block" yaml:"block"`
 }
 
-func NewQueryTxEventsByBlockHashResponse(be []QueryTxEventsResponse) QueryTxEventsByBlockHashResponse {
-	return QueryTxEventsByBlockHashResponse{BlockEvents: be}
+func NewQueryBrc20TxEventsByBlockHashResponse(be []QueryBrc20TxEventsResponse) QueryBrc20TxEventsByBlockHashResponse {
+	return QueryBrc20TxEventsByBlockHashResponse{BlockEvents: be}
 }
 
-type TransferableInscription struct {
+type Brc20TransferableInscription struct {
 	InscriptionId     string `json:"inscription_id" yaml:"inscription_id"`
 	InscriptionNumber int64  `json:"inscription_number" yaml:"inscription_number"`
 	Amount            string `json:"amount" yaml:"amount"`
@@ -219,26 +219,26 @@ type TransferableInscription struct {
 	Owner             string `json:"owner" yaml:"owner"`
 }
 
-type QueryTransferableInscriptionResponse struct {
-	Inscriptions []TransferableInscription `json:"inscriptions" yaml:"inscriptions"`
+type QueryBrc20TransferableInscriptionResponse struct {
+	Inscriptions []Brc20TransferableInscription `json:"inscriptions" yaml:"inscriptions"`
 }
 
-func NewQueryTransferableInscriptionResponse(tis []TransferableInscription) QueryTransferableInscriptionResponse {
-	return QueryTransferableInscriptionResponse{Inscriptions: tis}
+func NewQueryBrc20TransferableInscriptionResponse(tis []Brc20TransferableInscription) QueryBrc20TransferableInscriptionResponse {
+	return QueryBrc20TransferableInscriptionResponse{Inscriptions: tis}
 }
 
-type InscriptionInfo struct {
-	Action            string    `json:"action,omitempty" yaml:"action,omitempty"`
-	InscriptionNumber int64     `json:"inscription_number,omitempty" yaml:"inscription_number,omitempty"`
-	InscriptionId     string    `json:"inscription_id" yaml:"inscription_id"`
-	From              string    `json:"from" yaml:"from"`
-	To                string    `json:"to,omitempty" yaml:"to,omitempty"`
-	OldSatPoint       string    `json:"old_satpoint,omitempty" yaml:"old_satpoint,omitempty"`
-	NewSatPoint       string    `json:"new_satpoint,omitempty" yaml:"new_satpoint,omitempty"`
-	Operation         Operation `json:"operation,omitempty" yaml:"operation,omitempty"`
+type Brc20InscriptionInfo struct {
+	Action            string         `json:"action,omitempty" yaml:"action,omitempty"`
+	InscriptionNumber int64          `json:"inscription_number,omitempty" yaml:"inscription_number,omitempty"`
+	InscriptionId     string         `json:"inscription_id" yaml:"inscription_id"`
+	From              string         `json:"from" yaml:"from"`
+	To                string         `json:"to,omitempty" yaml:"to,omitempty"`
+	OldSatPoint       string         `json:"old_satpoint,omitempty" yaml:"old_satpoint,omitempty"`
+	NewSatPoint       string         `json:"new_satpoint,omitempty" yaml:"new_satpoint,omitempty"`
+	Operation         Brc20Operation `json:"operation,omitempty" yaml:"operation,omitempty"`
 }
 
-type Operation struct {
+type Brc20Operation struct {
 	Tick string `json:"tick" yaml:"tick"`
 	Amt  string `json:"amt,omitempty" yaml:"amt,omitempty"`
 	Max  string `json:"max,omitempty" yaml:"max,omitempty"`
