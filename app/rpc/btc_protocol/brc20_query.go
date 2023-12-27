@@ -14,7 +14,7 @@ import (
 
 func registerBrc20QueryRoutes(cliCtx context.CLIContext, r *mux.Router, ethApi *eth.PublicEthereumAPI) {
 	r.HandleFunc("/brc20/block/{btcBlockHash}/events", QueryBrc20TxsEventsByBtcHashHandlerFunc(cliCtx, ethApi)).Methods("Get")
-	r.HandleFunc("/brc20/block/{txid}/events", QueryBrc20TxsEventsByBtcTxidHandlerFunc(cliCtx, ethApi)).Methods("GET")
+	r.HandleFunc("/brc20/tx/{txid}/events", QueryBrc20TxsEventsByBtcTxidHandlerFunc(cliCtx, ethApi)).Methods("GET")
 }
 
 func QueryBrc20TxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *eth.PublicEthereumAPI) http.HandlerFunc {
