@@ -116,6 +116,10 @@ func HeightByBtcHash(ctx *rpctypes.Context, btcHash string) (int64, error) {
 	return env.BlockStore.LoadZeroHeightByBtcHash(btcHash)
 }
 
+func BtcBlockHashByBtcTxid(ctx *rpctypes.Context, btcTxid string) (string, error) {
+	return env.BlockStore.LoadBtcBlockHashByBtcTxid(btcTxid)
+}
+
 func MapTxhashTxid(bctx *rpctypes.Context, btcHash, protocolName string) (map[string]string, error) {
 	return env.BlockStore.LoadMapTxhashTxidByBtcHash(btcHash, protocolName)
 }
