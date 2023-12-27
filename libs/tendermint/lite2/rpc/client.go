@@ -224,6 +224,10 @@ func (c *Client) HeightByBtcHash(btcHash string) (int64, error) {
 	return 0, fmt.Errorf("tmrpc client")
 }
 
+func (c *Client) BtcBlockHashByBtcTxid(string) (string, error) {
+	return "", fmt.Errorf("tmrpc client")
+}
+
 func (c *Client) MapTxhashTxid(btcHash, protocolName string) (map[string]string, error) {
 	return nil, fmt.Errorf("tmrpc client")
 }
