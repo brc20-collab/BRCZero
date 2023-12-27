@@ -31,21 +31,36 @@ func QueryTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *eth.P
 			return
 		}
 
-		var resps []brcxtypes.EventResponse
+		//m := map[zeroHash]txid
+		m := map[string]string{}
+
+		type ResBlock struct {
+			event []brcxtypes.EventResponse
+			txid  string
+		}
+		// tmp := map[txid][]event
+		tmp := map[string][]brcxtypes.EventResponse{}
 		for _, txLogs := range blockLogs {
 			for _, l := range txLogs {
 				if len(l.Data) == 0 {
 					// means this tx has no events
 					continue
 				}
+				txid := m[l.TxHash.String()]
+
 				eventContext, err := brcxtypes.UnpackEventContext(l.Data)
 				if err != nil {
 					rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 					return
 				}
-				resps = append(resps, eventContext.ToEventResponse())
+				//todo if ok=tmp[txid]
+				tmp[txid] = append(tmp[txid], eventContext.ToEventResponse())
 			}
+		}
 
+		var res []ResBlock
+		for txid, events := range tmp {
+			res = append(res, ResBlock{txid: txid, event: events})
 		}
 
 		rest.PostProcessResponseBare(w, cliCtx, resps)
