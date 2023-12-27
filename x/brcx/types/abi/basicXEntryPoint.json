@@ -1,0 +1,20 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "inScriptionContext",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "inscription",
+        "type": "string"
+      }
+    ],
+    "name": "entryPoint",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

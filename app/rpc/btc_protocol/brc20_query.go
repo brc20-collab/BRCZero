@@ -13,6 +13,7 @@ import (
 
 func registerBrc20QueryRoutes(cliCtx context.CLIContext, r *mux.Router, ethApi *eth.PublicEthereumAPI) {
 	r.HandleFunc("/brc20/block/{btcBlockHash}/events", QueryTxsEventsByBtcHashHandlerFunc(cliCtx, ethApi)).Methods("Get")
+
 }
 
 func QueryTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *eth.PublicEthereumAPI) http.HandlerFunc {
@@ -38,7 +39,7 @@ func QueryTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *eth.P
 					// means this tx has no events
 					continue
 				}
-				eventContext, err := brcxtypes.UnpackEventContext(l.Data)
+				eventContext, err := brcxtypes.UnpackBrc20EventContext(l.Data)
 				if err != nil {
 					rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 					return
