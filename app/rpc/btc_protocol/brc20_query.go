@@ -75,7 +75,12 @@ func QueryTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *eth.P
 
 		blockEventsResp := brcxtypes.NewQueryTxEventsByBlockHashResponse(txEventsResp)
 
-		res := brcxtypes.NewOKApiResult(blockEventsResp)
-		rest.PostProcessResponseBare(w, cliCtx, res)
+		response := brcxtypes.NewOKApiResult(blockEventsResp)
+		resp, err := cliCtx.Codec.MarshalJSON(response)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+		rest.PostProcessResponseBare(w, cliCtx, resp)
 	}
 }
