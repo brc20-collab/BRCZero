@@ -1,0 +1,353 @@
+[
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_plugin",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "AmtUndefined",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "BlockHashUndefined",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "BlockHeightUndefined",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "BlockTimeUndefined",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "CallerNotPlugin",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidJSON",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidOperation",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "LimUndefined",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "MaxUndefined",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "OperationUndefined",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ReceiverUndefined",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "SenderUndefined",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Src20AlreadyDeployed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Src20NotFound",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "SupplyDataWrong",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "TickUndefined",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "TxidUndefined",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "inscriptionContext",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "inscription",
+          "type": "string"
+        }
+      ],
+      "name": "entryPoint",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "page",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "pageSize",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "owner",
+          "type": "string"
+        }
+      ],
+      "name": "getAllSRC20Balance",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "tickOrigin",
+              "type": "string"
+            },
+            {
+              "internalType": "uint64",
+              "name": "amt",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint256",
+              "name": "blockIndex",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Src20BalanceInfo[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "page",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "pageSize",
+          "type": "uint256"
+        }
+      ],
+      "name": "getSRC20AllTokenInfo",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "tickOrigin",
+              "type": "string"
+            },
+            {
+              "internalType": "uint64",
+              "name": "max",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "lim",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "amt",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint8",
+              "name": "dec",
+              "type": "uint8"
+            },
+            {
+              "internalType": "string",
+              "name": "creator",
+              "type": "string"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "txHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "blockIndex",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "blockTime",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Src20TokenInfo[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "addr",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "tickOrigin",
+          "type": "string"
+        }
+      ],
+      "name": "getSRC20Balance",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "tickOrigin",
+              "type": "string"
+            },
+            {
+              "internalType": "uint64",
+              "name": "amt",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint256",
+              "name": "blockIndex",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Src20BalanceInfo",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "tickOrigin",
+          "type": "string"
+        }
+      ],
+      "name": "getSRC20TokenInfo",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "tickOrigin",
+              "type": "string"
+            },
+            {
+              "internalType": "uint64",
+              "name": "max",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "lim",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "amt",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint8",
+              "name": "dec",
+              "type": "uint8"
+            },
+            {
+              "internalType": "string",
+              "name": "creator",
+              "type": "string"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "txHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "blockIndex",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "blockTime",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Src20TokenInfo",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "plugin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
