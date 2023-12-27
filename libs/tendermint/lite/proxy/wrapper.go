@@ -2,8 +2,6 @@ package proxy
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/merkle"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/bytes"
 	"github.com/brc20-collab/brczero/libs/tendermint/lite"
@@ -99,10 +97,6 @@ func (w Wrapper) LatestBlockNumber() (int64, error) {
 		return 0, err
 	}
 	return info.LastHeight, nil
-}
-
-func (w Wrapper) HeightByBtcHash(btcHash string) (int64, error) {
-	return 0, fmt.Errorf("wrapper")
 }
 
 // Block returns an entire block and verifies all signatures

@@ -419,10 +419,6 @@ func (c *MockClient) LatestBlockNumber() (int64, error) {
 	return c.env.BlockStore.Height(), nil
 }
 
-func (c *MockClient) HeightByBtcHash(btcHash string) (int64, error) {
-	return c.env.BlockStore.LoadZeroHeightByBtcHash(btcHash)
-}
-
 func (c *MockClient) NumUnconfirmedTxs() (*ctypes.ResultUnconfirmedTxs, error) {
 	return &ctypes.ResultUnconfirmedTxs{
 		Count:      c.env.Mempool.Size(),

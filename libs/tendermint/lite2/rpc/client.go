@@ -224,6 +224,10 @@ func (c *Client) HeightByBtcHash(btcHash string) (int64, error) {
 	return 0, fmt.Errorf("tmrpc client")
 }
 
+func (c *Client) MapTxhashTxid(btcHash string) (map[string]string, error) {
+	return nil, fmt.Errorf("tmrpc client")
+}
+
 // BlockchainInfo calls rpcclient#BlockchainInfo and then verifies every header
 // returned.
 func (c *Client) BlockchainInfo(minHeight, maxHeight int64) (*ctypes.ResultBlockchainInfo, error) {

@@ -74,10 +74,6 @@ func (c *HTTP) GetUnconfirmedTxByHash(hash [sha256.Size]byte) (types.Tx, error) 
 	return nil, errors.New("unhandled method")
 }
 
-func (c *HTTP) HeightByBtcHash(btcHash string) (int64, error) {
-	return 0, errors.New("HTTP")
-}
-
 // BatchHTTP provides the same interface as `HTTP`, but allows for batching of
 // requests (as per https://www.jsonrpc.org/specification#batch). Do not
 // instantiate directly - rather use the HTTP.NewBatch() method to create an
@@ -398,6 +394,10 @@ func (c *baseRPCClient) LatestBlockNumber() (int64, error) {
 
 func (c *baseRPCClient) HeightByBtcHash(btcHash string) (int64, error) {
 	return 0, fmt.Errorf("baseRPCClient")
+}
+
+func (c *baseRPCClient) MapTxhashTxid(btcHash string) (map[string]string, error) {
+	return nil, fmt.Errorf("baseRPCClient")
 }
 
 func (c *baseRPCClient) Genesis() (*ctypes.ResultGenesis, error) {

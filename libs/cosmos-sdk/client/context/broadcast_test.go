@@ -41,10 +41,6 @@ func (c MockClient) LatestBlockNumber() (int64, error) {
 	return 0, nil
 }
 
-func (c *MockClient) HeightByBtcHash(btcHash string) (int64, error) {
-	return 0, nil
-}
-
 func CreateContextWithErrorAndMode(err error, mode string) CLIContext {
 	return CLIContext{
 		Client:        MockClient{err: err},
