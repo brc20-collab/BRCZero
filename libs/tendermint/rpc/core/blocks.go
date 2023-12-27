@@ -116,8 +116,8 @@ func HeightByBtcHash(ctx *rpctypes.Context, btcHash string) (int64, error) {
 	return env.BlockStore.LoadZeroHeightByBtcHash(btcHash)
 }
 
-func MapTxhashTxid(bctx *rpctypes.Context, btcHash string) (map[string]string, error) {
-	return env.BlockStore.LoadMapTxhashTxidByBtcHash(btcHash)
+func MapTxhashTxid(bctx *rpctypes.Context, btcHash, protocolName string) (map[string]string, error) {
+	return env.BlockStore.LoadMapTxhashTxidByBtcHash(btcHash, protocolName)
 }
 
 // Commit gets block commit at a given height.

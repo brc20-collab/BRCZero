@@ -38,7 +38,7 @@ func QueryRuneTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *e
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
-		zeroTxHashBtcTxidMap, err := node.MapTxhashTxid(btcBlockHash)
+		zeroTxHashBtcTxidMap, err := node.MapTxhashTxid(btcBlockHash, protocolName)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return

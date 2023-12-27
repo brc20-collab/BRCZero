@@ -131,7 +131,7 @@ func (bs *BlockStore) LoadZeroHeightByBtcHash(btcHash string) (int64, error) {
 	return strconv.ParseInt(string(zeroHeight), 10, 64)
 }
 
-func (bs *BlockStore) LoadMapTxhashTxidByBtcHash(btcHash string) (map[string]string, error) {
+func (bs *BlockStore) LoadMapTxhashTxidByBtcHash(btcHash, protocolName string) (map[string]string, error) {
 	res := make(map[string]string)
 	zeroH, err := bs.LoadZeroHeightByBtcHash(btcHash)
 	if err != nil {
@@ -141,7 +141,9 @@ func (bs *BlockStore) LoadMapTxhashTxidByBtcHash(btcHash string) (map[string]str
 	for _, tx := range block.Txs {
 		var ztx types.ZeroRequestTx
 		if err = rlp.DecodeBytes(tx, &ztx); err == nil {
-			res[hex.EncodeToString(tx.Hash())] = ztx.BTCTxid
+			if protocolName == ztx.ProtocolName {
+				res[hex.EncodeToString(tx.Hash())] = ztx.BTCTxid
+			}
 		}
 	}
 	return res, nil

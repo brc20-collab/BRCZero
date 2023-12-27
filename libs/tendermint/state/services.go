@@ -29,7 +29,7 @@ type BlockStore interface {
 
 	LoadBlockByHash(hash []byte) *types.Block
 	LoadZeroHeightByBtcHash(hash string) (int64, error)
-	LoadMapTxhashTxidByBtcHash(btcHash string) (map[string]string, error)
+	LoadMapTxhashTxidByBtcHash(btcHash, protocolName string) (map[string]string, error)
 	LoadBlockPart(height int64, index int) *types.Part
 
 	LoadBlockCommit(height int64) *types.Commit

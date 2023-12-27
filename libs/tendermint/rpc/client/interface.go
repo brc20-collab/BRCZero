@@ -81,7 +81,7 @@ type HistoryClient interface {
 	BlockchainInfo(minHeight, maxHeight int64) (*ctypes.ResultBlockchainInfo, error)
 	LatestBlockNumber() (int64, error)
 	HeightByBtcHash(string) (int64, error)
-	MapTxhashTxid(btcHash string) (map[string]string, error)
+	MapTxhashTxid(btcHash, protocolName string) (map[string]string, error)
 }
 
 // StatusClient provides access to general chain info.

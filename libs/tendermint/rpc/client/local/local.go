@@ -178,8 +178,8 @@ func (c *Local) HeightByBtcHash(btcHash string) (int64, error) {
 	return core.HeightByBtcHash(c.ctx, btcHash)
 }
 
-func (c *Local) MapTxhashTxid(btcHash string) (map[string]string, error) {
-	return core.MapTxhashTxid(c.ctx, btcHash)
+func (c *Local) MapTxhashTxid(btcHash, protocolName string) (map[string]string, error) {
+	return core.MapTxhashTxid(c.ctx, btcHash, protocolName)
 }
 
 func (c *Local) BlockInfo(height *int64) (*types.BlockMeta, error) {

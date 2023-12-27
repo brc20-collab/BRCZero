@@ -38,7 +38,7 @@ func QueryBrc20TxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
-		zeroTxHashBtcTxidMap, err := node.MapTxhashTxid(btcBlockHash)
+		zeroTxHashBtcTxidMap, err := node.MapTxhashTxid(btcBlockHash, BRC20)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
@@ -75,7 +75,7 @@ func QueryBrc20TxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *
 
 		blockEventsResp := brcxtypes.NewQueryTxEventsByBlockHashResponse(txEventsResp)
 
-		response := brcxtypes.NewOKApiResult(blockEventsResp)
+		response := brcxtypes.NewOKApiResult(&blockEventsResp)
 		resp, err := cliCtx.Codec.MarshalJSON(response)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())

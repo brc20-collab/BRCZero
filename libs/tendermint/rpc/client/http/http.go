@@ -396,7 +396,7 @@ func (c *baseRPCClient) HeightByBtcHash(btcHash string) (int64, error) {
 	return 0, fmt.Errorf("baseRPCClient")
 }
 
-func (c *baseRPCClient) MapTxhashTxid(btcHash string) (map[string]string, error) {
+func (c *baseRPCClient) MapTxhashTxid(btcHash, protocolName string) (map[string]string, error) {
 	return nil, fmt.Errorf("baseRPCClient")
 }
 
