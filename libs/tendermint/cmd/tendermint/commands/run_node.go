@@ -214,7 +214,7 @@ func AddNodeFlags(cmd *cobra.Command) {
 		"Used for backtracking height to enable fast sync crawler's tx",
 	)
 
-	cmd.Flags().Uint(
+	cmd.Flags().Int(
 		"mempool.pull_zero_data_limit",
 		config.Mempool.PullZeroDataLimit,
 		"Limit of pulling crawler's data every time",

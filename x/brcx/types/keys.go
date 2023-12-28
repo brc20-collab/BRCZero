@@ -15,6 +15,8 @@ const (
 
 	MsgInscriptionType = "inscription"
 	MsgBascisXType     = "bascis_x"
+
+	BRC20 = "brc-20"
 )
 
 var (
