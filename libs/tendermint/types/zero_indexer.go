@@ -15,6 +15,9 @@ type ZeroAPIResponse struct {
 }
 
 type ZeroResponseData struct {
+	Page             uint            `json:"page"`
+	Count            uint            `json:"count"`
+	Sum              uint            `json:"sum"`
 	BTCHeight        uint64          `json:"block_height"`
 	BTCBlockHash     string          `json:"block_hash"`
 	BTCPrevBlockHash string          `json:"prev_block_hash"`
