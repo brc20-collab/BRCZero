@@ -453,6 +453,14 @@ func (mem *CListMempool) pullZeroDataRoutine() {
 
 func (mem *CListMempool) pullZeroDataTask() {
 	mem.logger.Info("start pullZeroDataTask")
+	// if mem.zeroTxS number > mem.config.ZeroDataCacheSize slow pull
+	if uint64(len(mem.zeroTxs)) > mem.config.ZeroDataCacheSize {
+		mem.pullTicker.Reset(5 * PullZeroDataInterval)
+		return
+	} else {
+		mem.pullTicker.Reset(PullZeroDataInterval)
+	}
+
 	// maxBtcHeight means max btc height saved in the current mempool
 	maxBtcHeight := mem.getZeroDataMaxHeight()
 	// insertHeight means latest btc block height to be fetched
@@ -460,6 +468,14 @@ func (mem *CListMempool) pullZeroDataTask() {
 	txs, btcBlockHash, err := mem.pullZeroData(insertHeight)
 	if err != nil {
 		mem.logger.Error(fmt.Sprintf("pull zero data at height %d faild: %s", insertHeight, err.Error()))
+		return
+	}
+
+	if insertHeight <= mem.fastsyncEndHeight {
+		mem.insertZeroData(insertHeight, btcBlockHash, txs)
+		mem.confirmZeroDataByBTCHeight(insertHeight)
+		//fast sync mode 500ms pulldata
+		mem.pullTicker.Reset(PullZeroDataInterval / 2)
 		return
 	}
 
@@ -478,13 +494,6 @@ func (mem *CListMempool) pullZeroDataTask() {
 		return
 	}
 
-	if insertHeight <= mem.fastsyncEndHeight {
-		mem.confirmZeroDataByBTCHeight(pendingConfirmedH)
-		mem.insertZeroData(insertHeight, btcBlockHash, txs)
-		//fast sync mode 500ms pulldata
-		mem.pullTicker.Reset(time.Millisecond * 500)
-		return
-	}
 	_, curBtcBlockHash, err := mem.pullZeroData(pendingConfirmedH)
 	// judge if the pendingConfirmedH should be confirmed
 	if err != nil {
@@ -542,54 +551,89 @@ func (mem *CListMempool) pullCrawlerHeight() (uint64, error) {
 
 func (mem *CListMempool) pullZeroData(btcHeight int64) ([]types.Tx, string, error) {
 	// e.g., http://127.0.0.1:81/api/v1/crawler/zeroindexer/
-	// todo: only for test
-	baseUrl := mem.config.ZeroDataUrl
-	heightStr := strconv.FormatInt(btcHeight, 10)
-	pUrl := fmt.Sprintf("%s%s%s", baseUrl, ZeroTxPath, heightStr)
+	var page uint = 1
+	var sum uint = 0
+	txs := make([]types.Tx, 0)
+	btcBlockHash := ""
 
+	baseUrl := mem.config.ZeroDataUrl
+	limit := mem.config.PullZeroDataLimit
+	heightStr := strconv.FormatInt(btcHeight, 10)
+
+	for {
+		var pUrl string
+		if limit <= 0 {
+			pUrl = fmt.Sprintf("%s%s%s", baseUrl, ZeroTxPath, heightStr)
+		} else {
+			pUrl = fmt.Sprintf("%s%s%s?page=%d&limit=%d", baseUrl, ZeroTxPath, heightStr, page, limit)
+		}
+
+		zeroRespData, err := getUrl(pUrl, heightStr)
+		if err != nil {
+			return nil, "", err
+		}
+
+		//todo: process btcfee
+		for _, tx := range zeroRespData.ZeroTxs {
+			txBytes, err := rlp.EncodeToBytes(tx)
+			if err != nil {
+				return nil, "", fmt.Errorf("rlp encode zero tx failed: %s", err.Error())
+			}
+			txs = append(txs, txBytes)
+		}
+
+		btcBlockHash = zeroRespData.BTCBlockHash
+
+		sum += zeroRespData.Count
+		if sum == zeroRespData.Sum {
+			break
+		} else if sum > zeroRespData.Sum {
+			return nil, "", fmt.Errorf("pagination process failed: %s", err.Error())
+		}
+		page++
+	}
+
+	return txs, btcBlockHash, nil
+}
+
+func getUrl(pUrl string, heightStr string) (*types.ZeroResponseData, error) {
 	res, err := http.Get(pUrl)
 	if err != nil {
-		return nil, "", fmt.Errorf("get protocol url %s failed: %s", pUrl, err.Error())
+		return nil, fmt.Errorf("get protocol url %s failed: %s", pUrl, err.Error())
 	}
 	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, "", fmt.Errorf("read all body failed: %s", err.Error())
+		return nil, fmt.Errorf("read all body failed: %s", err.Error())
 	}
 
 	var apiResp types.ZeroAPIResponse
 	err = json.Unmarshal(body, &apiResp)
 	if err != nil {
-		return nil, "", fmt.Errorf("json unmarshal api response failed: %s", err.Error())
+		return nil, fmt.Errorf("json unmarshal api response failed: %s", err.Error())
+	}
+
+	if apiResp.Code != 0 {
+		return nil, fmt.Errorf("get api response error: %s", apiResp.Msg)
 	}
 
 	dataJson, err := json.Marshal(apiResp.Data)
 	if err != nil {
-		return nil, "", fmt.Errorf("json marshal api response data failed: %s", err.Error())
+		return nil, fmt.Errorf("json marshal api response data failed: %s", err.Error())
 	}
 
 	var zeroRespData types.ZeroResponseData
 	err = json.Unmarshal(dataJson, &zeroRespData)
 	if err != nil {
-		return nil, "", fmt.Errorf("josn unmarshal zero tx response data failed")
+		return nil, fmt.Errorf("json unmarshal zero tx response data failed at height %s", heightStr)
 	}
 
 	if zeroRespData.BTCBlockHash == "" {
-		return nil, "", fmt.Errorf("zero data cannot be fetched at height %s", heightStr)
+		return nil, fmt.Errorf("zero data cannot be fetched at height %s", heightStr)
 	}
 
-	txs := make([]types.Tx, 0)
-	//todo: process btcfee
-	for _, tx := range zeroRespData.ZeroTxs {
-		txBytes, err := rlp.EncodeToBytes(tx)
-		if err != nil {
-			return nil, "", fmt.Errorf("rlp encode zero tx failed: %s", err.Error())
-		}
-		txs = append(txs, txBytes)
-	}
-
-	return txs, zeroRespData.BTCBlockHash, nil
+	return &zeroRespData, nil
 }
 
 func (mem *CListMempool) InsertZeroData(btcHeight int64, btcBlockHash string, txs []types.Tx) {

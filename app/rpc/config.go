@@ -6,9 +6,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/spf13/viper"
-
 	"github.com/brc20-collab/brczero/app/crypto/ethsecp256k1"
 	"github.com/brc20-collab/brczero/app/crypto/hd"
 	"github.com/brc20-collab/brczero/app/rpc/btc_protocol"
@@ -22,6 +19,8 @@ import (
 	cmserver "github.com/brc20-collab/brczero/libs/cosmos-sdk/server"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
+	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/spf13/viper"
 )
 
 const (
