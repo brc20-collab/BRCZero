@@ -610,9 +610,7 @@ func getUrl(pUrl string, heightStr string) (*types.ZeroResponseData, error) {
 	if apiResp.Code != 0 {
 		return nil, fmt.Errorf("get api response error: %s", apiResp.Msg)
 	}
-	if apiResp.Code != 0 {
-		return nil, "", fmt.Errorf("pull zero data err: %s", apiResp.Msg)
-	}
+
 	dataJson, err := json.Marshal(apiResp.Data)
 	if err != nil {
 		return nil, fmt.Errorf("json marshal api response data failed: %s", err.Error())
