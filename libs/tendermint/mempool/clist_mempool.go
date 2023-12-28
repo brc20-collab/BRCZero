@@ -529,24 +529,13 @@ func (mem *CListMempool) pullCrawlerHeight() (uint64, error) {
 		return 0, fmt.Errorf("read all body failed: %s", err.Error())
 	}
 
-	var apiResp types.ZeroAPIResponse
+	var apiResp types.ZeroAPIResponse[types.CrawlerHeightData]
 	err = json.Unmarshal(body, &apiResp)
 	if err != nil {
 		return 0, fmt.Errorf("json unmarshal api response failed: %s", err.Error())
 	}
 
-	dataJson, err := json.Marshal(apiResp.Data)
-	if err != nil {
-		return 0, fmt.Errorf("json marshal api response data failed: %s", err.Error())
-	}
-
-	var chd types.CrawlerHeightData
-	err = json.Unmarshal(dataJson, &chd)
-	if err != nil {
-		return 0, fmt.Errorf("josn unmarshal unmarshal crawler height data failed")
-	}
-
-	return chd.CrawlerHeight, nil
+	return apiResp.Data.CrawlerHeight, nil
 }
 
 func (mem *CListMempool) pullZeroData(btcHeight int64) ([]types.Tx, string, error) {
@@ -608,7 +597,7 @@ func getUrl(pUrl string, heightStr string) (*types.ZeroResponseData, error) {
 		return nil, fmt.Errorf("read all body failed: %s", err.Error())
 	}
 
-	var apiResp types.ZeroAPIResponse
+	var apiResp types.ZeroAPIResponse[types.ZeroResponseData]
 	err = json.Unmarshal(body, &apiResp)
 	if err != nil {
 		return nil, fmt.Errorf("json unmarshal api response failed: %s", err.Error())
@@ -618,22 +607,11 @@ func getUrl(pUrl string, heightStr string) (*types.ZeroResponseData, error) {
 		return nil, fmt.Errorf("get api response error: %s", apiResp.Msg)
 	}
 
-	dataJson, err := json.Marshal(apiResp.Data)
-	if err != nil {
-		return nil, fmt.Errorf("json marshal api response data failed: %s", err.Error())
-	}
-
-	var zeroRespData types.ZeroResponseData
-	err = json.Unmarshal(dataJson, &zeroRespData)
-	if err != nil {
-		return nil, fmt.Errorf("json unmarshal zero tx response data failed at height %s", heightStr)
-	}
-
-	if zeroRespData.BTCBlockHash == "" {
+	if apiResp.Data.BTCBlockHash == "" {
 		return nil, fmt.Errorf("zero data cannot be fetched at height %s", heightStr)
 	}
 
-	return &zeroRespData, nil
+	return &apiResp.Data, nil
 }
 
 func (mem *CListMempool) InsertZeroData(btcHeight int64, btcBlockHash string, txs []types.Tx) {
