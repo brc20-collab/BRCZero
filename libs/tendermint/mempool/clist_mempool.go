@@ -572,13 +572,6 @@ func (mem *CListMempool) pullZeroData(btcHeight int64) ([]types.Tx, string, erro
 		if err != nil {
 			return nil, "", err
 		}
-		sum += zeroRespData.Count
-		if sum == zeroRespData.Sum {
-			break
-		} else if sum > zeroRespData.Sum {
-			return nil, "", fmt.Errorf("pagination process failed: %s", err.Error())
-		}
-		page++
 
 		//todo: process btcfee
 		for _, tx := range zeroRespData.ZeroTxs {
@@ -590,6 +583,14 @@ func (mem *CListMempool) pullZeroData(btcHeight int64) ([]types.Tx, string, erro
 		}
 
 		btcBlockHash = zeroRespData.BTCBlockHash
+
+		sum += zeroRespData.Count
+		if sum == zeroRespData.Sum {
+			break
+		} else if sum > zeroRespData.Sum {
+			return nil, "", fmt.Errorf("pagination process failed: %s", err.Error())
+		}
+		page++
 	}
 
 	return txs, btcBlockHash, nil
