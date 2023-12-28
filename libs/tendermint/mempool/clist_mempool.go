@@ -571,7 +571,9 @@ func (mem *CListMempool) pullZeroData(btcHeight int64) ([]types.Tx, string, erro
 	if err != nil {
 		return nil, "", fmt.Errorf("json unmarshal api response failed: %s", err.Error())
 	}
-
+	if apiResp.Code != 0 {
+		return nil, "", fmt.Errorf("pull zero data err: %s", apiResp.Msg)
+	}
 	dataJson, err := json.Marshal(apiResp.Data)
 	if err != nil {
 		return nil, "", fmt.Errorf("json marshal api response data failed: %s", err.Error())
