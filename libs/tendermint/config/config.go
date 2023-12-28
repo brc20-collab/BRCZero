@@ -694,6 +694,7 @@ type MempoolConfig struct {
 	ZeroDataUrl                string   `mapstructure:"zero_data_url"`
 	FastSyncHeightGap          int64    `mapstructure:"fast_sync_height_gap"`
 	ZeroDataCacheSize          uint64   `mapstructure:"zero_data_cache_size"`
+	PullZeroDataLimit          uint     `mapstructure:"pull_zero_data_limit"`
 }
 
 // DefaultMempoolConfig returns a default configuration for the Tendermint mempool
@@ -723,6 +724,7 @@ func DefaultMempoolConfig() *MempoolConfig {
 		ZeroDataUrl:                "",
 		FastSyncHeightGap:          0,
 		ZeroDataCacheSize:          100,
+		PullZeroDataLimit:          30,
 	}
 }
 
