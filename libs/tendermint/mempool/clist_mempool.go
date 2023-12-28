@@ -562,7 +562,7 @@ func (mem *CListMempool) pullZeroData(btcHeight int64) ([]types.Tx, string, erro
 
 	for {
 		var pUrl string
-		if limit < 0 {
+		if limit <= 0 {
 			pUrl = fmt.Sprintf("%s%s%s", baseUrl, ZeroTxPath, heightStr)
 		} else {
 			pUrl = fmt.Sprintf("%s%s%s?page=%d&limit=%d", baseUrl, ZeroTxPath, heightStr, page, limit)
