@@ -471,6 +471,14 @@ func (mem *CListMempool) pullZeroDataTask() {
 		return
 	}
 
+	if insertHeight <= mem.fastsyncEndHeight {
+		mem.insertZeroData(insertHeight, btcBlockHash, txs)
+		mem.confirmZeroDataByBTCHeight(insertHeight)
+		//fast sync mode 500ms pulldata
+		mem.pullTicker.Reset(PullZeroDataInterval / 2)
+		return
+	}
+
 	// after success get data of new btc height
 	pendingConfirmedH := maxBtcHeight - BtcConfirmedGap
 	// note: pendingConfirmedData is local data, maybe different from btc node
@@ -486,13 +494,6 @@ func (mem *CListMempool) pullZeroDataTask() {
 		return
 	}
 
-	if insertHeight <= mem.fastsyncEndHeight {
-		mem.confirmZeroDataByBTCHeight(pendingConfirmedH)
-		mem.insertZeroData(insertHeight, btcBlockHash, txs)
-		//fast sync mode 500ms pulldata
-		mem.pullTicker.Reset(PullZeroDataInterval / 2)
-		return
-	}
 	_, curBtcBlockHash, err := mem.pullZeroData(pendingConfirmedH)
 	// judge if the pendingConfirmedH should be confirmed
 	if err != nil {
