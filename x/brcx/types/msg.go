@@ -70,7 +70,7 @@ func NewMsgBasicProtocolOp(protocolName string, inscription string, btcTxid stri
 }
 
 func (msg MsgBasicProtocolOp) Route() string { return RouterKey }
-func (msg MsgBasicProtocolOp) Type() string  { return MsgBasicXType }
+func (msg MsgBasicProtocolOp) Type() string  { return MsgBasicProtocolOpType }
 func (msg MsgBasicProtocolOp) GetSigners() []sdk.AccAddress {
 	return nil
 }

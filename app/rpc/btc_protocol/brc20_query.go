@@ -1,6 +1,7 @@
 package btc_protocol
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -10,11 +11,34 @@ import (
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/rest"
 	brcxtypes "github.com/brc20-collab/brczero/x/brcx/types"
+	"github.com/brc20-collab/brczero/x/common"
 )
 
 func registerBrc20QueryRoutes(cliCtx context.CLIContext, r *mux.Router, ethApi *eth.PublicEthereumAPI) {
-	r.HandleFunc("/brc20/block/{btcBlockHash}/events", QueryBrc20TxsEventsByBtcHashHandlerFunc(cliCtx, ethApi)).Methods("Get")
-	r.HandleFunc("/brc20/tx/{txid}/events", QueryBrc20TxsEventsByBtcTxidHandlerFunc(cliCtx, ethApi)).Methods("GET")
+	r.HandleFunc(
+		"/brc20/block/{btcBlockHash}/events",
+		QueryBrc20TxsEventsByBtcHashHandlerFunc(cliCtx, ethApi),
+	).Methods("Get")
+
+	r.HandleFunc(
+		"/brc20/tx/{txid}/events",
+		QueryBrc20TxsEventsByBtcTxidHandlerFunc(cliCtx, ethApi),
+	).Methods("GET")
+
+	r.HandleFunc(
+		"/brc20/tick/{tickName}",
+		QueryBrc20TickByNameHandlerFn(cliCtx),
+	).Methods("GET")
+
+	r.HandleFunc(
+		"/brc20/tick",
+		QueryAllTickHandlerFn(cliCtx),
+	).Methods("GET")
+
+	r.HandleFunc(
+		"/brc20/tick/{tickName}/address/{address}/balance",
+		QueryBalanceByNameAndAddrHandlerFn(cliCtx),
+	).Methods("GET")
 }
 
 func QueryBrc20TxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *eth.PublicEthereumAPI) http.HandlerFunc {
@@ -152,5 +176,83 @@ func QueryBrc20TxsEventsByBtcTxidHandlerFunc(cliCtx context.CLIContext, ethApi *
 			return
 		}
 		rest.PostProcessResponseBare(w, cliCtx, resp)
+	}
+}
+
+func QueryBrc20TickByNameHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		tickName := mux.Vars(r)["tickName"]
+
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		params := brcxtypes.NewQueryTickParams(tickName)
+
+		bz, err := cliCtx.Codec.MarshalJSON(params)
+		if err != nil {
+			common.HandleErrorMsg(w, cliCtx, common.CodeMarshalJSONFailed, err.Error())
+			return
+		}
+
+		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", brcxtypes.QuerierRoute, brcxtypes.QueryTick), bz)
+		if err != nil {
+			sdkErr := common.ParseSDKError(err.Error())
+			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			return
+		}
+
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, res)
+	}
+}
+
+func QueryAllTickHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		//todo: pagination
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", brcxtypes.QuerierRoute, brcxtypes.QueryAllTick), nil)
+		if err != nil {
+			sdkErr := common.ParseSDKError(err.Error())
+			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			return
+		}
+
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, res)
+	}
+}
+
+func QueryBalanceByNameAndAddrHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		tickName := mux.Vars(r)["tickName"]
+		addr := mux.Vars(r)["address"]
+
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		params := brcxtypes.NewQueryDataParams(addr, tickName)
+		bz, err := cliCtx.Codec.MarshalJSON(params)
+		if err != nil {
+			common.HandleErrorMsg(w, cliCtx, common.CodeMarshalJSONFailed, err.Error())
+			return
+		}
+
+		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", brcxtypes.QuerierRoute, brcxtypes.QueryBalance), bz)
+		if err != nil {
+			sdkErr := common.ParseSDKError(err.Error())
+			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			return
+		}
+
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, res)
 	}
 }

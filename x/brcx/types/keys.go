@@ -15,8 +15,8 @@ const (
 
 	MsgInscriptionType = "inscription"
 
-	MsgBasicXType = "basic_x"
-	BRC20         = "brc-20"
+	MsgBasicProtocolOpType = "basic_protocol_op"
+	BRC20                  = "brc-20"
 )
 
 var (

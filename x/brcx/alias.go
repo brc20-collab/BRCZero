@@ -35,7 +35,7 @@ var (
 	ErrUnknownOperationOfManageContract = types.ErrUnknownOperationOfManageContract
 	ConvertBTCAddress                   = types.ConvertBTCAddress
 	NewMsgInscription                   = types.NewMsgInscription
-	NewMsgBasicX                        = types.NewMsgBasicProtocolOp
+	NewMsgBasicProtocolOp               = types.NewMsgBasicProtocolOp
 
 	ErrInternal           = types.ErrInternal
 	ErrValidateInput      = types.ErrValidateInput

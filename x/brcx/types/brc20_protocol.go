@@ -183,7 +183,7 @@ func GetBrc20AllTransferableTickInput(addr string) ([]byte, error) {
 	return data, nil
 }
 
-func UnpackBrc20GetAllTransferableTickOutput(ret []byte) ([]Brc20TransferableInscription, error) {
+func UnpackGetBrc20AllTransferableTickOutput(ret []byte) ([]Brc20TransferableInscription, error) {
 	var tc []Brc20TransferableInscription
 	err := brc20EntryPointABI.UnpackIntoInterface(&tc, Brc20GetAllTransferableTickMethod, ret)
 	if err != nil {
