@@ -6,6 +6,7 @@ import (
 	cfg "github.com/brc20-collab/brczero/libs/tendermint/config"
 	sm "github.com/brc20-collab/brczero/libs/tendermint/state"
 	"github.com/brc20-collab/brczero/libs/tendermint/store"
+	"github.com/brc20-collab/brczero/libs/tendermint/types"
 	dbm "github.com/brc20-collab/brczero/libs/tm-db"
 	"github.com/spf13/viper"
 	"log"
@@ -13,7 +14,7 @@ import (
 )
 
 func handleReorgBlock(blockStore *store.BlockStore, stateDB dbm.DB, state sm.State, config *cfg.Config) sm.State {
-	pruneH := viper.GetInt64("start-height")
+	pruneH := viper.GetInt64(types.FlagZeroReorgHeight)
 	log.Printf("start height [%d,%d)...", blockStore.Base(), blockStore.Height())
 	if pruneH == 0 || blockStore.Height() < pruneH {
 		return state

@@ -268,7 +268,7 @@ func RegisterServerFlags(cmd *cobra.Command) *cobra.Command {
 	cmd.Flags().String(FlagStartFromSnapshot, "", "Snapshot URL which uses to start node")
 	cmd.Flags().MarkHidden(FlagStartFromSnapshot)
 
-	cmd.Flags().Int64("start-height", 0, "Set the start block height for repair")
+	cmd.Flags().Int64(tmtypes.FlagZeroReorgHeight, 0, "Set the start block height for repair")
 
 	return cmd
 }
