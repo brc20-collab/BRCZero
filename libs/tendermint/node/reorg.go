@@ -15,10 +15,10 @@ import (
 
 func handleReorgBlock(blockStore *store.BlockStore, stateDB dbm.DB, state sm.State, config *cfg.Config) sm.State {
 	pruneH := viper.GetInt64(types.FlagZeroReorgHeight)
-	log.Printf("start height [%d,%d)...", blockStore.Base(), blockStore.Height())
 	if pruneH == 0 || blockStore.Height() < pruneH {
 		return state
 	}
+	log.Printf("start height [%d,%d)...", blockStore.Base(), blockStore.Height())
 	sm.SetIgnoreSmbCheck(true)
 	iavl.SetIgnoreVersionCheck(true)
 	pruneBlocksFromTop(blockStore, pruneH)
