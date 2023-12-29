@@ -16,4 +16,5 @@ const (
 func RegisterBtcProtocolRoutes(cliCtx context.CLIContext, r *mux.Router, ethApi *eth.PublicEthereumAPI) {
 	registerBrc20QueryRoutes(cliCtx, r, ethApi)
 	registerRuneQueryRoutes(cliCtx, r, ethApi)
+	registerSrc20QueryRoutes(cliCtx, r, ethApi)
 }

@@ -15,6 +15,11 @@ var (
 	src20ABIJson []byte
 )
 
+func init() {
+	src20EntryPointABI = GetEVMABIConfig(src20EntryPointABIJson)
+	src20ABI = GetEVMABIConfig(src20ABIJson)
+}
+
 func UnpackSrc20EventContext(ret []byte) (Src20WrappedEvent, error) {
 	var ec Src20WrappedEvent
 	err := src20ABI.UnpackIntoInterface(&ec, EventsName, ret)

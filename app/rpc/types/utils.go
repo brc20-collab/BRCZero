@@ -47,7 +47,8 @@ func RawTxToEthTx(clientCtx clientcontext.CLIContext, bz []byte, height int64) (
 	case *evmtypes.MsgEthereumTx:
 		return tx, nil
 	case *stdtx.StdTx:
-		if len(tx.GetMsgs()) == 1 && tx.GetMsgs()[0].Type() == brcxtypes.MsgInscriptionType {
+		if len(tx.GetMsgs()) == 1 &&
+			tx.GetMsgs()[0].Type() == brcxtypes.MsgInscriptionType || tx.GetMsgs()[0].Type() == brcxtypes.MsgBasicXType {
 			return ConvertBRCXTransactionToEVMTx(clientCtx, *tx)
 		} else {
 			return nil, fmt.Errorf("invalid transaction type %T, expected %T", tx, evmtypes.MsgEthereumTx{})
