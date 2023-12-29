@@ -56,11 +56,6 @@ func RawTxToEthTx(clientCtx clientcontext.CLIContext, bz []byte, height int64) (
 	default:
 		return nil, fmt.Errorf("invalid transaction type %T, expected %T", tx, evmtypes.MsgEthereumTx{})
 	}
-	ethTx, ok := tx.(*evmtypes.MsgEthereumTx)
-	if !ok {
-		return nil, fmt.Errorf("invalid transaction type %T, expected %T", tx, evmtypes.MsgEthereumTx{})
-	}
-	return ethTx, nil
 }
 
 func ToTransaction(tx *evmtypes.MsgEthereumTx, from *common.Address) *watcher.Transaction {
