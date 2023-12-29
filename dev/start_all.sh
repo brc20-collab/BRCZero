@@ -35,7 +35,6 @@ nohup ./target/debug/ord \
   --regtest \
   --bitcoin-rpc-user bitcoinrpc \
   --bitcoin-rpc-pass bitcoinrpc \
-  --brczero-rpc-url=http://127.0.0.1:26657 \
   --enable-index-brc20 \
   --enable-save-ord-receipts \
   --first-brczero-height=120 \

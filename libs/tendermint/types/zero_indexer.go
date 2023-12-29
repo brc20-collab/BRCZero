@@ -8,10 +8,10 @@ type ZeroRequestTx struct {
 	BTCFee             string `json:"btc_fee"`
 }
 
-type ZeroAPIResponse struct {
-	Code int32       `json:"code"`
-	Msg  string      `json:"msg"`
-	Data interface{} `json:"data"`
+type ZeroAPIResponse[T interface{}] struct {
+	Code int32  `json:"code"`
+	Msg  string `json:"msg"`
+	Data T      `json:"data"`
 }
 
 type ZeroResponseData struct {
