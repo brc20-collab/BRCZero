@@ -31,7 +31,7 @@ run() {
       --dynamic-gp-mode=2 \
       --consensus.timeout_commit 4000ms \
       --consensus.create_empty_blocks=false \
-      --consensus.start_btc_height=788140 \
+      --consensus.start_btc_height=788040 \
       --mempool.zero_data_url="http://3.113.237.222:3000/v1" \
       --mempool.fast_sync_height_gap=10 \
       --tree-enable-async-commit=false \
