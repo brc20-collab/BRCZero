@@ -50,7 +50,7 @@ func (we Src20WrappedEvent) ToEventResponse() Src20EventResponse {
 
 type QuerySrc20TxEventsResponse struct {
 	Events []Src20EventResponse `json:"events" yaml:"events"`
-	Txid   string               `json:"txid" yaml:"txid"`
+	Txid   string               `json:"tx_hash" yaml:"tx_hash"`
 }
 
 func NewQuerySrc20TxEventsResponse(e []Src20EventResponse, txid string) QuerySrc20TxEventsResponse {
