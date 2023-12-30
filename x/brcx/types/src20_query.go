@@ -39,7 +39,7 @@ func (we Src20WrappedEvent) ToEventResponse() Src20EventResponse {
 		Max:        fmt.Sprintf("%d", we.Max),
 		Lim:        fmt.Sprintf("%d", we.Lim),
 		Amt:        fmt.Sprintf("%d", we.Amt),
-		Dec:        we.Dec,
+		Dec:        fmt.Sprintf("%d", we.Dec),
 		From:       we.From,
 		To:         we.To,
 		//todo: judge valid field
