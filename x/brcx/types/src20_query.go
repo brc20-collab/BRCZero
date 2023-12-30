@@ -21,7 +21,7 @@ type Src20EventResponse struct {
 	Max        string `json:"max" yaml:"max"`
 	Lim        string `json:"lim" yaml:"lim"`
 	Amt        string `json:"amt" yaml:"amt"`
-	Dec        uint8  `json:"dec" yaml:"dec"`
+	Dec        string `json:"dec" yaml:"dec"`
 	From       string `json:"from" yaml:"from"`
 	To         string `json:"to" yaml:"to"`
 	Valid      bool   `json:"valid" yaml:"valid"`
