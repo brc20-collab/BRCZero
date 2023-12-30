@@ -13,3 +13,15 @@ func NewOKApiResponse[T interface{}](data T) ApiResponse[T] {
 		Data: data,
 	}
 }
+
+type ApiError struct {
+	Code int    `json:"code" yaml:"code"`
+	Msg  string `json:"msg" yaml:"msg"`
+}
+
+func NewApiError(code int, msg string) ApiError {
+	return ApiError{
+		Code: code,
+		Msg:  msg,
+	}
+}

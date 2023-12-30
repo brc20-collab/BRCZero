@@ -1,7 +1,6 @@
 package btc_protocol
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -12,7 +11,6 @@ import (
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/rest"
 	basicxtypes "github.com/brc20-collab/brczero/x/brcx/types"
-	"github.com/brc20-collab/brczero/x/common"
 )
 
 func registerBrc20QueryRoutes(cliCtx context.CLIContext, r *mux.Router, ethApi *eth.PublicEthereumAPI) {
@@ -69,18 +67,18 @@ func QueryBrc20TxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *
 
 		blockLogs, err := ethApi.GetLogsByBtcHash(btcBlockHash)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		node, err := cliCtx.GetNode()
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 		zeroTxHashBtcTxidMap, err := node.MapTxhashTxid(btcBlockHash, BRC20)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
@@ -97,7 +95,7 @@ func QueryBrc20TxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *
 
 				eventContext, err := basicxtypes.UnpackBrc20EventContext(l.Data)
 				if err != nil {
-					rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+					WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 					return
 				}
 
@@ -113,17 +111,9 @@ func QueryBrc20TxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *
 			txEventsResp = append(txEventsResp, basicxtypes.NewQueryBrc20TxEventsResponse(events, txid))
 		}
 
-		blockEventsResp := basicxtypes.NewQueryBrc20TxEventsByBlockHashResponse(txEventsResp)
+		resp := basicxtypes.NewQueryBrc20TxEventsByBlockHashResponse(txEventsResp)
 
-		response := basicxtypes.NewOKApiResponse(blockEventsResp)
-
-		resp, err := json.Marshal(response)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write(resp)
+		PostProcessBasicXApiResponse(w, cliCtx, resp)
 	}
 }
 
@@ -134,25 +124,25 @@ func QueryBrc20TxsEventsByBtcTxidHandlerFunc(cliCtx context.CLIContext, ethApi *
 
 		node, err := cliCtx.GetNode()
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		btcBlockHash, err := node.BtcBlockHashByBtcTxid(targetTxid)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		blockLogs, err := ethApi.GetLogsByBtcHash(btcBlockHash)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		zeroTxHashBtcTxidMap, err := node.MapTxhashTxid(btcBlockHash, BRC20)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
@@ -169,7 +159,7 @@ func QueryBrc20TxsEventsByBtcTxidHandlerFunc(cliCtx context.CLIContext, ethApi *
 
 				eventContext, err := basicxtypes.UnpackBrc20EventContext(l.Data)
 				if err != nil {
-					rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+					WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 					return
 				}
 
@@ -180,17 +170,9 @@ func QueryBrc20TxsEventsByBtcTxidHandlerFunc(cliCtx context.CLIContext, ethApi *
 			}
 		}
 
-		txEventsResp := basicxtypes.NewQueryBrc20TxEventsResponse(resMap[targetTxid], targetTxid)
+		resp := basicxtypes.NewQueryBrc20TxEventsResponse(resMap[targetTxid], targetTxid)
 
-		response := basicxtypes.NewOKApiResponse(txEventsResp)
-
-		resp, err := json.Marshal(response)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write(resp)
+		PostProcessBasicXApiResponse(w, cliCtx, resp)
 	}
 }
 
@@ -207,33 +189,25 @@ func QueryBrc20TickByNameHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 
 		bz, err := cliCtx.Codec.MarshalJSON(params)
 		if err != nil {
-			common.HandleErrorMsg(w, cliCtx, common.CodeMarshalJSONFailed, err.Error())
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", basicxtypes.QuerierRoute, basicxtypes.QueryTick), bz)
 		if err != nil {
-			sdkErr := common.ParseSDKError(err.Error())
-			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		var data basicxtypes.QueryBrc20TickInfoResponse
 		err = cliCtx.Codec.UnmarshalJSON(res, &data)
 		if err != nil {
-			sdkErr := common.ParseSDKError(err.Error())
-			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
-		response := basicxtypes.NewOKApiResponse(data)
+		resp := basicxtypes.NewOKApiResponse(data)
 
-		resp, err := json.Marshal(response)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write(resp)
+		PostProcessBasicXApiResponse(w, cliCtx, resp)
 	}
 }
 
@@ -247,27 +221,19 @@ func QueryAllTickHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 
 		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", basicxtypes.QuerierRoute, basicxtypes.QueryAllTick), nil)
 		if err != nil {
-			sdkErr := common.ParseSDKError(err.Error())
-			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		var data basicxtypes.QueryBrc20AllTickInfoResponse
 		err = cliCtx.Codec.UnmarshalJSON(res, &data)
 		if err != nil {
-			sdkErr := common.ParseSDKError(err.Error())
-			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
-		response := basicxtypes.NewOKApiResponse(data)
+		resp := basicxtypes.NewOKApiResponse(data)
 
-		resp, err := json.Marshal(response)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write(resp)
+		PostProcessBasicXApiResponse(w, cliCtx, resp)
 	}
 }
 
@@ -284,33 +250,25 @@ func QueryBalanceByNameAndAddrHandlerFn(cliCtx context.CLIContext) http.HandlerF
 		params := basicxtypes.NewQueryDataParams(addr, tickName)
 		bz, err := cliCtx.Codec.MarshalJSON(params)
 		if err != nil {
-			common.HandleErrorMsg(w, cliCtx, common.CodeMarshalJSONFailed, err.Error())
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", basicxtypes.QuerierRoute, basicxtypes.QueryBalance), bz)
 		if err != nil {
-			sdkErr := common.ParseSDKError(err.Error())
-			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		var data basicxtypes.QueryBrc20BalanceResponse
 		err = cliCtx.Codec.UnmarshalJSON(res, &data)
 		if err != nil {
-			sdkErr := common.ParseSDKError(err.Error())
-			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
-		response := basicxtypes.NewOKApiResponse(data)
+		resp := basicxtypes.NewOKApiResponse(data)
 
-		resp, err := json.Marshal(response)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write(resp)
+		PostProcessBasicXApiResponse(w, cliCtx, resp)
 	}
 }
 
@@ -326,32 +284,24 @@ func QueryBrc20AllBalanceByAddrHandlerFn(cliCtx context.CLIContext) http.Handler
 		params := basicxtypes.NewQueryAllDataParams(addr)
 		bz, err := cliCtx.Codec.MarshalJSON(params)
 		if err != nil {
-			common.HandleErrorMsg(w, cliCtx, common.CodeMarshalJSONFailed, err.Error())
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", basicxtypes.QuerierRoute, basicxtypes.QueryAllBalance), bz)
 		if err != nil {
-			sdkErr := common.ParseSDKError(err.Error())
-			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 		var data basicxtypes.QueryBrc20AllBalanceResponse
 		err = cliCtx.Codec.UnmarshalJSON(res, &data)
 		if err != nil {
-			sdkErr := common.ParseSDKError(err.Error())
-			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
-		response := basicxtypes.NewOKApiResponse(data)
+		resp := basicxtypes.NewOKApiResponse(data)
 
-		resp, err := json.Marshal(response)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write(resp)
+		PostProcessBasicXApiResponse(w, cliCtx, resp)
 	}
 }
 
@@ -368,32 +318,25 @@ func QueryBrc20TransferableBalanceByNameAndAddrHandlerFn(cliCtx context.CLIConte
 		params := basicxtypes.NewQueryDataParams(addr, tickName)
 		bz, err := cliCtx.Codec.MarshalJSON(params)
 		if err != nil {
-			common.HandleErrorMsg(w, cliCtx, common.CodeMarshalJSONFailed, err.Error())
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", basicxtypes.QuerierRoute, basicxtypes.QueryTransferableTick), bz)
 		if err != nil {
-			sdkErr := common.ParseSDKError(err.Error())
-			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		var data basicxtypes.QueryBrc20TransferableInscriptionResponse
 		err = cliCtx.Codec.UnmarshalJSON(res, &data)
 		if err != nil {
-			sdkErr := common.ParseSDKError(err.Error())
-			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
-		response := basicxtypes.NewOKApiResponse(data)
-		resp, err := json.Marshal(response)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write(resp)
+		resp := basicxtypes.NewOKApiResponse(data)
+
+		PostProcessBasicXApiResponse(w, cliCtx, resp)
 	}
 }
 
@@ -409,33 +352,26 @@ func QueryBrc20AllTransferableBalanceByAddrHandlerFn(cliCtx context.CLIContext) 
 		params := basicxtypes.NewQueryAllDataParams(addr)
 		bz, err := cliCtx.Codec.MarshalJSON(params)
 		if err != nil {
-			common.HandleErrorMsg(w, cliCtx, common.CodeMarshalJSONFailed, err.Error())
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", basicxtypes.QuerierRoute, basicxtypes.QueryAllTransferableTick), bz)
 		if err != nil {
-			sdkErr := common.ParseSDKError(err.Error())
-			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		var data basicxtypes.QueryBrc20TransferableInscriptionResponse
 		err = cliCtx.Codec.UnmarshalJSON(res, &data)
 		if err != nil {
-			sdkErr := common.ParseSDKError(err.Error())
-			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		response := basicxtypes.NewOKApiResponse(data)
-		resp, err := json.Marshal(response)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write(resp)
+		resp := basicxtypes.NewOKApiResponse(data)
+
+		PostProcessBasicXApiResponse(w, cliCtx, resp)
 	}
 }
 
@@ -448,26 +384,19 @@ func QueryBrc20TotalTickHoldersHandlerFn(cliCtx context.CLIContext) http.Handler
 
 		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", basicxtypes.QuerierRoute, basicxtypes.QueryTotalTickHolders), nil)
 		if err != nil {
-			sdkErr := common.ParseSDKError(err.Error())
-			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		var data basicxtypes.QueryBrc20TotalTickHoldersResponse
 		err = cliCtx.Codec.UnmarshalJSON(res, &data)
 		if err != nil {
-			sdkErr := common.ParseSDKError(err.Error())
-			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		response := basicxtypes.NewOKApiResponse(data)
-		resp, err := json.Marshal(response)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write(resp)
+		resp := basicxtypes.NewOKApiResponse(data)
+
+		PostProcessBasicXApiResponse(w, cliCtx, resp)
 	}
 }
