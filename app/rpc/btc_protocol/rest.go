@@ -8,9 +8,9 @@ import (
 )
 
 const (
-	BRC20 = "brc-20"
-	SRC20 = "src-20"
-	RUNE  = "rune"
+	BRC20     = "brc-20"
+	SRC20     = "src-20"
+	RUNEALPHA = "runealpha"
 )
 
 func RegisterBtcProtocolRoutes(cliCtx context.CLIContext, r *mux.Router, ethApi *eth.PublicEthereumAPI) {

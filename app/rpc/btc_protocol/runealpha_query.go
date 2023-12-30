@@ -13,7 +13,7 @@ import (
 )
 
 func registerRuneQueryRoutes(cliCtx context.CLIContext, r *mux.Router, ethApi *eth.PublicEthereumAPI) {
-	r.HandleFunc("/rune/block/{btcBlockHash}/events", QueryRuneTxsEventsByBtcHashHandlerFunc(cliCtx, ethApi)).Methods("Get")
+	r.HandleFunc("/runealpha/block/{btcBlockHash}/events", QueryRuneTxsEventsByBtcHashHandlerFunc(cliCtx, ethApi)).Methods("Get")
 
 }
 
@@ -38,7 +38,7 @@ func QueryRuneTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *e
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
-		zeroTxHashBtcTxidMap, err := node.MapTxhashTxid(btcBlockHash, RUNE)
+		zeroTxHashBtcTxidMap, err := node.MapTxhashTxid(btcBlockHash, RUNEALPHA)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
