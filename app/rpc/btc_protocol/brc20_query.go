@@ -10,7 +10,7 @@ import (
 	"github.com/brc20-collab/brczero/app/rpc/namespaces/eth"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/rest"
-	brcxtypes "github.com/brc20-collab/brczero/x/brcx/types"
+	basicxtypes "github.com/brc20-collab/brczero/x/brcx/types"
 	"github.com/brc20-collab/brczero/x/common"
 )
 
@@ -38,6 +38,26 @@ func registerBrc20QueryRoutes(cliCtx context.CLIContext, r *mux.Router, ethApi *
 	r.HandleFunc(
 		"/brc20/tick/{tickName}/address/{address}/balance",
 		QueryBalanceByNameAndAddrHandlerFn(cliCtx),
+	).Methods("GET")
+
+	r.HandleFunc(
+		"/brc20/address/{address}/balance",
+		QueryBrc20AllBalanceByAddrHandlerFn(cliCtx),
+	).Methods("GET")
+
+	r.HandleFunc(
+		"/brc20/tick/{tickName}/address/{address}/transferable",
+		QueryBrc20TransferableBalanceByNameAndAddrHandlerFn(cliCtx),
+	).Methods("GET")
+
+	r.HandleFunc(
+		"/brc20/address/{address}/transferable",
+		QueryBrc20AllTransferableBalanceByAddrHandlerFn(cliCtx),
+	).Methods("GET")
+
+	r.HandleFunc(
+		"/brc20/holders",
+		QueryBrc20TotalTickHoldersHandlerFn(cliCtx),
 	).Methods("GET")
 }
 
@@ -68,7 +88,7 @@ func QueryBrc20TxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *
 			return
 		}
 
-		resMap := map[string][]brcxtypes.Brc20EventResponse{}
+		resMap := map[string][]basicxtypes.Brc20EventResponse{}
 		for _, txLogs := range blockLogs {
 			for _, l := range txLogs {
 				if len(l.Data) == 0 {
@@ -79,27 +99,27 @@ func QueryBrc20TxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *
 				zeroTxhash := strings.TrimPrefix(l.TxHash.String(), "0x")
 				txid := zeroTxHashBtcTxidMap[zeroTxhash]
 
-				eventContext, err := brcxtypes.UnpackBrc20EventContext(l.Data)
+				eventContext, err := basicxtypes.UnpackBrc20EventContext(l.Data)
 				if err != nil {
 					rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 					return
 				}
 
 				if _, ok := resMap[txid]; !ok {
-					resMap[txid] = make([]brcxtypes.Brc20EventResponse, 0, 1)
+					resMap[txid] = make([]basicxtypes.Brc20EventResponse, 0, 1)
 				}
 				resMap[txid] = append(resMap[txid], eventContext.ToEventResponse())
 			}
 		}
 
-		txEventsResp := make([]brcxtypes.QueryBrc20TxEventsResponse, 0)
+		txEventsResp := make([]basicxtypes.QueryBrc20TxEventsResponse, 0)
 		for txid, events := range resMap {
-			txEventsResp = append(txEventsResp, brcxtypes.NewQueryBrc20TxEventsResponse(events, txid))
+			txEventsResp = append(txEventsResp, basicxtypes.NewQueryBrc20TxEventsResponse(events, txid))
 		}
 
-		blockEventsResp := brcxtypes.NewQueryBrc20TxEventsByBlockHashResponse(txEventsResp)
+		blockEventsResp := basicxtypes.NewQueryBrc20TxEventsByBlockHashResponse(txEventsResp)
 
-		response := brcxtypes.NewOKApiResponse(blockEventsResp)
+		response := basicxtypes.NewOKApiResponse(blockEventsResp)
 		resp, err := cliCtx.Codec.MarshalJSON(response)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
@@ -143,7 +163,7 @@ func QueryBrc20TxsEventsByBtcTxidHandlerFunc(cliCtx context.CLIContext, ethApi *
 			return
 		}
 
-		resMap := map[string][]brcxtypes.Brc20EventResponse{}
+		resMap := map[string][]basicxtypes.Brc20EventResponse{}
 		for _, txLogs := range blockLogs {
 			for _, l := range txLogs {
 				if len(l.Data) == 0 {
@@ -154,22 +174,22 @@ func QueryBrc20TxsEventsByBtcTxidHandlerFunc(cliCtx context.CLIContext, ethApi *
 				zeroTxhash := strings.TrimPrefix(l.TxHash.String(), "0x")
 				txid := zeroTxHashBtcTxidMap[zeroTxhash]
 
-				eventContext, err := brcxtypes.UnpackBrc20EventContext(l.Data)
+				eventContext, err := basicxtypes.UnpackBrc20EventContext(l.Data)
 				if err != nil {
 					rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 					return
 				}
 
 				if _, ok := resMap[txid]; !ok {
-					resMap[txid] = make([]brcxtypes.Brc20EventResponse, 0, 1)
+					resMap[txid] = make([]basicxtypes.Brc20EventResponse, 0, 1)
 				}
 				resMap[txid] = append(resMap[txid], eventContext.ToEventResponse())
 			}
 		}
 
-		txEventsResp := brcxtypes.NewQueryBrc20TxEventsResponse(resMap[targetTxid], targetTxid)
+		txEventsResp := basicxtypes.NewQueryBrc20TxEventsResponse(resMap[targetTxid], targetTxid)
 
-		response := brcxtypes.NewOKApiResponse(txEventsResp)
+		response := basicxtypes.NewOKApiResponse(txEventsResp)
 		resp, err := cliCtx.Codec.MarshalJSON(response)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
@@ -188,7 +208,7 @@ func QueryBrc20TickByNameHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		params := brcxtypes.NewQueryTickParams(tickName)
+		params := basicxtypes.NewQueryTickParams(tickName)
 
 		bz, err := cliCtx.Codec.MarshalJSON(params)
 		if err != nil {
@@ -196,15 +216,23 @@ func QueryBrc20TickByNameHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", brcxtypes.QuerierRoute, brcxtypes.QueryTick), bz)
+		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", basicxtypes.QuerierRoute, basicxtypes.QueryTick), bz)
 		if err != nil {
 			sdkErr := common.ParseSDKError(err.Error())
 			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
 			return
 		}
 
+		var data basicxtypes.QueryBrc20TickInfoResponse
+		err = cliCtx.Codec.UnmarshalJSON(res, &data)
+		if err != nil {
+			sdkErr := common.ParseSDKError(err.Error())
+			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			return
+		}
+		resp := basicxtypes.NewOKApiResponse(data)
 		cliCtx = cliCtx.WithHeight(height)
-		rest.PostProcessResponse(w, cliCtx, res)
+		rest.PostProcessResponse(w, cliCtx, resp)
 	}
 }
 
@@ -216,15 +244,23 @@ func QueryAllTickHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", brcxtypes.QuerierRoute, brcxtypes.QueryAllTick), nil)
+		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", basicxtypes.QuerierRoute, basicxtypes.QueryAllTick), nil)
 		if err != nil {
 			sdkErr := common.ParseSDKError(err.Error())
 			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
 			return
 		}
 
+		var data basicxtypes.QueryBrc20AllTickInfoResponse
+		err = cliCtx.Codec.UnmarshalJSON(res, &data)
+		if err != nil {
+			sdkErr := common.ParseSDKError(err.Error())
+			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			return
+		}
+		resp := basicxtypes.NewOKApiResponse(data)
 		cliCtx = cliCtx.WithHeight(height)
-		rest.PostProcessResponse(w, cliCtx, res)
+		rest.PostProcessResponse(w, cliCtx, resp)
 	}
 }
 
@@ -238,21 +274,164 @@ func QueryBalanceByNameAndAddrHandlerFn(cliCtx context.CLIContext) http.HandlerF
 			return
 		}
 
-		params := brcxtypes.NewQueryDataParams(addr, tickName)
+		params := basicxtypes.NewQueryDataParams(addr, tickName)
 		bz, err := cliCtx.Codec.MarshalJSON(params)
 		if err != nil {
 			common.HandleErrorMsg(w, cliCtx, common.CodeMarshalJSONFailed, err.Error())
 			return
 		}
 
-		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", brcxtypes.QuerierRoute, brcxtypes.QueryBalance), bz)
+		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", basicxtypes.QuerierRoute, basicxtypes.QueryBalance), bz)
 		if err != nil {
 			sdkErr := common.ParseSDKError(err.Error())
 			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
 			return
 		}
 
+		var data basicxtypes.QueryBrc20BalanceResponse
+		err = cliCtx.Codec.UnmarshalJSON(res, &data)
+		if err != nil {
+			sdkErr := common.ParseSDKError(err.Error())
+			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			return
+		}
+		resp := basicxtypes.NewOKApiResponse(data)
 		cliCtx = cliCtx.WithHeight(height)
-		rest.PostProcessResponse(w, cliCtx, res)
+		rest.PostProcessResponse(w, cliCtx, resp)
+	}
+}
+
+func QueryBrc20AllBalanceByAddrHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		addr := mux.Vars(r)["address"]
+
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		params := basicxtypes.NewQueryAllDataParams(addr)
+		bz, err := cliCtx.Codec.MarshalJSON(params)
+		if err != nil {
+			common.HandleErrorMsg(w, cliCtx, common.CodeMarshalJSONFailed, err.Error())
+			return
+		}
+
+		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", basicxtypes.QuerierRoute, basicxtypes.QueryAllBalance), bz)
+		if err != nil {
+			sdkErr := common.ParseSDKError(err.Error())
+			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			return
+		}
+		var data basicxtypes.QueryBrc20AllBalanceResponse
+		err = cliCtx.Codec.UnmarshalJSON(res, &data)
+		if err != nil {
+			sdkErr := common.ParseSDKError(err.Error())
+			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			return
+		}
+		resp := basicxtypes.NewOKApiResponse(data)
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, resp)
+	}
+}
+
+func QueryBrc20TransferableBalanceByNameAndAddrHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		tickName := mux.Vars(r)["tickName"]
+		addr := mux.Vars(r)["address"]
+
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		params := basicxtypes.NewQueryDataParams(addr, tickName)
+		bz, err := cliCtx.Codec.MarshalJSON(params)
+		if err != nil {
+			common.HandleErrorMsg(w, cliCtx, common.CodeMarshalJSONFailed, err.Error())
+			return
+		}
+
+		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", basicxtypes.QuerierRoute, basicxtypes.QueryTransferableTick), bz)
+		if err != nil {
+			sdkErr := common.ParseSDKError(err.Error())
+			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			return
+		}
+
+		var data basicxtypes.QueryBrc20TransferableInscriptionResponse
+		err = cliCtx.Codec.UnmarshalJSON(res, &data)
+		if err != nil {
+			sdkErr := common.ParseSDKError(err.Error())
+			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			return
+		}
+		resp := basicxtypes.NewOKApiResponse(data)
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, resp)
+	}
+}
+
+func QueryBrc20AllTransferableBalanceByAddrHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		addr := mux.Vars(r)["address"]
+
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		params := basicxtypes.NewQueryAllDataParams(addr)
+		bz, err := cliCtx.Codec.MarshalJSON(params)
+		if err != nil {
+			common.HandleErrorMsg(w, cliCtx, common.CodeMarshalJSONFailed, err.Error())
+			return
+		}
+
+		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", basicxtypes.QuerierRoute, basicxtypes.QueryAllTransferableTick), bz)
+		if err != nil {
+			sdkErr := common.ParseSDKError(err.Error())
+			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			return
+		}
+
+		var data basicxtypes.QueryBrc20TransferableInscriptionResponse
+		err = cliCtx.Codec.UnmarshalJSON(res, &data)
+		if err != nil {
+			sdkErr := common.ParseSDKError(err.Error())
+			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			return
+		}
+		resp := basicxtypes.NewOKApiResponse(data)
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, resp)
+	}
+}
+
+func QueryBrc20TotalTickHoldersHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", basicxtypes.QuerierRoute, basicxtypes.QueryTotalTickHolders), nil)
+		if err != nil {
+			sdkErr := common.ParseSDKError(err.Error())
+			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			return
+		}
+
+		var data basicxtypes.QueryBrc20TotalTickHoldersResponse
+		err = cliCtx.Codec.UnmarshalJSON(res, &data)
+		if err != nil {
+			sdkErr := common.ParseSDKError(err.Error())
+			common.HandleErrorMsg(w, cliCtx, sdkErr.Code, sdkErr.Message)
+			return
+		}
+		resp := basicxtypes.NewOKApiResponse(data)
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, resp)
 	}
 }
