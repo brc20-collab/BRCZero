@@ -16,7 +16,7 @@ type Src20EventContext struct {
 }
 
 type Src20EventResponse struct {
-	Op         string `json:"type" yaml:"type"`
+	Op         string `json:"op" yaml:"op"`
 	TickOrigin string `json:"tick" yaml:"tick"`
 	Max        string `json:"max" yaml:"max"`
 	Lim        string `json:"lim" yaml:"lim"`
