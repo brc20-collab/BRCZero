@@ -240,6 +240,10 @@ type ResultPendingTxs struct {
 	Txs map[string]map[string]types.WrappedMempoolTx `json:"pending_txs"`
 }
 
+type ResultZeroData struct {
+	Data map[string]types.ZeroData `json:"current_zero_data"`
+}
+
 // empty results
 type (
 	ResultUnsafeFlushMempool struct{}

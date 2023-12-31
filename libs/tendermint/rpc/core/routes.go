@@ -52,6 +52,8 @@ var Routes = map[string]*rpc.RPCFunc{
 	"get_enable_delete_min_gp_tx": rpc.NewRPCFunc(GetEnableDeleteMinGPTx, ""),
 
 	"pending_txs": rpc.NewRPCFunc(GetPendingTxs, ""),
+
+	"current_zero_data": rpc.NewRPCFunc(GetCurrentZeroData, ""),
 }
 
 func AddUnsafeRoutes() {
