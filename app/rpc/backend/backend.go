@@ -497,50 +497,37 @@ func (b *EthermintBackend) GetLogs(height int64) ([][]*ethtypes.Log, error) {
 
 // GetLogsOptimize returns all the logs from all the ethereum transactions in a block.
 func (b *EthermintBackend) GetLogsOptimize(height int64) ([]tmtypes.EthLogWithTxid, error) {
-	resBlock, err := b.Block(&height)
-	if err != nil {
-		return nil, fmt.Errorf("not found block by height(%d)", height)
-	}
-
-	txs := make([]common.Hash, len(resBlock.Block.Txs))
-	for i, tx := range resBlock.Block.Txs {
-		txs[i] = common.BytesToHash(tx.Hash())
-	}
-	// return empty directly when block was produced during stress testing.
-	var blockLogs = []tmtypes.EthLogWithTxid{}
-	if b.logsLimit > 0 && len(txs) > b.logsLimit {
-		return blockLogs, nil
-	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(b.logsTimeout)*time.Second)
 	defer cancel()
-	for _, tx := range txs {
+	for {
 		select {
 		case <-ctx.Done():
 			return nil, ErrTimeout
 		default:
-			// NOTE: we query the state in case the tx result logs are not persisted after an upgrade.
-			txRes, err := b.clientCtx.Client.Tx(tx.Bytes(), !b.clientCtx.TrustNode)
+			resBlock, err := b.clientCtx.Client.BlockResults(&height)
 			if err != nil {
-				continue
+				return nil, fmt.Errorf("not found block by height(%d)", height)
 			}
-			if !txRes.TxResult.IsOK() {
-				continue
-			}
-			execRes, err := evmtypes.DecodeResultData(txRes.TxResult.Data)
-			if err != nil {
-				continue
-			}
-			var validLogs []*ethtypes.Log
-			for _, log := range execRes.Logs {
-				if log.BlockNumber == uint64(height) {
-					validLogs = append(validLogs, log)
+			var blockLogs = []tmtypes.EthLogWithTxid{}
+			for _, txRes := range resBlock.TxsResults {
+				if !txRes.IsOK() {
+					continue
 				}
+				execRes, err := evmtypes.DecodeResultData(txRes.Data)
+				if err != nil {
+					continue
+				}
+				var validLogs []*ethtypes.Log
+				for _, log := range execRes.Logs {
+					if log.BlockNumber == uint64(height) {
+						validLogs = append(validLogs, log)
+					}
+				}
+				blockLogs = append(blockLogs, tmtypes.EthLogWithTxid{Logs: validLogs, Txid: execRes.TxHash.String()})
 			}
-			blockLogs = append(blockLogs, tmtypes.EthLogWithTxid{Logs: validLogs, Txid: txRes.Hash.String()})
+			return blockLogs, nil
 		}
 	}
-
-	return blockLogs, nil
 }
 
 // BloomStatus returns the BloomBitsBlocks and the number of processed sections maintained
