@@ -55,7 +55,8 @@ type Backend interface {
 	HeaderByHash(blockHash common.Hash) (*ethtypes.Header, error)
 	GetBlockByNumber(blockNum rpctypes.BlockNumber, fullTx bool) (*evmtypes.Block, error)
 	GetBlockByHash(hash common.Hash, fullTx bool) (*evmtypes.Block, error)
-
+	HeightByBtcHash(string) (int64, error)
+	BtcBlockHashByBtcTxid(string) (string, error)
 	GetTransactionByHash(hash common.Hash) (*watcher.Transaction, error)
 
 	// returns the logs of a given block
@@ -503,6 +504,14 @@ func (b *EthermintBackend) BloomStatus() (uint64, uint64) {
 // LatestBlockNumber gets the latest block height in int64 format.
 func (b *EthermintBackend) LatestBlockNumber() (int64, error) {
 	return b.clientCtx.Client.LatestBlockNumber()
+}
+
+func (b *EthermintBackend) HeightByBtcHash(btcHash string) (int64, error) {
+	return b.clientCtx.Client.HeightByBtcHash(btcHash)
+}
+
+func (b *EthermintBackend) BtcBlockHashByBtcTxid(btcTxid string) (string, error) {
+	return b.clientCtx.Client.BtcBlockHashByBtcTxid(btcTxid)
 }
 
 func (b *EthermintBackend) ServiceFilter(ctx context.Context, session *bloombits.MatcherSession) {

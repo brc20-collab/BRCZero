@@ -14,9 +14,9 @@ const (
 	QuerierRoute = ModuleName
 
 	MsgInscriptionType = "inscription"
-	MsgBascisXType     = "bascis_x"
 
-	BRC20 = "brc-20"
+	MsgBasicProtocolOpType = "basic_protocol_op"
+	BRC20                  = "brc-20"
 )
 
 var (

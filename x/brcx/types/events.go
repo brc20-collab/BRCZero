@@ -1,15 +1,15 @@
 package types
 
 const (
-	EventTypeBRCX           = ModuleName
-	EventTypeBRCXProtocol   = "brx_protocol"
+	EventTypeBasicX         = ModuleName
 	EventTypeManageContract = "manage_contract"
 	EventTypeEntryPoint     = "entry_point"
 	EventTypeCallEvm        = "call_evm"
 
-	AttributeResult   = "result"
-	AttributeProtocol = "protocol"
-	AttributeBTCTXID  = "btc_txid"
+	AttributeResult       = "result"
+	AttributeProtocolName = "protocol"
+	AttributeBTCTXID      = "btc_txid"
+	AttributeBTCBlockHash = "btc_block_hash"
 
 	AttributeManageContractOperation = "operation"
 	AttributeManageContractAddress   = "contract_addrss"

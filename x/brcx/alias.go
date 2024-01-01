@@ -14,9 +14,8 @@ const (
 	ManageCallContract         = types.ManageCallContract
 	ManageContractProtocolName = types.ManageContractProtocolName
 
-	AttributeProtocol                = types.AttributeProtocol
-	EventTypeBRCX                    = types.EventTypeBRCX
-	EventTypeBRCXProtocol            = types.EventTypeBRCXProtocol
+	AttributeProtocolName            = types.AttributeProtocolName
+	EventTypeBasicX                  = types.EventTypeBasicX
 	EventTypeManageContract          = types.EventTypeManageContract
 	EventTypeEntryPoint              = types.EventTypeEntryPoint
 	AttributeManageContractOperation = types.AttributeManageContractOperation
@@ -36,20 +35,20 @@ var (
 	ErrUnknownOperationOfManageContract = types.ErrUnknownOperationOfManageContract
 	ConvertBTCAddress                   = types.ConvertBTCAddress
 	NewMsgInscription                   = types.NewMsgInscription
-	NewMsgBasicX                        = types.NewMsgBascisX
+	NewMsgBasicProtocolOp               = types.NewMsgBasicProtocolOp
 
 	ErrInternal           = types.ErrInternal
 	ErrValidateInput      = types.ErrValidateInput
 	ErrExecute            = types.ErrExecute
 	ErrGetContractAddress = types.ErrGetContractAddress
-	ErrCallEntryPoint     = types.ErrCallEntryPoint
+	ErrCallMethod         = types.ErrCallMethod
 	ErrPackInput          = types.ErrPackInput
 )
 
 type (
 	Keeper             = keeper.Keeper
 	MsgInscription     = types.MsgInscription
-	MsgBascisX         = types.MsgBascisX
+	MsgBasicProtocolOp = types.MsgBasicProtocolOp
 	ManageContract     = types.ManageContract
 	ResultInfo         = types.ResultInfo
 	InscriptionContext = types.InscriptionContext

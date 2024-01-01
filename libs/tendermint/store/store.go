@@ -2,12 +2,14 @@ package store
 
 import (
 	"bytes"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
 	"sync"
 
+	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/tendermint/go-amino"
 
 	"github.com/pkg/errors"
@@ -96,7 +98,7 @@ func (bs *BlockStore) LoadBlock(height int64) *types.Block {
 }
 
 func (bs *BlockStore) LoadBTCMeta(height int64) (*types.BTCBlockMeta, error) {
-	btcbuff, err := bs.db.Get(calcBRCZeroToBTC(height))
+	btcbuff, err := bs.db.Get(calcZeroHeightKey(height))
 	if err != nil {
 		return nil, err
 	}
@@ -105,6 +107,59 @@ func (bs *BlockStore) LoadBTCMeta(height int64) (*types.BTCBlockMeta, error) {
 		return nil, err
 	}
 	return &meta, nil
+}
+
+func (bs *BlockStore) LoadZeroHeightByBtcHeight(btcHeight int64) (int64, error) {
+	zeroHeight, err := bs.db.Get(calcBTCHeightKey(btcHeight))
+	if err != nil {
+		return 0, err
+	}
+	if len(zeroHeight) == 0 {
+		return 0, fmt.Errorf("cannot get zero height using btc height %d", btcHeight)
+	}
+	return strconv.ParseInt(string(zeroHeight), 10, 64)
+}
+
+func (bs *BlockStore) LoadBtcBlockHashByBtcTxid(btcTxid string) (string, error) {
+	btcBlockHash, err := bs.db.Get(calcBTCTxidKey(btcTxid))
+	if err != nil {
+		return "", err
+	}
+
+	if len(btcBlockHash) == 0 {
+		return "", fmt.Errorf("cannot get btc block hash using btc txid %s", btcTxid)
+	}
+
+	return string(btcBlockHash), nil
+}
+
+func (bs *BlockStore) LoadZeroHeightByBtcHash(btcHash string) (int64, error) {
+	zeroHeight, err := bs.db.Get(calcBTCBlockHashKey(btcHash))
+	if err != nil {
+		return 0, err
+	}
+	if len(zeroHeight) == 0 {
+		return 0, fmt.Errorf("cannot get zero height using btc hash %s", btcHash)
+	}
+	return strconv.ParseInt(string(zeroHeight), 10, 64)
+}
+
+func (bs *BlockStore) LoadMapTxhashTxidByBtcHash(btcHash, protocolName string) (map[string]string, error) {
+	res := make(map[string]string)
+	zeroH, err := bs.LoadZeroHeightByBtcHash(btcHash)
+	if err != nil {
+		return nil, err
+	}
+	block := bs.LoadBlock(zeroH)
+	for _, tx := range block.Txs {
+		var ztx types.ZeroRequestTx
+		if err = rlp.DecodeBytes(tx, &ztx); err == nil {
+			if protocolName == ztx.ProtocolName {
+				res[hex.EncodeToString(tx.Hash())] = ztx.BTCTxid
+			}
+		}
+	}
+	return res, nil
 }
 
 // LoadBlockWithExInfo returns the block with the given height.
@@ -380,12 +435,13 @@ func (bs *BlockStore) deleteBatch(height int64, deleteFromTop bool) (uint64, err
 		for p := 0; p < meta.BlockID.PartsHeader.Total; p++ {
 			batch.Delete(calcBlockPartKey(h, p))
 		}
-		batch.Delete(calcBRCZeroToBTC(h))
+		batch.Delete(calcZeroHeightKey(h))
 		btcmeta, err := bs.LoadBTCMeta(h)
 		if err != nil {
 			return nil
 		}
-		batch.Delete(calcBTCToBRCZero(btcmeta.BTCHeight))
+		batch.Delete(calcBTCHeightKey(btcmeta.BTCHeight))
+		batch.Delete(calcBTCBlockHashKey(btcmeta.BTCBlockHash))
 		deleted++
 
 		// flush every 1000 blocks to avoid batches becoming too large
@@ -459,8 +515,15 @@ func (bs *BlockStore) SaveBlock(block *types.Block, blockParts *types.PartSet, s
 	if err != nil {
 		panic(fmt.Errorf("failed saveBlock height:%d json marshal btc block meta:%v", height, btcmeta))
 	}
-	batch.Set(calcBRCZeroToBTC(height), btcvalue)
-	batch.Set(calcBTCToBRCZero(block.BtcHeight), []byte(fmt.Sprintf("%d", height)))
+	batch.Set(calcZeroHeightKey(height), btcvalue)
+	batch.Set(calcBTCHeightKey(block.BtcHeight), []byte(fmt.Sprintf("%d", height)))
+	batch.Set(calcBTCBlockHashKey(block.BtcBlockHash), []byte(fmt.Sprintf("%d", height)))
+	for _, tx := range block.Txs {
+		var ztx types.ZeroRequestTx
+		if err = rlp.DecodeBytes(tx, &ztx); err == nil {
+			batch.Set(calcBTCTxidKey(ztx.BTCTxid), []byte(block.BtcBlockHash))
+		}
+	}
 	// Save block parts
 	for i := 0; i < blockParts.Total(); i++ {
 		part := blockParts.GetPart(i)
@@ -538,12 +601,20 @@ func calcBlockHashKey(hash []byte) []byte {
 	return amino.StrToBytes(strings.Join([]string{"BH", amino.HexEncodeToString(hash)}, ":"))
 }
 
-func calcBRCZeroToBTC(height int64) []byte {
+func calcZeroHeightKey(height int64) []byte {
 	return amino.StrToBytes(strings.Join([]string{"BRC0H", strconv.FormatInt(height, 10)}, ":"))
 }
 
-func calcBTCToBRCZero(height int64) []byte {
+func calcBTCHeightKey(height int64) []byte {
 	return amino.StrToBytes(strings.Join([]string{"BTCH", strconv.FormatInt(height, 10)}, ":"))
+}
+
+func calcBTCBlockHashKey(btcHash string) []byte {
+	return amino.StrToBytes(strings.Join([]string{"BTCHash", btcHash}, ":"))
+}
+
+func calcBTCTxidKey(txid string) []byte {
+	return amino.StrToBytes(strings.Join([]string{"BTCTxid", txid}, ":"))
 }
 
 //-----------------------------------------------------------------------------

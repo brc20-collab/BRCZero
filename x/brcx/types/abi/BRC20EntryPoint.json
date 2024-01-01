@@ -1,0 +1,562 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "BRCX_ADMIN",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "DEFAULT_DEC",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "inscriptionId",
+            "type": "string"
+          },
+          {
+            "internalType": "int64",
+            "name": "inscriptionNumber",
+            "type": "int64"
+          },
+          {
+            "internalType": "bool",
+            "name": "isTransfer",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "txid",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "sender",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "receiver",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "commitInput",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "revealOutput",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "oldSatPoint",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "newSatPoint",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "blockHash",
+            "type": "string"
+          },
+          {
+            "internalType": "uint32",
+            "name": "blockTime",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint64",
+            "name": "blockHeight",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct IBrc20EntryPoint.InScriptionContext",
+        "name": "inScriptionContext",
+        "type": "tuple"
+      },
+      {
+        "internalType": "string",
+        "name": "inscription",
+        "type": "string"
+      }
+    ],
+    "name": "entryPoint",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "addr",
+        "type": "string"
+      }
+    ],
+    "name": "getAllBalance",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "tick",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "availableBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "transferableBalance",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IBrc20EntryPoint.Brc20Balance[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllTickInformation",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "tick",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "tickAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "nowSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "decimals",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lim",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "inscriptionId",
+            "type": "string"
+          },
+          {
+            "internalType": "int64",
+            "name": "inscriptionNumber",
+            "type": "int64"
+          },
+          {
+            "internalType": "string",
+            "name": "txid",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "sender",
+            "type": "string"
+          },
+          {
+            "internalType": "uint32",
+            "name": "blockTime",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint64",
+            "name": "blockHeight",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct IBrc20EntryPoint.Brc20Information[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "addr",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "tick",
+        "type": "string"
+      }
+    ],
+    "name": "getBalance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "totalBalances",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "availableBalance",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "transferableBalance",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "indexFrom",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "indexTo",
+        "type": "uint256"
+      }
+    ],
+    "name": "getTickDeployedSlice",
+    "outputs": [
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "tick",
+        "type": "string"
+      }
+    ],
+    "name": "getTickInformation",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "tick",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "tickAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "nowSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "decimals",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lim",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "inscriptionId",
+            "type": "string"
+          },
+          {
+            "internalType": "int64",
+            "name": "inscriptionNumber",
+            "type": "int64"
+          },
+          {
+            "internalType": "string",
+            "name": "txid",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "sender",
+            "type": "string"
+          },
+          {
+            "internalType": "uint32",
+            "name": "blockTime",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint64",
+            "name": "blockHeight",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct IBrc20EntryPoint.Brc20Information",
+        "name": "tickInformation",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTotalTickHolders",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "tickHodlers",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "addr",
+        "type": "string"
+      }
+    ],
+    "name": "getUserAllTransferableTickInformation",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "inscriptionId",
+            "type": "string"
+          },
+          {
+            "internalType": "int64",
+            "name": "inscriptionNumber",
+            "type": "int64"
+          },
+          {
+            "internalType": "string",
+            "name": "amount",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "tick",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "owner",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct IBrc20EntryPoint.TransferableInscription[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "addr",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "tick",
+        "type": "string"
+      }
+    ],
+    "name": "getUserTransferableTickInformation",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "inscriptionId",
+            "type": "string"
+          },
+          {
+            "internalType": "int64",
+            "name": "inscriptionNumber",
+            "type": "int64"
+          },
+          {
+            "internalType": "string",
+            "name": "amount",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "tick",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "owner",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct IBrc20EntryPoint.TransferableInscription[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "precomplieContarct",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "tickDeployed",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

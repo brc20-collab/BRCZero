@@ -25,27 +25,11 @@ docker exec -it local_bitcoin_node bitcoin-cli generatetoaddress 120 bcrt1qd28je
 docker exec -it local_bitcoin_node bitcoin-cli -rpcwallet=testwallet_01 getwalletinfo
 
 echo "************* Start ord... *************"
-cd /Users/oker/go/src/github.com/okex/BRC20S
-cargo build
-rm -rf ./_cache1
-nohup ./target/debug/ord \
-  --log-level=INFO \
-  --data-dir=./_cache1 \
-  --rpc-url=http://localhost:18443 \
-  --regtest \
-  --bitcoin-rpc-user bitcoinrpc \
-  --bitcoin-rpc-pass bitcoinrpc \
-  --enable-index-brc20 \
-  --enable-save-ord-receipts \
-  --first-brczero-height=120 \
-  --first-brc20-height=120 \
-  --first-inscription-height=120 \
-  server --http-port=80 >./ord.log 2>&1 &
-sleep 5
+
 
 echo "************* Start brczero node... *************"
-cd $self_path
-./start.sh
+#cd $self_path
+#./start.sh
 #rm -rf ./_cache2
 #nohup ./target/debug/ord \
 #  --log-level=DEBUG \

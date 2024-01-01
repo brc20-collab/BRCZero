@@ -2,7 +2,6 @@ package proxy
 
 import (
 	"context"
-
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/merkle"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/bytes"
 	"github.com/brc20-collab/brczero/libs/tendermint/lite"

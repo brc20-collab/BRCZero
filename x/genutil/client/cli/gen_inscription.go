@@ -6,6 +6,11 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"os"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+
 	clictx "github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/flags"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
@@ -16,9 +21,6 @@ import (
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/client/utils"
 	tmtypes "github.com/brc20-collab/brczero/libs/tendermint/types"
 	"github.com/brc20-collab/brczero/x/brcx"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"os"
 )
 
 const (
@@ -179,7 +181,7 @@ func GenMsgBasicxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicMana
 				return fmt.Errorf("the inscription or inscription_context is empty")
 			}
 
-			msg := brcx.NewMsgBasicX(brcx.ManageContractProtocolName, inscription, "1111111111111111111111111111111111111111111111111111111111111111", "", inscriptionContextStr)
+			msg := brcx.NewMsgBasicProtocolOp(brcx.ManageContractProtocolName, inscription, "1111111111111111111111111111111111111111111111111111111111111111", "", inscriptionContextStr)
 
 			// write the unsigned transaction to the buffer
 			w := bytes.NewBuffer([]byte{})

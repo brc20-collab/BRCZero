@@ -47,7 +47,8 @@ func RawTxToEthTx(clientCtx clientcontext.CLIContext, bz []byte, height int64) (
 	case *evmtypes.MsgEthereumTx:
 		return tx, nil
 	case *stdtx.StdTx:
-		if len(tx.GetMsgs()) == 1 && tx.GetMsgs()[0].Type() == brcxtypes.MsgInscriptionType {
+		if len(tx.GetMsgs()) == 1 &&
+			tx.GetMsgs()[0].Type() == brcxtypes.MsgInscriptionType || tx.GetMsgs()[0].Type() == brcxtypes.MsgBasicProtocolOpType {
 			return ConvertBRCXTransactionToEVMTx(clientCtx, *tx)
 		} else {
 			return nil, fmt.Errorf("invalid transaction type %T, expected %T", tx, evmtypes.MsgEthereumTx{})
@@ -55,11 +56,6 @@ func RawTxToEthTx(clientCtx clientcontext.CLIContext, bz []byte, height int64) (
 	default:
 		return nil, fmt.Errorf("invalid transaction type %T, expected %T", tx, evmtypes.MsgEthereumTx{})
 	}
-	ethTx, ok := tx.(*evmtypes.MsgEthereumTx)
-	if !ok {
-		return nil, fmt.Errorf("invalid transaction type %T, expected %T", tx, evmtypes.MsgEthereumTx{})
-	}
-	return ethTx, nil
 }
 
 func ToTransaction(tx *evmtypes.MsgEthereumTx, from *common.Address) *watcher.Transaction {

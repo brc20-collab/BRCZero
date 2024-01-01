@@ -21,7 +21,6 @@ type MsgInscription struct {
 	InscriptionContext InscriptionContext `json:"inscription_context" yaml:"inscriptionContext"`
 }
 
-// NewMsgUnjail creates a new MsgUnjail instance
 func NewMsgInscription(Inscription string, ctx InscriptionContext) MsgInscription {
 	return MsgInscription{
 		Inscription:        Inscription,
@@ -29,7 +28,6 @@ func NewMsgInscription(Inscription string, ctx InscriptionContext) MsgInscriptio
 	}
 }
 
-// nolint
 func (msg MsgInscription) Route() string { return RouterKey }
 func (msg MsgInscription) Type() string  { return MsgInscriptionType }
 func (msg MsgInscription) GetSigners() []sdk.AccAddress {
@@ -49,9 +47,9 @@ func (msg MsgInscription) ValidateBasic() error {
 }
 
 // verify interface at compile time
-var _ sdk.Msg = &MsgBascisX{}
+var _ sdk.Msg = &MsgBasicProtocolOp{}
 
-type MsgBascisX struct {
+type MsgBasicProtocolOp struct {
 	ProtocolName string `json:"protocol_name" yaml:"protocol_name"`
 	// Inscription represents the inscription data of protocol operations on the chain.
 	Inscription string `json:"inscription" yaml:"inscription"`
@@ -61,9 +59,8 @@ type MsgBascisX struct {
 	Context string `json:"inscription_context" yaml:"inscription_context"`
 }
 
-// NewMsgBascisX creates a new MsgBascisX instance
-func NewMsgBascisX(protocolName string, inscription string, btcTxid string, btcFee string, ctx string) MsgBascisX {
-	return MsgBascisX{
+func NewMsgBasicProtocolOp(protocolName string, inscription string, btcTxid string, btcFee string, ctx string) MsgBasicProtocolOp {
+	return MsgBasicProtocolOp{
 		ProtocolName: protocolName,
 		Inscription:  inscription,
 		BTCTxid:      btcTxid,
@@ -72,21 +69,20 @@ func NewMsgBascisX(protocolName string, inscription string, btcTxid string, btcF
 	}
 }
 
-// nolint
-func (msg MsgBascisX) Route() string { return RouterKey }
-func (msg MsgBascisX) Type() string  { return MsgBascisXType }
-func (msg MsgBascisX) GetSigners() []sdk.AccAddress {
+func (msg MsgBasicProtocolOp) Route() string { return RouterKey }
+func (msg MsgBasicProtocolOp) Type() string  { return MsgBasicProtocolOpType }
+func (msg MsgBasicProtocolOp) GetSigners() []sdk.AccAddress {
 	return nil
 }
 
 // GetSignBytes gets the bytes for the message signer to sign on
-func (msg MsgBascisX) GetSignBytes() []byte {
+func (msg MsgBasicProtocolOp) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
 // ValidateBasic validity check for the AnteHandler
-func (msg MsgBascisX) ValidateBasic() error {
+func (msg MsgBasicProtocolOp) ValidateBasic() error {
 	if len(msg.ProtocolName) == 0 {
 		return ErrValidateBasic("msg.ProtocolName is empty")
 	}
@@ -112,7 +108,7 @@ func Decoder(_ codec.CdcAbstraction, txBytes []byte) (tx sdk.Tx, err error) {
 				return authtypes.NewStdTx([]sdk.Msg{msgInscription}, fee, nil, ""), nil
 			}
 		} else {
-			msg := NewMsgBascisX(zeroTx.ProtocolName, zeroTx.Inscription, zeroTx.BTCTxid, zeroTx.BTCFee, zeroTx.InscriptionContext)
+			msg := NewMsgBasicProtocolOp(zeroTx.ProtocolName, zeroTx.Inscription, zeroTx.BTCTxid, zeroTx.BTCFee, zeroTx.InscriptionContext)
 			// TODO 50000000 is tmp
 			fee := authtypes.NewStdFee(50000000, nil)
 			return authtypes.NewStdTx([]sdk.Msg{msg}, fee, nil, ""), nil
