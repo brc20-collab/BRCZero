@@ -506,7 +506,7 @@ func (b *EthermintBackend) GetLogsOptimize(height int64) ([]tmtypes.EthLogWithTx
 		default:
 			resBlock, err := b.clientCtx.Client.BlockResults(&height)
 			if err != nil {
-				return nil, fmt.Errorf("not found block by height(%d)", height)
+				return nil, fmt.Errorf("not found block by height(%d),err: %s", height, err)
 			}
 			var blockLogs = []tmtypes.EthLogWithTxid{}
 			for _, txRes := range resBlock.TxsResults {
