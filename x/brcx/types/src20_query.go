@@ -1,18 +1,21 @@
 package types
 
-import "fmt"
+import (
+	"fmt"
+	"math/big"
+)
 
 type Src20EventContext struct {
-	Op         string `json:"op" yaml:"op"`
-	TickOrigin string `json:"tickOrigin" yaml:"tickOrigin"`
-	Max        uint64 `json:"max" yaml:"max"`
-	Lim        uint64 `json:"lim" yaml:"lim"`
-	Amt        uint64 `json:"amt" yaml:"amt"`
-	Dec        uint8  `json:"dec" yaml:"dec"`
-	From       string `json:"from" yaml:"from"`
-	To         string `json:"to" yaml:"to"`
-	Valid      bool   `json:"valid" yaml:"valid"`
-	Msg        string `json:"msg" yaml:"msg"`
+	Op         string   `json:"op" yaml:"op"`
+	TickOrigin string   `json:"tickOrigin" yaml:"tickOrigin"`
+	Max        *big.Int `json:"max" yaml:"max"`
+	Lim        *big.Int `json:"lim" yaml:"lim"`
+	Amt        *big.Int `json:"amt" yaml:"amt"`
+	Dec        uint8    `json:"dec" yaml:"dec"`
+	From       string   `json:"from" yaml:"from"`
+	To         string   `json:"to" yaml:"to"`
+	Valid      bool     `json:"valid" yaml:"valid"`
+	Msg        string   `json:"msg" yaml:"msg"`
 }
 
 type Src20EventResponse struct {
@@ -36,9 +39,9 @@ func (we Src20WrappedEvent) ToEventResponse() Src20EventResponse {
 	return Src20EventResponse{
 		Op:         we.Op,
 		TickOrigin: we.TickOrigin,
-		Max:        fmt.Sprintf("%d", we.Max),
-		Lim:        fmt.Sprintf("%d", we.Lim),
-		Amt:        fmt.Sprintf("%d", we.Amt),
+		Max:        we.Max.String(),
+		Lim:        we.Lim.String(),
+		Amt:        we.Amt.String(),
 		Dec:        fmt.Sprintf("%d", we.Dec),
 		From:       we.From,
 		To:         we.To,
