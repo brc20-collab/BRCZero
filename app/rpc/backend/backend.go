@@ -61,6 +61,7 @@ type Backend interface {
 
 	// returns the logs of a given block
 	GetLogs(height int64) ([][]*ethtypes.Log, error)
+	GetLogsOptimize(height int64) ([]tmtypes.EthLogWithTxid, error)
 
 	// Used by pending transaction filter
 	PendingTransactions() ([]*watcher.Transaction, error)
@@ -488,6 +489,54 @@ func (b *EthermintBackend) GetLogs(height int64) ([][]*ethtypes.Log, error) {
 				}
 			}
 			blockLogs = append(blockLogs, validLogs)
+		}
+	}
+
+	return blockLogs, nil
+}
+
+// GetLogsOptimize returns all the logs from all the ethereum transactions in a block.
+func (b *EthermintBackend) GetLogsOptimize(height int64) ([]tmtypes.EthLogWithTxid, error) {
+	resBlock, err := b.Block(&height)
+	if err != nil {
+		return nil, fmt.Errorf("not found block by height(%d)", height)
+	}
+
+	txs := make([]common.Hash, len(resBlock.Block.Txs))
+	for i, tx := range resBlock.Block.Txs {
+		txs[i] = common.BytesToHash(tx.Hash())
+	}
+	// return empty directly when block was produced during stress testing.
+	var blockLogs = []tmtypes.EthLogWithTxid{}
+	if b.logsLimit > 0 && len(txs) > b.logsLimit {
+		return blockLogs, nil
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(b.logsTimeout)*time.Second)
+	defer cancel()
+	for _, tx := range txs {
+		select {
+		case <-ctx.Done():
+			return nil, ErrTimeout
+		default:
+			// NOTE: we query the state in case the tx result logs are not persisted after an upgrade.
+			txRes, err := b.clientCtx.Client.Tx(tx.Bytes(), !b.clientCtx.TrustNode)
+			if err != nil {
+				continue
+			}
+			if !txRes.TxResult.IsOK() {
+				continue
+			}
+			execRes, err := evmtypes.DecodeResultData(txRes.TxResult.Data)
+			if err != nil {
+				continue
+			}
+			var validLogs []*ethtypes.Log
+			for _, log := range execRes.Logs {
+				if log.BlockNumber == uint64(height) {
+					validLogs = append(validLogs, log)
+				}
+			}
+			blockLogs = append(blockLogs, tmtypes.EthLogWithTxid{Logs: validLogs, Txid: txRes.Hash.String()})
 		}
 	}
 

@@ -1,0 +1,143 @@
+[
+  {
+    "type": "constructor",
+    "inputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "entryPoint",
+    "inputs": [
+      {
+        "name": "inscription",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "inscriptionContext",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "utxoDatabase",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract AtomicalUtxoDatabase"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "event",
+    "name": "Arc20Deployed",
+    "inputs": [
+      {
+        "name": "contractAddr",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "ticker",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      },
+      {
+        "name": "atomicalId",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "AtomicalEvent",
+    "inputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "indexed": false,
+        "internalType": "struct AtomicalEventParam",
+        "components": [
+          {
+            "name": "txHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "atomicalsId",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "atomicalsType",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "subtype",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "atomicalsFromIndexes",
+            "type": "uint256[]",
+            "internalType": "uint256[]"
+          },
+          {
+            "name": "atomicalsFromValues",
+            "type": "uint256[]",
+            "internalType": "uint256[]"
+          },
+          {
+            "name": "toAddress",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "toValueSats",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "mintAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "mintTicker",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "requestTicker",
+            "type": "string",
+            "internalType": "string"
+          }
+        ]
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "AtomicalAssetNotExist",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "DuplicateAtomicalAsset",
+    "inputs": []
+  }
+]

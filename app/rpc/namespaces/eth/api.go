@@ -1700,3 +1700,7 @@ func (api *PublicEthereumAPI) GetLogsByBtcHash(btcHash string) ([][]*ethtypes.Lo
 	}
 	return api.backend.GetLogs(h)
 }
+
+func (api *PublicEthereumAPI) GetLogsOptimize(height uint64) ([]tmtypes.EthLogWithTxid, error) {
+	return api.backend.GetLogsOptimize(int64(height))
+}

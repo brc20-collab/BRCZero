@@ -21,6 +21,7 @@ func RegisterBtcProtocolRoutes(cliCtx context.CLIContext, r *mux.Router, ethApi 
 	registerBrc20QueryRoutes(cliCtx, r, ethApi)
 	registerRuneQueryRoutes(cliCtx, r, ethApi)
 	registerSrc20QueryRoutes(cliCtx, r, ethApi)
+	registerArc220QueryRoutes(cliCtx, r, ethApi)
 }
 
 func PostProcessBasicXApiResponse(w http.ResponseWriter, cliCtx context.CLIContext, body interface{}) {
