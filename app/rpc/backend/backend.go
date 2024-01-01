@@ -61,7 +61,7 @@ type Backend interface {
 
 	// returns the logs of a given block
 	GetLogs(height int64) ([][]*ethtypes.Log, error)
-	GetLogsOptimize(height int64) ([]tmtypes.EthLogWithTxid, error)
+	GetLogsOptimize(height int64) ([][]*ethtypes.Log, []common.Hash, error)
 
 	// Used by pending transaction filter
 	PendingTransactions() ([]*watcher.Transaction, error)
@@ -446,6 +446,10 @@ func (b *EthermintBackend) GetTransactionByHash(hash common.Hash) (tx *watcher.T
 
 // GetLogs returns all the logs from all the ethereum transactions in a block.
 func (b *EthermintBackend) GetLogs(height int64) ([][]*ethtypes.Log, error) {
+	blockLog, _, err := b.GetLogsOptimize(height)
+	if err == nil {
+		return blockLog, nil
+	}
 	block, err := b.GetBlockByNumber(rpctypes.BlockNumber(height), false)
 	if err != nil {
 		return nil, err
@@ -496,19 +500,20 @@ func (b *EthermintBackend) GetLogs(height int64) ([][]*ethtypes.Log, error) {
 }
 
 // GetLogsOptimize returns all the logs from all the ethereum transactions in a block.
-func (b *EthermintBackend) GetLogsOptimize(height int64) ([]tmtypes.EthLogWithTxid, error) {
+func (b *EthermintBackend) GetLogsOptimize(height int64) ([][]*ethtypes.Log, []common.Hash, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(b.logsTimeout)*time.Second)
 	defer cancel()
 	for {
 		select {
 		case <-ctx.Done():
-			return nil, ErrTimeout
+			return nil, nil, ErrTimeout
 		default:
 			resBlock, err := b.clientCtx.Client.BlockResults(&height)
 			if err != nil {
-				return nil, fmt.Errorf("not found block by height(%d),err: %s", height, err)
+				return nil, nil, fmt.Errorf("not found block by height(%d),err: %s", height, err)
 			}
-			var blockLogs = []tmtypes.EthLogWithTxid{}
+			var blockLogs = [][]*ethtypes.Log{}
+			txids := make([]common.Hash, 0)
 			for _, txRes := range resBlock.TxsResults {
 				if !txRes.IsOK() {
 					continue
@@ -523,9 +528,10 @@ func (b *EthermintBackend) GetLogsOptimize(height int64) ([]tmtypes.EthLogWithTx
 						validLogs = append(validLogs, log)
 					}
 				}
-				blockLogs = append(blockLogs, tmtypes.EthLogWithTxid{Logs: validLogs, Txid: execRes.TxHash.String()})
+				blockLogs = append(blockLogs, validLogs)
+				txids = append(txids, execRes.TxHash)
 			}
-			return blockLogs, nil
+			return blockLogs, txids, nil
 		}
 	}
 }

@@ -42,7 +42,7 @@ func QueryArc20TxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *
 			return
 		}
 
-		blockLogs, err := ethApi.GetLogsOptimize(height)
+		blockLogs, _, err := ethApi.GetLogsOptimize(height)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
@@ -50,7 +50,7 @@ func QueryArc20TxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *
 
 		resEvent := make([]arc20.AtomicalEventParam, 0)
 		for _, txLogs := range blockLogs {
-			for _, l := range txLogs.Logs {
+			for _, l := range txLogs {
 				if len(l.Data) == 0 {
 					// means this tx has no events
 					continue
@@ -58,7 +58,6 @@ func QueryArc20TxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *
 				if len(l.Topics) == 0 {
 					continue
 				}
-
 				eventContext, err := arc20.UnpackArc20EventContext(l.Data, l.Topics[0])
 				if err != nil {
 					if err == arc20.ErrNotExpectEvent {
