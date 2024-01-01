@@ -1,12 +1,6 @@
 [
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_plugin",
-          "type": "address"
-        }
-      ],
+      "inputs": [],
       "stateMutability": "nonpayable",
       "type": "constructor"
     },
@@ -28,11 +22,6 @@
     {
       "inputs": [],
       "name": "BlockTimeUndefined",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "CallerNotPlugin",
       "type": "error"
     },
     {
@@ -78,11 +67,6 @@
     {
       "inputs": [],
       "name": "Src20NotFound",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "SupplyDataWrong",
       "type": "error"
     },
     {
@@ -220,6 +204,11 @@
               "internalType": "uint256",
               "name": "blockTime",
               "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "src20",
+              "type": "address"
             }
           ],
           "internalType": "struct Src20TokenInfo[]",
@@ -327,11 +316,35 @@
               "internalType": "uint256",
               "name": "blockTime",
               "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "src20",
+              "type": "address"
             }
           ],
           "internalType": "struct Src20TokenInfo",
           "name": "",
           "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "owner",
+          "type": "string"
+        }
+      ],
+      "name": "getTickFromUser",
+      "outputs": [
+        {
+          "internalType": "string[]",
+          "name": "",
+          "type": "string[]"
         }
       ],
       "stateMutability": "view",
@@ -345,6 +358,49 @@
           "internalType": "address",
           "name": "",
           "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "name": "src20s",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "ticksOfUser",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
         }
       ],
       "stateMutability": "view",
