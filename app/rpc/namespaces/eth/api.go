@@ -1701,6 +1701,11 @@ func (api *PublicEthereumAPI) GetLogsByBtcHash(btcHash string) ([][]*ethtypes.Lo
 	return api.backend.GetLogs(h)
 }
 
-func (api *PublicEthereumAPI) GetLogsOptimize(height uint64) ([][]*ethtypes.Log, []common.Hash, error) {
+func (api *PublicEthereumAPI) GetLogsOptimizeForEvent(height uint64) ([][]*ethtypes.Log, []common.Hash, error) {
 	return api.backend.GetLogsOptimize(int64(height))
+}
+
+func (api *PublicEthereumAPI) GetLogsOptimize(height uint64) ([][]*ethtypes.Log, error) {
+	logs, _, err := api.backend.GetLogsOptimize(int64(height))
+	return logs, err
 }

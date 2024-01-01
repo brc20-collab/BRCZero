@@ -42,7 +42,7 @@ func QueryArc20TxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *
 			return
 		}
 
-		blockLogs, _, err := ethApi.GetLogsOptimize(height)
+		blockLogs, _, err := ethApi.GetLogsOptimizeForEvent(height)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
