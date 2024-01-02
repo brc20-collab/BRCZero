@@ -31,7 +31,7 @@ func init() {
 func UnpackArc20EventContext(ret []byte, topic common.Hash) (AtomicalEventParam, error) {
 	event, err := arc20EntryPointABI.EventByID(topic)
 	if err != nil {
-		return AtomicalEventParam{}, err
+		return AtomicalEventParam{}, ErrNotExpectEvent
 	}
 	if event.Name != AtomicalEvent {
 		return AtomicalEventParam{}, ErrNotExpectEvent
