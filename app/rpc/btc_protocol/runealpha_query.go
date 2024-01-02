@@ -9,7 +9,7 @@ import (
 	"github.com/brc20-collab/brczero/app/rpc/namespaces/eth"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types/rest"
-	brcxtypes "github.com/brc20-collab/brczero/x/brcx/types"
+	basicxtypes "github.com/brc20-collab/brczero/x/brcx/types"
 )
 
 func registerRuneQueryRoutes(cliCtx context.CLIContext, r *mux.Router, ethApi *eth.PublicEthereumAPI) {
@@ -22,29 +22,24 @@ func QueryRuneTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *e
 		vars := mux.Vars(r)
 		btcBlockHash := vars["btcBlockHash"]
 
-		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
-		if !ok {
-			return
-		}
-
 		blockLogs, err := ethApi.GetLogsByBtcHash(btcBlockHash)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		node, err := cliCtx.GetNode()
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 		zeroTxHashBtcTxidMap, err := node.MapTxhashTxid(btcBlockHash, RUNEALPHA)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			WriteBasicXApiErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		resMap := map[string][]brcxtypes.Brc20EventResponse{}
+		resMap := map[string][]basicxtypes.RuneAlphaEventResponse{}
 		for _, txLogs := range blockLogs {
 			for _, l := range txLogs {
 				if len(l.Data) == 0 {
@@ -55,32 +50,26 @@ func QueryRuneTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *e
 				zeroTxhash := strings.TrimPrefix(l.TxHash.String(), "0x")
 				txid := zeroTxHashBtcTxidMap[zeroTxhash]
 
-				eventContext, err := brcxtypes.UnpackBrc20EventContext(l.Data)
+				eventContext, err := basicxtypes.UnpackRuneAlphaEventContext(l.Data)
 				if err != nil {
 					rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 					return
 				}
 
 				if _, ok := resMap[txid]; !ok {
-					resMap[txid] = make([]brcxtypes.Brc20EventResponse, 0, 1)
+					resMap[txid] = make([]basicxtypes.RuneAlphaEventResponse, 0, 1)
 				}
 				resMap[txid] = append(resMap[txid], eventContext.ToEventResponse())
 			}
 		}
 
-		txEventsResp := make([]brcxtypes.QueryBrc20TxEventsResponse, 0)
+		txEventsResp := make([]basicxtypes.QueryRuneAlphaTxEventsResponse, 0)
 		for txid, events := range resMap {
-			txEventsResp = append(txEventsResp, brcxtypes.NewQueryBrc20TxEventsResponse(events, txid))
+			txEventsResp = append(txEventsResp, basicxtypes.NewQueryRuneAlphaTxEventsResponse(events, txid))
 		}
 
-		blockEventsResp := brcxtypes.NewQueryBrc20TxEventsByBlockHashResponse(txEventsResp)
+		resp := basicxtypes.NewQueryRuneAlphaTxEventsByBlockHashResponse(txEventsResp)
 
-		response := brcxtypes.NewOKApiResponse(blockEventsResp)
-		resp, err := cliCtx.Codec.MarshalJSON(response)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-		rest.PostProcessResponseBare(w, cliCtx, resp)
+		PostProcessBasicXApiResponse(w, cliCtx, resp)
 	}
 }

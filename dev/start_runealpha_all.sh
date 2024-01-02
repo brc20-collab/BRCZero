@@ -27,10 +27,10 @@ docker exec -it local_bitcoin_node bitcoin-cli -rpcwallet=testwallet_01 getwalle
 echo "************* Start rune ord... *************"
 cd /Users/oker/go/src/github.com/okex/runealpha-ord
 cargo build
-rm -rf ./_cache1
-nohup ./target/debug/ord --regtest --rpc-url=http://localhost:18443 --bitcoin-rpc-user bitcoinrpc --bitcoin-rpc-pass bitcoinrpc --index-runes-pre-alpha-i-agree-to-get-rekt --data-dir ./_cache1 server --enable-json-api --http-port 83 >./rune_ord.log 2>&1 &
+rm -rf ./_cache_runealpha
+nohup ./target/debug/ord --regtest --rpc-url=http://localhost:18443 --bitcoin-rpc-user bitcoinrpc --bitcoin-rpc-pass bitcoinrpc --index-runes-pre-alpha-i-agree-to-get-rekt --data-dir ./_cache_runealpha server --enable-json-api --http-port 83 >./rune_ord.log 2>&1 &
 sleep 5
 
 echo "************* Start brczero node... *************"
 cd $self_path
-./start_rune_zero.sh
+./start_runealpha.sh

@@ -85,3 +85,4 @@ dev/wasm/vmbridge-erc20/artifacts
 dev/wasm/vmbridge-erc20/target
 cache
 regtest
+/dev/_cache_runealpha/

@@ -587,10 +587,12 @@ func (mem *CListMempool) pullZeroData(btcHeight int64) ([]types.Tx, string, erro
 }
 
 func getUrl(pUrl string, heightStr string) (*types.ZeroResponseData, error) {
+	fmt.Println("pURL:", pUrl, "\nheight:", heightStr)
 	res, err := http.Get(pUrl)
 	if err != nil {
 		return nil, fmt.Errorf("get protocol url %s failed: %s", pUrl, err.Error())
 	}
+	fmt.Println(res.Body)
 	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
@@ -603,7 +605,7 @@ func getUrl(pUrl string, heightStr string) (*types.ZeroResponseData, error) {
 	if err != nil {
 		return nil, fmt.Errorf("json unmarshal api response failed: %s", err.Error())
 	}
-
+	fmt.Println(apiResp)
 	if apiResp.Code != types.OK_CODE {
 		return nil, fmt.Errorf("get api response error: %s", apiResp.Msg)
 	}
