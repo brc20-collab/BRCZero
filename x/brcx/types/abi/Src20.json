@@ -7,14 +7,14 @@
           "type": "string"
         },
         {
-          "internalType": "uint64",
+          "internalType": "uint256",
           "name": "_maxSupply",
-          "type": "uint64"
+          "type": "uint256"
         },
         {
-          "internalType": "uint64",
+          "internalType": "uint256",
           "name": "_limitPerMint",
-          "type": "uint64"
+          "type": "uint256"
         },
         {
           "internalType": "uint8",
@@ -30,6 +30,21 @@
           "internalType": "string",
           "name": "_creator",
           "type": "string"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_txid",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_blockHeight",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_blockTime",
+          "type": "uint256"
         }
       ],
       "stateMutability": "nonpayable",
@@ -66,16 +81,6 @@
       "type": "error"
     },
     {
-      "inputs": [],
-      "name": "TickOriginTooLong",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "TickOriginTooShort",
-      "type": "error"
-    },
-    {
       "anonymous": false,
       "inputs": [
         {
@@ -91,19 +96,19 @@
               "type": "string"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint256",
               "name": "max",
-              "type": "uint64"
+              "type": "uint256"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint256",
               "name": "lim",
-              "type": "uint64"
+              "type": "uint256"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint256",
               "name": "amt",
-              "type": "uint64"
+              "type": "uint256"
             },
             {
               "internalType": "uint8",
@@ -151,9 +156,48 @@
       "name": "balanceOf",
       "outputs": [
         {
-          "internalType": "uint64",
+          "internalType": "uint256",
           "name": "",
-          "type": "uint64"
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "blockHeight",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "blockTime",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "creator",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
         }
       ],
       "stateMutability": "view",
@@ -197,14 +241,14 @@
               "type": "string"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint256",
               "name": "max",
-              "type": "uint64"
+              "type": "uint256"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint256",
               "name": "lim",
-              "type": "uint64"
+              "type": "uint256"
             },
             {
               "internalType": "uint8",
@@ -225,9 +269,9 @@
       "name": "limitPerMint",
       "outputs": [
         {
-          "internalType": "uint64",
+          "internalType": "uint256",
           "name": "",
-          "type": "uint64"
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -238,9 +282,9 @@
       "name": "maxSupply",
       "outputs": [
         {
-          "internalType": "uint64",
+          "internalType": "uint256",
           "name": "",
-          "type": "uint64"
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -292,9 +336,9 @@
               "type": "string"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint256",
               "name": "amt",
-              "type": "uint64"
+              "type": "uint256"
             }
           ],
           "internalType": "struct MintInfo",
@@ -325,9 +369,9 @@
       "name": "totalSupply",
       "outputs": [
         {
-          "internalType": "uint64",
+          "internalType": "uint256",
           "name": "",
-          "type": "uint64"
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -353,9 +397,9 @@
               "type": "string"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint256",
               "name": "amt",
-              "type": "uint64"
+              "type": "uint256"
             }
           ],
           "internalType": "struct TransferInfo",
@@ -366,6 +410,19 @@
       "name": "transfer",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "txid",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     }
   ]
