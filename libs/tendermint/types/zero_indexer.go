@@ -1,5 +1,7 @@
 package types
 
+const OK_CODE = 0
+
 type ZeroRequestTx struct {
 	ProtocolName       string `json:"protocol_name"`
 	Inscription        string `json:"inscription"`

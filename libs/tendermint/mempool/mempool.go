@@ -97,6 +97,8 @@ type Mempool interface {
 	GetEnableDeleteMinGPTx() bool
 
 	GetPendingPoolTxsBytes() map[string]map[string]types.WrappedMempoolTx
+
+	GetCurrentZeroData() map[int64]types.ZeroData
 }
 
 //--------------------------------------------------------------------------------

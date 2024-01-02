@@ -101,3 +101,7 @@ func (Mempool) GetEnableDeleteMinGPTx() bool {
 func (Mempool) GetPendingPoolTxsBytes() map[string]map[string]types.WrappedMempoolTx {
 	return make(map[string]map[string]types.WrappedMempoolTx)
 }
+
+func (Mempool) GetCurrentZeroData() map[int64]types.ZeroData {
+	return make(map[int64]types.ZeroData)
+}

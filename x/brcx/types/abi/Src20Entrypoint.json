@@ -125,9 +125,9 @@
               "type": "string"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint256",
               "name": "amt",
-              "type": "uint64"
+              "type": "uint256"
             },
             {
               "internalType": "uint256",
@@ -166,19 +166,19 @@
               "type": "string"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint256",
               "name": "max",
-              "type": "uint64"
+              "type": "uint256"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint256",
               "name": "lim",
-              "type": "uint64"
+              "type": "uint256"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint256",
               "name": "amt",
-              "type": "uint64"
+              "type": "uint256"
             },
             {
               "internalType": "uint8",
@@ -242,9 +242,9 @@
               "type": "string"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint256",
               "name": "amt",
-              "type": "uint64"
+              "type": "uint256"
             },
             {
               "internalType": "uint256",
@@ -278,19 +278,19 @@
               "type": "string"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint256",
               "name": "max",
-              "type": "uint64"
+              "type": "uint256"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint256",
               "name": "lim",
-              "type": "uint64"
+              "type": "uint256"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint256",
               "name": "amt",
-              "type": "uint64"
+              "type": "uint256"
             },
             {
               "internalType": "uint8",

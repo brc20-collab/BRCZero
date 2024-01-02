@@ -3,6 +3,7 @@ package core
 import (
 	"crypto/sha256"
 	"fmt"
+	"strconv"
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/baseapp"
 	ctypes "github.com/brc20-collab/brczero/libs/tendermint/rpc/core/types"
@@ -137,4 +138,13 @@ func GetPendingTxs(ctx *rpctypes.Context) (*ctypes.ResultPendingTxs, error) {
 		pendingTx = env.Mempool.GetPendingPoolTxsBytes()
 	}
 	return &ctypes.ResultPendingTxs{Txs: pendingTx}, nil
+}
+
+func GetCurrentZeroData(ctx *rpctypes.Context) (*ctypes.ResultZeroData, error) {
+	data := env.Mempool.GetCurrentZeroData()
+	res := make(map[string]types.ZeroData, 0)
+	for h, d := range data {
+		res[strconv.FormatInt(h, 10)] = d
+	}
+	return &ctypes.ResultZeroData{Data: res}, nil
 }

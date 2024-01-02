@@ -499,7 +499,8 @@ func (mem *CListMempool) pullZeroDataTask() {
 	if err != nil {
 		mem.logger.Error(fmt.Sprintf("pull zero data at height %d, faild: %s", pendingConfirmedH, err.Error()))
 	} else if pendingConfirmedData.BTCBlockHash == curBtcBlockHash {
-		// if the btcBlockHash is same from plugin and mempool, the height should be confirmed and the new data should be added to mempool
+		// if the btcBlockHash is same from crawler and mempool,
+		// the height should be confirmed and the new data should be added to mempool
 		mem.confirmZeroDataByBTCHeight(pendingConfirmedH)
 		mem.logger.Debug(fmt.Sprintf("insert zero data at height: %d, btcBlockHash: %s", insertHeight, btcBlockHash))
 		mem.insertZeroData(insertHeight, btcBlockHash, txs)
@@ -603,7 +604,7 @@ func getUrl(pUrl string, heightStr string) (*types.ZeroResponseData, error) {
 		return nil, fmt.Errorf("json unmarshal api response failed: %s", err.Error())
 	}
 
-	if apiResp.Code != 0 {
+	if apiResp.Code != types.OK_CODE {
 		return nil, fmt.Errorf("get api response error: %s", apiResp.Msg)
 	}
 
@@ -731,6 +732,16 @@ func (mem *CListMempool) delZeroDataByBTCHeight(btcHeight int64) {
 	if _, ok := mem.zeroTxs[btcHeight]; ok {
 		delete(mem.zeroTxs, btcHeight)
 	}
+}
+
+func (mem *CListMempool) GetCurrentZeroData() map[int64]types.ZeroData {
+	mem.zeroMtx.Lock()
+	defer mem.zeroMtx.Unlock()
+	res := make(map[int64]types.ZeroData)
+	for h, d := range mem.zeroTxs {
+		res[h] = *d
+	}
+	return res
 }
 
 func (mem *CListMempool) CheckAndGetWrapCMTx(tx types.Tx, txInfo TxInfo) *types.WrapCMTx {
