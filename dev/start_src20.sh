@@ -44,6 +44,7 @@ run() {
       --trie.dirty-disabled=true \
       --trace --home $HOME_SERVER --chain-id $CHAINID \
       --elapsed Round=1,CommitRound=1,Produce=1 \
+      --mempool.pull_zero_data_limit=0 \
       --rest.laddr "tcp://0.0.0.0:8545" > brc10.txt 2>&1 &
 
 # --iavl-commit-interval-height \
