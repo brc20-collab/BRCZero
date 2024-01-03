@@ -3,10 +3,10 @@ package arc20
 import (
 	"bytes"
 	_ "embed"
+	"encoding/hex"
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
 	"math/big"
 )
 
@@ -65,7 +65,7 @@ type AtomicalEventParam struct {
 }
 
 func (hash *Hash) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf("\"%s\"", hexutil.Encode(hash[:]))), nil
+	return []byte(fmt.Sprintf("\"%s\"", hex.EncodeToString(hash[:]))), nil
 }
 
 type ARC20Response struct {
