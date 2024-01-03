@@ -16,6 +16,7 @@ type RuneAlphaEventContext struct {
 	OutputId     string
 	PreOutputId  string
 	Timestamp    uint32
+	Msg          string
 }
 
 type RuneAlphaWrappedEvent struct {
@@ -36,6 +37,7 @@ type RuneAlphaEventResponse struct {
 	OutputId     string   `json:"output,omitempty" yaml:"output,omitempty"`
 	PreOutputId  string   `json:"input,omitempty" yaml:"input,omitempty"`
 	Timestamp    uint32   `json:"timestamp,omitempty" yaml:"timestamp,omitempty"`
+	Msg          string   `json:"msg,omitempty" yaml:"msg,omitempty"`
 }
 
 func (re RuneAlphaWrappedEvent) ToEventResponse() RuneAlphaEventResponse {
@@ -53,6 +55,7 @@ func (re RuneAlphaWrappedEvent) ToEventResponse() RuneAlphaEventResponse {
 		OutputId:     re.OutputId,
 		PreOutputId:  re.PreOutputId,
 		Timestamp:    re.Timestamp,
+		Msg:          re.Msg,
 	}
 }
 
