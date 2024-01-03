@@ -8,7 +8,7 @@
       },
       {
         "internalType": "uint64",
-        "name": "term_",
+        "name": "end_",
         "type": "uint64"
       },
       {
@@ -35,11 +35,6 @@
         "internalType": "string",
         "name": "symbol_",
         "type": "string"
-      },
-      {
-        "internalType": "uint64",
-        "name": "blockheight",
-        "type": "uint64"
       }
     ],
     "stateMutability": "nonpayable",
@@ -114,6 +109,11 @@
             "internalType": "uint32",
             "name": "timestamp",
             "type": "uint32"
+          },
+          {
+            "internalType": "string",
+            "name": "msg",
+            "type": "string"
           }
         ],
         "indexed": false,

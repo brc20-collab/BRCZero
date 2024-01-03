@@ -13,11 +13,11 @@ import (
 )
 
 func registerRuneQueryRoutes(cliCtx context.CLIContext, r *mux.Router, ethApi *eth.PublicEthereumAPI) {
-	r.HandleFunc("/runealpha/block/{btcBlockHash}/events", QueryRuneTxsEventsByBtcHashHandlerFunc(cliCtx, ethApi)).Methods("Get")
+	r.HandleFunc("/runealpha/block/{btcBlockHash}/events", QueryRuneAlphaTxsEventsByBtcHashHandlerFunc(cliCtx, ethApi)).Methods("Get")
 
 }
 
-func QueryRuneTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *eth.PublicEthereumAPI) http.HandlerFunc {
+func QueryRuneAlphaTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethApi *eth.PublicEthereumAPI) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		btcBlockHash := vars["btcBlockHash"]

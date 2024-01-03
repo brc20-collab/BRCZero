@@ -6,6 +6,8 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 )
 
+const RuneEvnetName = "RuneEvent"
+
 var (
 	runeAlphaEntryPointABI abi.ABI
 	//go:embed abi/RuneAlphaEntryPoint.json
@@ -23,7 +25,7 @@ func init() {
 
 func UnpackRuneAlphaEventContext(ret []byte) (RuneAlphaWrappedEvent, error) {
 	var ec RuneAlphaWrappedEvent
-	err := runeAlphaABI.UnpackIntoInterface(&ec, EventsName, ret)
+	err := runeAlphaABI.UnpackIntoInterface(&ec, RuneEvnetName, ret)
 	if err != nil {
 		return RuneAlphaWrappedEvent{}, err
 	}

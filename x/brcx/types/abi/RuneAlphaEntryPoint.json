@@ -133,6 +133,11 @@
             "internalType": "uint32",
             "name": "timestamp",
             "type": "uint32"
+          },
+          {
+            "internalType": "string",
+            "name": "msg",
+            "type": "string"
           }
         ],
         "indexed": false,
