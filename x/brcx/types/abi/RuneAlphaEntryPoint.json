@@ -26,11 +26,6 @@
   },
   {
     "inputs": [],
-    "name": "InvalidOp",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "IssuanceIdUndefined",
     "type": "error"
   },
@@ -51,17 +46,7 @@
   },
   {
     "inputs": [],
-    "name": "RepeatedIssuance",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "TxidUndefined",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "UnIssuanced",
     "type": "error"
   },
   {
@@ -76,12 +61,59 @@
           },
           {
             "internalType": "string",
-            "name": "rune",
+            "name": "preOutputId",
             "type": "string"
           },
           {
+            "components": [
+              {
+                "internalType": "uint128",
+                "name": "id",
+                "type": "uint128"
+              },
+              {
+                "internalType": "uint128",
+                "name": "amount",
+                "type": "uint128"
+              },
+              {
+                "internalType": "string",
+                "name": "rune",
+                "type": "string"
+              },
+              {
+                "internalType": "uint8",
+                "name": "divisibility",
+                "type": "uint8"
+              },
+              {
+                "internalType": "string",
+                "name": "symbol",
+                "type": "string"
+              }
+            ],
+            "internalType": "struct RuneBasicInfo",
+            "name": "burn",
+            "type": "tuple"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct BurnInputEvent",
+        "name": "burnInput",
+        "type": "tuple"
+      }
+    ],
+    "name": "BurnInput",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
             "internalType": "string",
-            "name": "symbol",
+            "name": "op",
             "type": "string"
           },
           {
@@ -90,29 +122,59 @@
             "type": "uint128"
           },
           {
+            "internalType": "string",
+            "name": "rune",
+            "type": "string"
+          },
+          {
             "internalType": "uint8",
             "name": "divisibility",
             "type": "uint8"
           },
           {
-            "internalType": "uint128",
-            "name": "limit",
-            "type": "uint128"
+            "internalType": "string",
+            "name": "symbol",
+            "type": "string"
           },
           {
             "internalType": "uint128",
             "name": "amount",
             "type": "uint128"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct BurnRuneEvent",
+        "name": "burnRune",
+        "type": "tuple"
+      }
+    ],
+    "name": "BurnRune",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "op",
+            "type": "string"
           },
           {
-            "internalType": "uint128",
-            "name": "supply",
-            "type": "uint128"
+            "internalType": "uint8",
+            "name": "divisibility",
+            "type": "uint8"
           },
           {
             "internalType": "uint64",
             "name": "end",
             "type": "uint64"
+          },
+          {
+            "internalType": "uint128",
+            "name": "limit",
+            "type": "uint128"
           },
           {
             "internalType": "uint256",
@@ -121,12 +183,17 @@
           },
           {
             "internalType": "string",
-            "name": "outputId",
+            "name": "rune",
             "type": "string"
           },
           {
+            "internalType": "uint128",
+            "name": "supply",
+            "type": "uint128"
+          },
+          {
             "internalType": "string",
-            "name": "preOutputId",
+            "name": "symbol",
             "type": "string"
           },
           {
@@ -135,18 +202,18 @@
             "type": "uint32"
           },
           {
-            "internalType": "string",
-            "name": "msg",
-            "type": "string"
+            "internalType": "uint128",
+            "name": "id",
+            "type": "uint128"
           }
         ],
         "indexed": false,
-        "internalType": "struct RuneEventContext",
-        "name": "runeEventContext",
+        "internalType": "struct IssueEvent",
+        "name": "issueEvent",
         "type": "tuple"
       }
     ],
-    "name": "RuneEvent",
+    "name": "Issue",
     "type": "event"
   },
   {
@@ -257,6 +324,25 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint128",
+        "name": "claimId",
+        "type": "uint128"
+      }
+    ],
+    "name": "getId",
+    "outputs": [
+      {
+        "internalType": "uint128",
+        "name": "",
+        "type": "uint128"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -442,6 +528,25 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint128",
+        "name": "id",
+        "type": "uint128"
+      }
+    ],
+    "name": "isClaimID",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
