@@ -32,7 +32,8 @@ run() {
       --consensus.timeout_commit 4000ms \
       --consensus.create_empty_blocks=false \
       --consensus.start_btc_height=120 \
-      --mempool.zero_data_url="http://0.0.0.0:80/api/v1" \
+      --mempool.pull_zero_data_limit=-1 \
+      --mempool.zero_data_url="http://127.0.0.1:80/api/v1" \
       --mempool.fast_sync_height_gap=10 \
       --tree-enable-async-commit=false \
       --enable-gid \
@@ -144,6 +145,6 @@ brczerod validate-genesis --home $HOME_SERVER
 brczerocli config keyring-backend test
 
 run
-
-sleep 4
+sleep 1
+exit 0
 
