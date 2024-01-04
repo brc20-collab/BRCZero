@@ -39,7 +39,7 @@ func QueryRuneAlphaTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethA
 			return
 		}
 
-		resMap := map[string][]basicxtypes.RuneAlphaEventResponse{}
+		resMap := make(map[string][]interface{})
 		for _, txLogs := range blockLogs {
 			for _, l := range txLogs {
 				if len(l.Data) == 0 {
@@ -47,23 +47,32 @@ func QueryRuneAlphaTxsEventsByBtcHashHandlerFunc(cliCtx context.CLIContext, ethA
 					continue
 				}
 
+				if len(l.Topics) == 0 {
+					continue
+				}
+
+				handler, ok := basicxtypes.TopicEventMap[l.Topics[0]]
+				if !ok {
+					continue
+				}
+
 				zeroTxhash := strings.TrimPrefix(l.TxHash.String(), "0x")
 				txid := zeroTxHashBtcTxidMap[zeroTxhash]
 
-				eventContext, err := basicxtypes.UnpackRuneAlphaEventContext(l.Data)
+				eventContext, err := handler(l.Data)
 				if err != nil {
 					rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 					return
 				}
 
 				if _, ok := resMap[txid]; !ok {
-					resMap[txid] = make([]basicxtypes.RuneAlphaEventResponse, 0, 1)
+					resMap[txid] = make([]interface{}, 0, 1)
 				}
-				resMap[txid] = append(resMap[txid], eventContext.ToEventResponse())
+				resMap[txid] = append(resMap[txid], eventContext)
 			}
 		}
 
-		txEventsResp := make([]basicxtypes.QueryRuneAlphaTxEventsResponse, 0)
+		txEventsResp := make([]interface{}, 0)
 		for txid, events := range resMap {
 			txEventsResp = append(txEventsResp, basicxtypes.NewQueryRuneAlphaTxEventsResponse(events, txid))
 		}
