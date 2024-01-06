@@ -36,6 +36,11 @@
   },
   {
     "inputs": [],
+    "name": "MinimumValueError",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "OpReturnIndexUndefined",
     "type": "error"
   },
@@ -214,6 +219,148 @@
       }
     ],
     "name": "Issue",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "op",
+            "type": "string"
+          },
+          {
+            "internalType": "uint128",
+            "name": "id",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "amount",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "output",
+            "type": "uint128"
+          },
+          {
+            "internalType": "string",
+            "name": "msg",
+            "type": "string"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct MintRuneErrEvent",
+        "name": "mintRuneErr",
+        "type": "tuple"
+      }
+    ],
+    "name": "MintError",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "op",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "outputId",
+            "type": "string"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint128",
+                "name": "id",
+                "type": "uint128"
+              },
+              {
+                "internalType": "uint128",
+                "name": "amount",
+                "type": "uint128"
+              },
+              {
+                "internalType": "string",
+                "name": "rune",
+                "type": "string"
+              },
+              {
+                "internalType": "uint8",
+                "name": "divisibility",
+                "type": "uint8"
+              },
+              {
+                "internalType": "string",
+                "name": "symbol",
+                "type": "string"
+              }
+            ],
+            "internalType": "struct RuneBasicInfo",
+            "name": "mint",
+            "type": "tuple"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct MintOutputEvent",
+        "name": "mintOutputEvent",
+        "type": "tuple"
+      }
+    ],
+    "name": "MintOutput",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "op",
+            "type": "string"
+          },
+          {
+            "internalType": "uint128",
+            "name": "id",
+            "type": "uint128"
+          },
+          {
+            "internalType": "string",
+            "name": "rune",
+            "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "divisibility",
+            "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "internalType": "uint128",
+            "name": "amount",
+            "type": "uint128"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct MintRuneEvent",
+        "name": "mintRuneEvent",
+        "type": "tuple"
+      }
+    ],
+    "name": "MintRune",
     "type": "event"
   },
   {

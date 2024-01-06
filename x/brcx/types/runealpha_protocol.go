@@ -4,7 +4,6 @@ import (
 	_ "embed"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 )
 
@@ -32,9 +31,6 @@ var (
 	BurnRuneTopic0   = crypto.Keccak256Hash(BurnRuneEventSig)
 	BurnInputTopic0  = crypto.Keccak256Hash(BurnInputEventSig)
 
-	// TopicEventMap store topic -> contract eventName
-	TopicEventMap = make(map[common.Hash]func([]byte) (interface{}, error))
-
 	runeAlphaEntryPointABI abi.ABI
 	//go:embed abi/RuneAlphaEntryPoint.json
 	runeAlphaEntryPointABIJson []byte
@@ -47,66 +43,58 @@ var (
 func init() {
 	runeAlphaEntryPointABI = GetEVMABIConfig(runeAlphaEntryPointABIJson)
 	runeAlphaABI = GetEVMABIConfig(runeAlphaABIJson)
-
-	TopicEventMap[MintRuneTopic0] = UnpackMintRuneEvent
-	TopicEventMap[MintOutputTopic0] = UnpackMintOutputEvent
-	TopicEventMap[MintErrTopic0] = UnpackMintErrEvent
-	TopicEventMap[IssueTopic0] = UnpackIssueEvent
-	TopicEventMap[BurnRuneTopic0] = UnpackBurnRuneEvent
-	TopicEventMap[BurnInputTopic0] = UnpackBurnInputEvent
-
 }
 
-func UnpackMintRuneEvent(ret []byte) (interface{}, error) {
+func UnpackMintRuneEvent(ret []byte) (MintRuneEvent, error) {
 	var ec RuneAlphaWrappedEvent[MintRuneEvent]
 	err := runeAlphaABI.UnpackIntoInterface(&ec, MintRuneEventName, ret)
 	if err != nil {
-		return RuneAlphaWrappedEvent[MintRuneEvent]{}, err
+		return MintRuneEvent{}, err
 	}
 	return ec.Events, nil
 }
 
-func UnpackMintOutputEvent(ret []byte) (interface{}, error) {
+func UnpackMintOutputEvent(ret []byte) (MintOutputEvent, error) {
 	var ec RuneAlphaWrappedEvent[MintOutputEvent]
 	err := runeAlphaABI.UnpackIntoInterface(&ec, MintOutputEventName, ret)
 	if err != nil {
-		return RuneAlphaWrappedEvent[MintOutputEvent]{}, err
+		return MintOutputEvent{}, err
 	}
 	return ec.Events, nil
 }
 
-func UnpackMintErrEvent(ret []byte) (interface{}, error) {
+func UnpackMintErrEvent(ret []byte) (MintRuneErrEvent, error) {
 	var ec RuneAlphaWrappedEvent[MintRuneErrEvent]
 	err := runeAlphaABI.UnpackIntoInterface(&ec, MintErrorEventName, ret)
 	if err != nil {
-		return RuneAlphaWrappedEvent[MintRuneErrEvent]{}, err
+		return MintRuneErrEvent{}, err
 	}
 	return ec.Events, nil
 }
 
-func UnpackIssueEvent(ret []byte) (interface{}, error) {
+func UnpackIssueEvent(ret []byte) (IssueEventAdapter, error) {
 	var ec RuneAlphaWrappedEvent[IssueEvent]
-	err := runeAlphaEntryPointABI.UnpackIntoInterface(&ec, IssueEventName, ret)
+	err := runeAlphaABI.UnpackIntoInterface(&ec, IssueEventName, ret)
 	if err != nil {
-		return RuneAlphaWrappedEvent[IssueEvent]{}, err
+		return IssueEventAdapter{}, err
 	}
-	return ec.Events, nil
+	return ec.Events.FormatResponse(), nil
 }
 
-func UnpackBurnRuneEvent(ret []byte) (interface{}, error) {
+func UnpackBurnRuneEvent(ret []byte) (BurnRuneEvent, error) {
 	var ec RuneAlphaWrappedEvent[BurnRuneEvent]
-	err := runeAlphaEntryPointABI.UnpackIntoInterface(&ec, BurnRuneEventName, ret)
+	err := runeAlphaABI.UnpackIntoInterface(&ec, BurnRuneEventName, ret)
 	if err != nil {
-		return RuneAlphaWrappedEvent[BurnRuneEvent]{}, err
+		return BurnRuneEvent{}, err
 	}
 	return ec.Events, nil
 }
 
-func UnpackBurnInputEvent(ret []byte) (interface{}, error) {
+func UnpackBurnInputEvent(ret []byte) (BurnInputEvent, error) {
 	var ec RuneAlphaWrappedEvent[BurnInputEvent]
-	err := runeAlphaEntryPointABI.UnpackIntoInterface(&ec, BurnInputEventName, ret)
+	err := runeAlphaABI.UnpackIntoInterface(&ec, BurnInputEventName, ret)
 	if err != nil {
-		return RuneAlphaWrappedEvent[BurnInputEvent]{}, err
+		return BurnInputEvent{}, err
 	}
 	return ec.Events, nil
 }
