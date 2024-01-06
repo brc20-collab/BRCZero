@@ -2,6 +2,7 @@ package types
 
 import (
 	_ "embed"
+
 	"github.com/ethereum/go-ethereum/accounts/abi"
 )
 
