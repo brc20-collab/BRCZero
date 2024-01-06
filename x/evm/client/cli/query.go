@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/hex"
 	"fmt"
 
 	ethcommon "github.com/ethereum/go-ethereum/common"
@@ -268,7 +269,7 @@ func GetCmdGetCode(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 			var out types.QueryResCode
 			cdc.MustUnmarshalJSON(res, &out)
-			return clientCtx.PrintOutput(out)
+			return clientCtx.PrintOutput(hex.EncodeToString(out.Code))
 		},
 	}
 }

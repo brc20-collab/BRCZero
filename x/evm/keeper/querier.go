@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strconv"
 
-	ethcmn "github.com/ethereum/go-ethereum/common"
 	apptypes "github.com/brc20-collab/brczero/app/types"
 	"github.com/brc20-collab/brczero/app/utils"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
@@ -14,6 +13,7 @@ import (
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	"github.com/brc20-collab/brczero/x/evm/types"
+	ethcmn "github.com/ethereum/go-ethereum/common"
 )
 
 // NewQuerier is the module level router for state queries
@@ -213,8 +213,7 @@ func queryCode(ctx sdk.Context, path []string, keeper Keeper) ([]byte, error) {
 	}
 
 	addr := ethcmn.HexToAddress(path[1])
-	so := keeper.GetOrNewStateObject(ctx, addr)
-	code := keeper.GetCodeByHash(ctx, ethcmn.BytesToHash(so.CodeHash()))
+	code := keeper.GetCode(ctx, addr)
 	res := types.QueryResCode{Code: code}
 	bz, err := codec.MarshalJSONIndent(keeper.cdc, res)
 	if err != nil {

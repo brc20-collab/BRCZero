@@ -39,7 +39,7 @@ func (k Keeper) CallEvm(ctx sdk.Context, callerAddr common.Address, to *common.A
 	if gasLimit == sdk.NewInfiniteGasMeter().Limit() {
 		gasLimit = k.evmKeeper.GetParams(ctx).MaxGasLimitPerTx
 	}
-
+	trace := ctx.IsTraceTx()
 	st := evmtypes.StateTransition{
 		AccountNonce: nonce,
 		Price:        big.NewInt(0),
@@ -52,11 +52,12 @@ func (k Keeper) CallEvm(ctx sdk.Context, callerAddr common.Address, to *common.A
 		TxHash:       &ethTxHash,
 		Sender:       callerAddr,
 		Simulate:     ctx.IsCheckTx(),
-		TraceTx:      false,
-		TraceTxLog:   false,
+		TraceTx:      trace,
+		TraceTxLog:   trace,
 	}
 	st.Csdb.Prepare(ethTxHash, k.evmKeeper.GetBlockHash(), 0)
-
+	ctx.SetIsTraceTxLog(trace)
+	ctx.SetIsTraceTx(trace)
 	st.SetCallToCM(k.evmKeeper.GetCallToCM())
 	executionResult, resultData, err, innertxs, contracts := st.TransitionDb(ctx, config)
 	if !ctx.IsCheckTx() && !ctx.IsTraceTx() {

@@ -723,7 +723,7 @@ func DefaultMempoolConfig() *MempoolConfig {
 		PendingRemoveEvent:         false,
 		ZeroDataUrl:                "",
 		FastSyncHeightGap:          0,
-		ZeroDataCacheSize:          100,
+		ZeroDataCacheSize:          1000,
 		PullZeroDataLimit:          30,
 	}
 }
