@@ -3,8 +3,6 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
-
 	"github.com/ethereum/go-ethereum/rlp"
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
@@ -105,13 +103,13 @@ func Decoder(_ codec.CdcAbstraction, txBytes []byte) (tx sdk.Tx, err error) {
 				msgInscription.Inscription = zeroTx.Inscription
 				msgInscription.InscriptionContext = context
 				// TODO 50000000 is tmp
-				fee := authtypes.NewStdFee(evmtypes.DefaultMaxGasLimitPerTx, nil)
+				fee := authtypes.NewStdFee(50000000000, nil)
 				return authtypes.NewStdTx([]sdk.Msg{msgInscription}, fee, nil, ""), nil
 			}
 		} else {
 			msg := NewMsgBasicProtocolOp(zeroTx.ProtocolName, zeroTx.Inscription, zeroTx.BTCTxid, zeroTx.BTCFee, zeroTx.InscriptionContext)
 			// TODO 50000000 is tmp
-			fee := authtypes.NewStdFee(evmtypes.DefaultMaxGasLimitPerTx, nil)
+			fee := authtypes.NewStdFee(50000000000, nil)
 			return authtypes.NewStdTx([]sdk.Msg{msg}, fee, nil, ""), nil
 		}
 	}
