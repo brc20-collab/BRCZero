@@ -458,6 +458,79 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "txId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint128",
+        "name": "outputLen",
+        "type": "uint128"
+      },
+      {
+        "internalType": "uint128",
+        "name": "opreturnIndex",
+        "type": "uint128"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint128",
+            "name": "id",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "amount",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "output",
+            "type": "uint128"
+          }
+        ],
+        "internalType": "struct Edict[]",
+        "name": "sameIdEdicts",
+        "type": "tuple[]"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint128",
+            "name": "id",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "amount",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "output",
+            "type": "uint128"
+          }
+        ],
+        "internalType": "struct Edict[]",
+        "name": "edicts",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "issuanceMint",
+    "outputs": [
+      {
+        "internalType": "uint128",
+        "name": "",
+        "type": "uint128"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "limit",
     "outputs": [
