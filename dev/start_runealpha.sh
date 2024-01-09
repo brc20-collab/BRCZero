@@ -31,8 +31,8 @@ run() {
       --dynamic-gp-mode=2 \
       --consensus.timeout_commit 4000ms \
       --consensus.create_empty_blocks=false \
-      --consensus.start_btc_height=120 \
-      --mempool.zero_data_url="http://127.0.0.1:83/api/v1" \
+      --consensus.start_btc_height=819862 \
+      --mempool.zero_data_url="http://127.0.0.1:86/api/v1" \
       --mempool.fast_sync_height_gap=10 \
       --mempool.pull_zero_data_limit=-1 \
       --tree-enable-async-commit=false \
@@ -46,7 +46,7 @@ run() {
       --trace --home $HOME_SERVER --chain-id $CHAINID \
       --elapsed Round=1,CommitRound=1,Produce=1 \
       --mempool.zero_data_cache_size=100 \
-      --rest.laddr "tcp://0.0.0.0:8545" > brc10.txt 2>&1 &
+      --rest.laddr "tcp://0.0.0.0:8545" > runealpha.txt 2>&1 &
 
 # --iavl-commit-interval-height \
 # --iavl-enable-async-commit \
