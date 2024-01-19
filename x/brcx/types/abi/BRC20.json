@@ -1,0 +1,505 @@
+[
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "inscriptionId",
+            "type": "string"
+          },
+          {
+            "internalType": "int64",
+            "name": "inscriptionNumber",
+            "type": "int64"
+          },
+          {
+            "internalType": "bool",
+            "name": "isTransfer",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "txid",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "sender",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "receiver",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "commitInput",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "revealOutput",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "oldSatPoint",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "newSatPoint",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "blockHash",
+            "type": "string"
+          },
+          {
+            "internalType": "uint32",
+            "name": "blockTime",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint64",
+            "name": "blockHeight",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct IBrc20EntryPoint.InScriptionContext",
+        "name": "context",
+        "type": "tuple"
+      },
+      {
+        "internalType": "string",
+        "name": "_tick",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxSupply",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_decimals",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_lim",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "eventType",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "tick",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "inscriptionId",
+            "type": "string"
+          },
+          {
+            "internalType": "int64",
+            "name": "inscriptionNumber",
+            "type": "int64"
+          },
+          {
+            "internalType": "string",
+            "name": "oldSatPoint",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "newSatPoint",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "supply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lim",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dec",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "sender",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "receiver",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "msg",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "txid",
+            "type": "string"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct IBrc20.EventContext",
+        "name": "events",
+        "type": "tuple"
+      }
+    ],
+    "name": "Events",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "sender",
+        "type": "string"
+      }
+    ],
+    "name": "balanceOf",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "count",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "decimals",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "inScriptionId",
+        "type": "string"
+      }
+    ],
+    "name": "getInscriptionInfo",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "lim",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "maxSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "inscriptionId",
+            "type": "string"
+          },
+          {
+            "internalType": "int64",
+            "name": "inscriptionNumber",
+            "type": "int64"
+          },
+          {
+            "internalType": "bool",
+            "name": "isTransfer",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "txid",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "sender",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "receiver",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "commitInput",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "revealOutput",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "oldSatPoint",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "newSatPoint",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "blockHash",
+            "type": "string"
+          },
+          {
+            "internalType": "uint32",
+            "name": "blockTime",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint64",
+            "name": "blockHeight",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct IBrc20EntryPoint.InScriptionContext",
+        "name": "context",
+        "type": "tuple"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amt",
+        "type": "uint256"
+      }
+    ],
+    "name": "mint",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nowSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "tick",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "inscriptionId",
+            "type": "string"
+          },
+          {
+            "internalType": "int64",
+            "name": "inscriptionNumber",
+            "type": "int64"
+          },
+          {
+            "internalType": "bool",
+            "name": "isTransfer",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "txid",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "sender",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "receiver",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "commitInput",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "revealOutput",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "oldSatPoint",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "newSatPoint",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "blockHash",
+            "type": "string"
+          },
+          {
+            "internalType": "uint32",
+            "name": "blockTime",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint64",
+            "name": "blockHeight",
+            "type": "uint64"
+          }
+        ],
+        "internalType": "struct IBrc20EntryPoint.InScriptionContext",
+        "name": "context",
+        "type": "tuple"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amt",
+        "type": "uint256"
+      }
+    ],
+    "name": "transfer",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

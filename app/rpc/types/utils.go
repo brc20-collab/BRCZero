@@ -3,8 +3,11 @@ package types
 import (
 	"bytes"
 	"context"
+	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
+
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -16,10 +19,12 @@ import (
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
+	stdtx "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/merkle"
 	tmbytes "github.com/brc20-collab/brczero/libs/tendermint/libs/bytes"
 	ctypes "github.com/brc20-collab/brczero/libs/tendermint/rpc/core/types"
 	tmtypes "github.com/brc20-collab/brczero/libs/tendermint/types"
+	brcxtypes "github.com/brc20-collab/brczero/x/brcx/types"
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
 	"github.com/brc20-collab/brczero/x/evm/watcher"
 )
@@ -38,11 +43,19 @@ func RawTxToEthTx(clientCtx clientcontext.CLIContext, bz []byte, height int64) (
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 
-	ethTx, ok := tx.(*evmtypes.MsgEthereumTx)
-	if !ok {
+	switch tx := tx.(type) {
+	case *evmtypes.MsgEthereumTx:
+		return tx, nil
+	case *stdtx.StdTx:
+		if len(tx.GetMsgs()) == 1 &&
+			tx.GetMsgs()[0].Type() == brcxtypes.MsgInscriptionType || tx.GetMsgs()[0].Type() == brcxtypes.MsgBasicProtocolOpType {
+			return ConvertBRCXTransactionToEVMTx(clientCtx, *tx)
+		} else {
+			return nil, fmt.Errorf("invalid transaction type %T, expected %T", tx, evmtypes.MsgEthereumTx{})
+		}
+	default:
 		return nil, fmt.Errorf("invalid transaction type %T, expected %T", tx, evmtypes.MsgEthereumTx{})
 	}
-	return ethTx, nil
 }
 
 func ToTransaction(tx *evmtypes.MsgEthereumTx, from *common.Address) *watcher.Transaction {
@@ -364,4 +377,39 @@ func GetEthSender(tr *ctypes.ResultTx) (string, error) {
 		}
 	}
 	return "", errors.New("No sender in Event")
+}
+
+func ConvertBRCXTransactionToEVMTx(clientCtx clientcontext.CLIContext, stdTx stdtx.StdTx) (*evmtypes.MsgEthereumTx, error) {
+	tx, err := clientCtx.Client.Tx(stdTx.Hash, false)
+	if err != nil {
+		return nil, err
+	}
+	var info brcxtypes.ResultInfo
+	if err := json.Unmarshal([]byte(tx.TxResult.Info), &info); err != nil {
+		return nil, err
+	}
+	to := common.HexToAddress(info.EvmTo)
+	txHash := common.BytesToHash(stdTx.Hash[:])
+	playload, err := hex.DecodeString(info.CallData)
+	if err != nil {
+		return nil, err
+	}
+	return &evmtypes.MsgEthereumTx{Data: evmtypes.TxData{
+		AccountNonce: info.Nonce,
+		Price:        stdTx.GetGasPrice(),
+		GasLimit:     stdTx.GetGas(),
+		Recipient:    &to,
+		Amount:       common.Big0,
+		Payload:      playload,
+		V:            nil,
+		R:            nil,
+		S:            nil,
+		Hash:         &txHash,
+		BTCFee:       nil,
+	}, BaseTx: sdk.BaseTx{
+		Raw:   stdTx.Raw,
+		Hash:  stdTx.Hash,
+		From:  info.EvmCaller,
+		Nonce: info.Nonce,
+	}}, nil
 }

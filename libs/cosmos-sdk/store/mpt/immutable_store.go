@@ -3,12 +3,16 @@ package mpt
 import (
 	"encoding/hex"
 	"fmt"
-	mpttype "github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt/types"
 	"io"
 	"sync"
 
+	tmtypes "github.com/brc20-collab/brczero/libs/tendermint/types"
+
+	mpttype "github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt/types"
+
 	ethcmn "github.com/ethereum/go-ethereum/common"
 	ethstate "github.com/ethereum/go-ethereum/core/state"
+
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/cachekv"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/tracekv"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/types"
@@ -19,12 +23,15 @@ type ImmutableMptStore struct {
 	db   ethstate.Database
 	root ethcmn.Hash
 	mtx  sync.Mutex
+
+	brcRpcStateCache map[string][]byte
 }
 
-func NewImmutableMptStore(db ethstate.Database, root ethcmn.Hash) (*ImmutableMptStore, error) {
+func NewImmutableMptStore(db ethstate.Database, root ethcmn.Hash, brcRpcStateCache map[string][]byte) (*ImmutableMptStore, error) {
 	ms := &ImmutableMptStore{
-		db:   db,
-		root: root,
+		db:               db,
+		root:             root,
+		brcRpcStateCache: brcRpcStateCache,
 	}
 	trie, err := ms.db.OpenTrie(root)
 	if err != nil {
@@ -43,10 +50,21 @@ func NewImmutableMptStoreFromTrie(db ethstate.Database, trie ethstate.Trie) *Imm
 	return ms
 }
 
+func (ms *ImmutableMptStore) GetBrcRpcState(key []byte) []byte {
+	if value, ok := ms.brcRpcStateCache[hex.EncodeToString(key)]; ok {
+		return value
+	}
+	return nil
+}
+
 func (ms *ImmutableMptStore) Get(key []byte) []byte {
 	ms.mtx.Lock()
 	defer ms.mtx.Unlock()
-
+	if tmtypes.RpcFlag != tmtypes.RpcApplyBlockMode {
+		if value := ms.GetBrcRpcState(key); value != nil {
+			return value
+		}
+	}
 	switch mptKeyType(key) {
 	case storageType:
 		_, stateRoot, realKey := decodeAddressStorageInfo(key)
@@ -90,6 +108,10 @@ func (ms *ImmutableMptStore) Delete(key []byte) {
 	panic("immutable store cannot delete")
 }
 
+func (ms *ImmutableMptStore) CleanBrcRpcState() {
+	ms.brcRpcStateCache = make(map[string][]byte, 0)
+}
+
 func (ms *ImmutableMptStore) getStorageTrie(addr ethcmn.Address, stateRoot ethcmn.Hash) ethstate.Trie {
 	addrHash := mpttype.Keccak256HashWithSyncPool(addr[:])
 	var t ethstate.Trie
@@ -127,6 +149,9 @@ func (ms *ImmutableMptStore) ReverseIterator(start, end []byte) types.Iterator {
 
 func (ms *ImmutableMptStore) GetStoreType() types.StoreType {
 	return StoreTypeMPT
+}
+func (ms *ImmutableMptStore) GetStoreName() string {
+	return "ImmutableMptStore"
 }
 
 func (ms *ImmutableMptStore) CacheWrap() types.CacheWrap {

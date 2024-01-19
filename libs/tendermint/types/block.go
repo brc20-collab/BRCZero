@@ -10,6 +10,7 @@ import (
 	"time"
 
 	gogotypes "github.com/gogo/protobuf/types"
+
 	"github.com/brc20-collab/brczero/libs/system/trace"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/compress"
 	tmtime "github.com/brc20-collab/brczero/libs/tendermint/types/time"
@@ -51,12 +52,18 @@ const (
 	FlagBlockCompressType      = "block-compress-type"
 	FlagBlockCompressFlag      = "block-compress-flag"
 	FlagBlockCompressThreshold = "block-compress-threshold"
+
+	RpcDefaultMode    = 0
+	RpcDeliverTxsMode = 1
+	RpcApplyBlockMode = 2
 )
 
 var (
 	BlockCompressType      = 0x00
 	BlockCompressFlag      = 0
 	BlockCompressThreshold = 1024000
+
+	RpcFlag = 0
 )
 
 type BlockExInfo struct {
@@ -73,10 +80,12 @@ func (info BlockExInfo) IsCompressed() bool {
 type Block struct {
 	mtx sync.Mutex
 
-	Header     `json:"header"`
-	Data       `json:"data"`
-	Evidence   EvidenceData `json:"evidence"`
-	LastCommit *Commit      `json:"last_commit"`
+	Header       `json:"header"`
+	Data         `json:"data"`
+	Evidence     EvidenceData `json:"evidence"`
+	LastCommit   *Commit      `json:"last_commit"`
+	BtcHeight    int64        `json:"btc_height"`
+	BtcBlockHash string       `json:"btc_block_hash"`
 }
 
 func (b *Block) AminoSize(cdc *amino.Codec) int {
@@ -102,10 +111,20 @@ func (b *Block) AminoSize(cdc *amino.Codec) int {
 		size += 1 + amino.UvarintSize(uint64(commitSize)) + commitSize
 	}
 
+	if b.BtcHeight != 0 {
+		size += 1 + amino.UvarintSize(uint64(b.BtcHeight))
+	}
+
+	if b.BtcBlockHash != "" {
+		size += 1 + amino.EncodedStringSize(b.BtcBlockHash)
+	}
+
 	return size
 }
 
 func (b *Block) UnmarshalFromAmino(cdc *amino.Codec, data []byte) error {
+	//todo: Currently using Codec native Unmarshal
+	return cdc.UnmarshalBinaryBare(data, &b)
 	var dataLen uint64 = 0
 	var subData []byte
 
@@ -158,6 +177,15 @@ func (b *Block) UnmarshalFromAmino(cdc *amino.Codec, data []byte) error {
 			if err != nil {
 				return err
 			}
+		case 5:
+			var n int
+			var vint uint64
+			vint, n, err = amino.DecodeUvarint(subData)
+			if err != nil {
+				return err
+			}
+			b.BtcHeight = int64(vint)
+			dataLen = uint64(n)
 		default:
 			return fmt.Errorf("unexpect feild num %d", pos)
 		}

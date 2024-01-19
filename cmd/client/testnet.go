@@ -29,7 +29,6 @@ import (
 	authtypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/crisis"
 	genutiltypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/genutil/types"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/mint"
 	tmconfig "github.com/brc20-collab/brczero/libs/tendermint/config"
 	tmcrypto "github.com/brc20-collab/brczero/libs/tendermint/crypto"
 	tmos "github.com/brc20-collab/brczero/libs/tendermint/libs/os"
@@ -383,11 +382,11 @@ func initGenFiles(
 	govGenState.DepositParams.MinDeposit[0].Denom = coinDenom
 	appGenState[gov.ModuleName] = cdc.MustMarshalJSON(govGenState)
 
-	var mintGenState mint.GenesisState
-	cdc.MustUnmarshalJSON(appGenState[mint.ModuleName], &mintGenState)
-
-	mintGenState.Params.MintDenom = coinDenom
-	appGenState[mint.ModuleName] = cdc.MustMarshalJSON(mintGenState)
+	//var mintGenState mint.GenesisState
+	//cdc.MustUnmarshalJSON(appGenState[mint.ModuleName], &mintGenState)
+	//
+	//mintGenState.Params.MintDenom = coinDenom
+	//appGenState[mint.ModuleName] = cdc.MustMarshalJSON(mintGenState)
 
 	var crisisGenState crisis.GenesisState
 	cdc.MustUnmarshalJSON(appGenState[crisis.ModuleName], &crisisGenState)

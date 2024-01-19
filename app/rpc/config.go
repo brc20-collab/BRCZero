@@ -6,9 +6,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/brc20-collab/brczero/app/crypto/ethsecp256k1"
 	"github.com/brc20-collab/brczero/app/crypto/hd"
+	"github.com/brc20-collab/brczero/app/rpc/btc_protocol"
 	"github.com/brc20-collab/brczero/app/rpc/nacos"
 	"github.com/brc20-collab/brczero/app/rpc/pendingtx"
 	"github.com/brc20-collab/brczero/app/rpc/websockets"
@@ -19,7 +19,7 @@ import (
 	cmserver "github.com/brc20-collab/brczero/libs/cosmos-sdk/server"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
-
+	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/spf13/viper"
 )
 
@@ -79,7 +79,7 @@ func RegisterRoutes(rs *lcd.RestServer) {
 		}
 	}
 
-	apis := GetAPIs(rs.CliCtx, rs.Logger(), privkeys...)
+	apis, ethApi := GetAPIs(rs.CliCtx, rs.Logger(), privkeys...)
 
 	// Register all the APIs exposed by the namespace services
 	// TODO: handle allowlist and private APIs
@@ -91,6 +91,9 @@ func RegisterRoutes(rs *lcd.RestServer) {
 
 	// Web3 RPC API route
 	rs.Mux.HandleFunc("/", server.ServeHTTP).Methods("POST", "OPTIONS")
+
+	// BTC protocol RPC API route
+	btc_protocol.RegisterBtcProtocolRoutes(rs.CliCtx, rs.Mux, ethApi)
 
 	// start websockets server
 	websocketAddr := viper.GetString(FlagWebsocket)

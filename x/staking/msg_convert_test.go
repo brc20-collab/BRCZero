@@ -1,6 +1,7 @@
 package staking
 
 import (
+	"encoding/hex"
 	"fmt"
 	"testing"
 
@@ -252,4 +253,11 @@ func TestConvertAddSharesMsg(t *testing.T) {
 		msg, err := ConvertAddSharesMsg([]byte(ts.msgstr), ts.res.GetSigners())
 		ts.fnCheck(msg, err, ts.res)
 	}
+}
+
+func TestConvertAddSharesMsg1(t *testing.T) {
+	buff, err := hex.DecodeString("98780601")
+	require.NoError(t, err)
+	t.Log("buff:", string(buff))
+	t.Log("CHAD", hex.EncodeToString([]byte("RUNE")))
 }

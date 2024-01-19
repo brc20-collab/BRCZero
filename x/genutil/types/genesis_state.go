@@ -3,10 +3,6 @@ package types
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
-
-	stakingtypes "github.com/brc20-collab/brczero/x/staking/types"
-
 	authtypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
 )
 
@@ -24,7 +20,7 @@ func NewGenesisState(genTxs []json.RawMessage) GenesisState {
 
 // ValidateGenesis validates GenTx transactions
 func ValidateGenesis(genesisState GenesisState) error {
-	for i, genTx := range genesisState.GenTxs {
+	for _, genTx := range genesisState.GenTxs {
 		var tx authtypes.StdTx
 		if err := ModuleCdc.UnmarshalJSON(genTx, &tx); err != nil {
 			return err
@@ -34,12 +30,6 @@ func ValidateGenesis(genesisState GenesisState) error {
 		if len(msgs) != 1 {
 			return errors.New(
 				"must provide genesis StdTx with exactly 1 CreateValidator message")
-		}
-
-		// TODO: abstract back to staking
-		if _, ok := msgs[0].(stakingtypes.MsgCreateValidator); !ok {
-			return fmt.Errorf(
-				"genesis transaction %v does not contain a MsgCreateValidator", i)
 		}
 	}
 	return nil

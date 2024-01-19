@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
+	"time"
+
 	"github.com/brc20-collab/brczero/libs/iavl"
 	iavlcfg "github.com/brc20-collab/brczero/libs/iavl/config"
 	"github.com/brc20-collab/brczero/libs/system/trace"
@@ -14,7 +16,6 @@ import (
 	sm "github.com/brc20-collab/brczero/libs/tendermint/state"
 	"github.com/brc20-collab/brczero/libs/tendermint/types"
 	tmtime "github.com/brc20-collab/brczero/libs/tendermint/types/time"
-	"time"
 )
 
 func (cs *State) dumpElapsed(trc *trace.Tracer, schema string) {
@@ -281,6 +282,7 @@ func (cs *State) finalizeCommit(height int64) {
 
 	// NewHeightStep!
 	cs.stateMtx.Lock()
+	cs.latestBTCHeight = block.BtcHeight
 	cs.updateToState(stateCopy)
 	cs.stateMtx.Unlock()
 

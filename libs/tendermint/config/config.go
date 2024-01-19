@@ -2,11 +2,12 @@ package config
 
 import (
 	"fmt"
-	"github.com/brc20-collab/brczero/libs/system"
 	"net/http"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/brc20-collab/brczero/libs/system"
 
 	"github.com/brc20-collab/brczero/libs/tendermint/types"
 
@@ -426,8 +427,8 @@ func DefaultRPCConfig() *RPCConfig {
 		MaxSubscriptionsPerClient: 1000,
 		TimeoutBroadcastTxCommit:  10 * time.Second,
 
-		MaxBodyBytes:   int64(1000000), // 1MB
-		MaxHeaderBytes: 1 << 20,        // same as the net/http default
+		MaxBodyBytes:   int64(1000000000), // 1000MB
+		MaxHeaderBytes: 1 << 20,           // same as the net/http default
 
 		TLSCertFile: "",
 		TLSKeyFile:  "",
@@ -690,6 +691,10 @@ type MempoolConfig struct {
 	PendingPoolMaxTxPerAddress int      `mapstructure:"pending_pool_max_tx_per_address"`
 	NodeKeyWhitelist           []string `mapstructure:"node_key_whitelist"`
 	PendingRemoveEvent         bool     `mapstructure:"pending_remove_event"`
+	ZeroDataUrl                string   `mapstructure:"zero_data_url"`
+	FastSyncHeightGap          int64    `mapstructure:"fast_sync_height_gap"`
+	ZeroDataCacheSize          uint64   `mapstructure:"zero_data_cache_size"`
+	PullZeroDataLimit          int      `mapstructure:"pull_zero_data_limit"`
 }
 
 // DefaultMempoolConfig returns a default configuration for the Tendermint mempool
@@ -716,6 +721,10 @@ func DefaultMempoolConfig() *MempoolConfig {
 		PendingPoolMaxTxPerAddress: 100,
 		NodeKeyWhitelist:           []string{},
 		PendingRemoveEvent:         false,
+		ZeroDataUrl:                "",
+		FastSyncHeightGap:          0,
+		ZeroDataCacheSize:          100,
+		PullZeroDataLimit:          30,
 	}
 }
 
@@ -825,6 +834,8 @@ type ConsensusConfig struct {
 	// Reactor sleep duration parameters
 	PeerGossipSleepDuration     time.Duration `mapstructure:"peer_gossip_sleep_duration"`
 	PeerQueryMaj23SleepDuration time.Duration `mapstructure:"peer_query_maj23_sleep_duration"`
+	//btc
+	StartBtcHeight uint64 `mapstructure:"start_btc_height"`
 }
 
 // DefaultConsensusConfig returns a default configuration for the consensus service
@@ -846,6 +857,7 @@ func DefaultConsensusConfig() *ConsensusConfig {
 		PeerGossipSleepDuration:     100 * time.Millisecond,
 		PeerQueryMaj23SleepDuration: 2000 * time.Millisecond,
 		Waiting:                     true,
+		StartBtcHeight:              0,
 	}
 }
 

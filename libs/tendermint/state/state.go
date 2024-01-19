@@ -159,6 +159,39 @@ func (state State) MakeBlock(
 	return block, block.MakePartSet(types.BlockPartSizeBytes)
 }
 
+func (state State) MakeBlockBrc(
+	height int64,
+	txs []types.Tx,
+	commit *types.Commit,
+	evidence []types.Evidence,
+	proposerAddress []byte,
+	btcHeight int64,
+	btcBlockHash string,
+) (*types.Block, *types.PartSet) {
+
+	// Build base block with block data.
+	block := types.MakeBlockBrc(height, txs, commit, evidence, btcHeight, btcBlockHash)
+
+	// Set time.
+	var timestamp time.Time
+	if height == types.GetStartBlockHeight()+1 {
+		timestamp = state.LastBlockTime // genesis time
+	} else {
+		timestamp = MedianTime(commit, state.LastValidators)
+	}
+
+	// Fill rest of header with state data.
+	block.Header.Populate(
+		state.Version.Consensus, state.ChainID,
+		timestamp, state.LastBlockID,
+		state.Validators.Hash(height), state.NextValidators.Hash(height+1),
+		state.ConsensusParams.Hash(), state.AppHash, state.LastResultsHash,
+		proposerAddress,
+	)
+
+	return block, block.MakePartSet(types.BlockPartSizeBytes)
+}
+
 func (state *State) String() string {
 	return fmt.Sprintf("%+v", *state)
 }

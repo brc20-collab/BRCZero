@@ -37,6 +37,8 @@ type Result struct {
 	// Events contains a slice of Event objects that were emitted during message or
 	// handler execution.
 	Events Events
+
+	Info []byte
 }
 
 // SimulationResponse defines the response generated when a transaction is successfully

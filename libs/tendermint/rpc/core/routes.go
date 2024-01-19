@@ -38,10 +38,7 @@ var Routes = map[string]*rpc.RPCFunc{
 	"get_address_list":         rpc.NewRPCFunc(TmGetAddressList, ""),
 	"block_search":             rpc.NewRPCFunc(BlockSearch, "query,page,per_page,order_by"),
 
-	// tx broadcast API
-	"broadcast_tx_commit": rpc.NewRPCFunc(BroadcastTxCommit, "tx"),
-	"broadcast_tx_sync":   rpc.NewRPCFunc(BroadcastTxSync, "tx"),
-	"broadcast_tx_async":  rpc.NewRPCFunc(BroadcastTxAsync, "tx"),
+	"broadcast_brczero_txs_async": rpc.NewRPCFunc(BroadcastBrczeroTxsAsync, "height,block_hash,is_confirmed,txs"),
 
 	// abci API
 	"abci_query": rpc.NewRPCFunc(ABCIQuery, "path,data,height,prove"),
@@ -55,6 +52,8 @@ var Routes = map[string]*rpc.RPCFunc{
 	"get_enable_delete_min_gp_tx": rpc.NewRPCFunc(GetEnableDeleteMinGPTx, ""),
 
 	"pending_txs": rpc.NewRPCFunc(GetPendingTxs, ""),
+
+	"current_zero_data": rpc.NewRPCFunc(GetCurrentZeroData, ""),
 }
 
 func AddUnsafeRoutes() {

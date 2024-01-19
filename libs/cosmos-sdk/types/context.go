@@ -51,7 +51,6 @@ type Context struct {
 	//	txCount            uint32
 	overridesBytes    []byte // overridesBytes is used to save overrides info, passed from ethCall to x/evm
 	watcher           *TxWatcher
-	feesplitInfo      *FeeSplitInfo
 	statedb           vm.StateDB
 	outOfGas          bool
 	wasmSimulateCache map[string][]byte
@@ -105,13 +104,6 @@ func (c *Context) AccountNonce() uint64        { return c.accountNonce }
 func (c *Context) AnteTracer() *trace.Tracer   { return c.trc }
 func (c Context) ParaMsg() *ParaMsg {
 	return c.paraMsg
-}
-
-func (c Context) GetFeeSplitInfo() *FeeSplitInfo {
-	if c.feesplitInfo == nil {
-		c.feesplitInfo = &FeeSplitInfo{}
-	}
-	return c.feesplitInfo
 }
 
 func (c *Context) EnableAccountCache()  { c.accountCache = &AccountCache{} }
@@ -397,11 +389,6 @@ func (c *Context) SetLogger(logger log.Logger) *Context {
 
 func (c *Context) SetParaMsg(m *ParaMsg) *Context {
 	c.paraMsg = m
-	return c
-}
-
-func (c *Context) SetFeeSplitInfo(f *FeeSplitInfo) *Context {
-	c.feesplitInfo = f
 	return c
 }
 

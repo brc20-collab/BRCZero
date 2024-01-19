@@ -13,7 +13,7 @@ import (
 const (
 	// DefaultParamspace for params keeper
 	DefaultParamspace       = ModuleName
-	defaultMaxGasLimitPerTx = 50000000
+	DefaultMaxGasLimitPerTx = 50000000000
 )
 
 // Parameter keys
@@ -68,7 +68,7 @@ func DefaultParams() Params {
 		ExtraEIPs:                         []int(nil), // TODO: define default values
 		EnableContractDeploymentWhitelist: false,
 		EnableContractBlockedList:         true,
-		MaxGasLimitPerTx:                  defaultMaxGasLimitPerTx,
+		MaxGasLimitPerTx:                  DefaultMaxGasLimitPerTx,
 	}
 }
 
@@ -80,7 +80,7 @@ func TestParams() Params {
 		ExtraEIPs:                         []int(nil), // TODO: define default values
 		EnableContractDeploymentWhitelist: false,
 		EnableContractBlockedList:         false,
-		MaxGasLimitPerTx:                  defaultMaxGasLimitPerTx,
+		MaxGasLimitPerTx:                  DefaultMaxGasLimitPerTx,
 	}
 }
 

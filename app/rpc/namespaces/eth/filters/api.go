@@ -37,6 +37,7 @@ type Backend interface {
 	HeaderByNumber(blockNr rpctypes.BlockNumber) (*ethtypes.Header, error)
 	HeaderByHash(blockHash common.Hash) (*ethtypes.Header, error)
 	GetLogs(height int64) ([][]*ethtypes.Log, error)
+	GetLogsOptimize(height int64) ([][]*ethtypes.Log, []common.Hash, error)
 
 	GetTransactionLogs(txHash common.Hash) ([]*ethtypes.Log, error)
 	BloomStatus() (uint64, uint64)

@@ -28,7 +28,7 @@ func Setup(isCheckTx bool, options ...Option) *BRCZeroApp {
 	viper.Set(sdk.FlagDBBackend, string(dbm.MemDBBackend))
 	types.DBBackend = string(dbm.MemDBBackend)
 	db := dbm.NewMemDB()
-	app := NewBRCZeroApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, 0)
+	app := NewBRCZeroApp(log.NewNopLogger(), db, nil, true, 0)
 
 	if !isCheckTx {
 		setupOption := &SetupOption{chainId: ""}

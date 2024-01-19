@@ -161,6 +161,83 @@ func RepairState(ctx *server.Context, onStart bool) {
 
 	mpttypes.TrieDirtyDisabled = rawTrieDirtyDisabledFlag
 }
+
+func RepairStateChangeContract(ctx *server.Context, onStart bool, hash []byte, code []byte) {
+	sm.SetIgnoreSmbCheck(true)
+	iavl.SetIgnoreVersionCheck(true)
+	global.SetRepairState(true)
+	defer global.SetRepairState(false)
+
+	// load latest block height
+	dataDir := filepath.Join(ctx.Config.RootDir, "data")
+	latestBlockHeight := latestBlockHeight(dataDir)
+	startBlockHeight := types.GetStartBlockHeight()
+	if latestBlockHeight <= startBlockHeight+2 {
+		log.Println(fmt.Sprintf("There is no need to repair data. The latest block height is %d, start block height is %d", latestBlockHeight, startBlockHeight))
+		return
+	}
+
+	config.RegisterDynamicConfig(ctx.Logger.With("module", "config"))
+	// create proxy app
+	proxyApp, repairApp, err := createRepairApp(ctx)
+	panicError(err)
+	defer repairApp.Close()
+
+	// get async commit version
+	commitVersion, err := repairApp.GetCommitVersion()
+	log.Println(fmt.Sprintf("repair state latestBlockHeight = %d \t commitVersion = %d", latestBlockHeight, commitVersion))
+	panicError(err)
+
+	if onStart && commitVersion == latestBlockHeight {
+		log.Println("no need to repair state on start")
+		return
+	}
+
+	// load state
+	stateStoreDB, err := sdk.NewDB(stateDB, dataDir)
+	panicError(err)
+	defer func() {
+		err := stateStoreDB.Close()
+		panicError(err)
+	}()
+	genesisDocProvider := node.DefaultGenesisDocProviderFunc(ctx.Config)
+	state, _, err := node.LoadStateFromDBOrGenesisDocProvider(stateStoreDB, genesisDocProvider)
+	panicError(err)
+
+	// load start version
+	startVersion := viper.GetInt64(FlagStartHeight)
+	if startVersion == 0 {
+		if onStart {
+			startVersion = commitVersion
+		} else {
+			stateOkHeight := latestBlockHeight - 2 // case: state machine broken
+			if commitVersion <= stateOkHeight {
+				startVersion = commitVersion
+			} else {
+				startVersion = stateOkHeight
+			}
+		}
+	}
+	if startVersion <= 0 {
+		panic("height too low, please restart from height 0 with genesis file")
+	}
+	log.Println(fmt.Sprintf("repair state at version = %d", startVersion))
+
+	err = repairApp.LoadStartVersion(startVersion)
+	panicError(err)
+
+	sdkCtx := repairApp.BaseApp.NewContext(true, abci.Header{})
+	repairApp.InitUpgrade(sdkCtx)
+
+	rawTrieDirtyDisabledFlag := viper.GetBool(mpttypes.FlagTrieDirtyDisabled)
+	mpttypes.TrieDirtyDisabled = true
+
+	repairApp.EvmKeeper.SetCodeDirectly(sdkCtx, hash, code)
+	// repair data by apply the latest two blocks
+	doRepair(ctx, state, stateStoreDB, proxyApp, startVersion, latestBlockHeight, dataDir)
+
+	mpttypes.TrieDirtyDisabled = rawTrieDirtyDisabledFlag
+}
 func createRepairApp(ctx *server.Context) (proxy.AppConns, *repairApp, error) {
 	rootDir := ctx.Config.RootDir
 	dataDir := filepath.Join(rootDir, "data")
@@ -180,7 +257,6 @@ func newRepairApp(logger tmlog.Logger, db dbm.DB, traceStore io.Writer) *repairA
 		db,
 		traceStore,
 		false,
-		map[int64]bool{},
 		0,
 	)}
 }

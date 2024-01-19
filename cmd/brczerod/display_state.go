@@ -125,7 +125,6 @@ func newDisplayApp(ctx *server.Context) *app.BRCZeroApp {
 		db,
 		nil,
 		false,
-		map[int64]bool{},
 		0,
 	)
 }

@@ -1,0 +1,672 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "divisibility_",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint64",
+        "name": "end_",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint128",
+        "name": "limit_",
+        "type": "uint128"
+      },
+      {
+        "internalType": "uint128",
+        "name": "supply_",
+        "type": "uint128"
+      },
+      {
+        "internalType": "uint128",
+        "name": "id_",
+        "type": "uint128"
+      },
+      {
+        "internalType": "string",
+        "name": "rune_",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "symbol_",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "op",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "preOutputId",
+            "type": "string"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint128",
+                "name": "id",
+                "type": "uint128"
+              },
+              {
+                "internalType": "uint128",
+                "name": "amount",
+                "type": "uint128"
+              },
+              {
+                "internalType": "string",
+                "name": "rune",
+                "type": "string"
+              },
+              {
+                "internalType": "uint8",
+                "name": "divisibility",
+                "type": "uint8"
+              },
+              {
+                "internalType": "string",
+                "name": "symbol",
+                "type": "string"
+              }
+            ],
+            "internalType": "struct RuneBasicInfo",
+            "name": "burn",
+            "type": "tuple"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct BurnInputEvent",
+        "name": "burnInput",
+        "type": "tuple"
+      }
+    ],
+    "name": "BurnInput",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "op",
+            "type": "string"
+          },
+          {
+            "internalType": "uint128",
+            "name": "id",
+            "type": "uint128"
+          },
+          {
+            "internalType": "string",
+            "name": "rune",
+            "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "divisibility",
+            "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "internalType": "uint128",
+            "name": "amount",
+            "type": "uint128"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct BurnRuneEvent",
+        "name": "burnRune",
+        "type": "tuple"
+      }
+    ],
+    "name": "BurnRune",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "op",
+            "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "divisibility",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint64",
+            "name": "end",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint128",
+            "name": "limit",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint256",
+            "name": "number",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "rune",
+            "type": "string"
+          },
+          {
+            "internalType": "uint128",
+            "name": "supply",
+            "type": "uint128"
+          },
+          {
+            "internalType": "string",
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint128",
+            "name": "id",
+            "type": "uint128"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct IssueEvent",
+        "name": "issueEvent",
+        "type": "tuple"
+      }
+    ],
+    "name": "Issue",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "op",
+            "type": "string"
+          },
+          {
+            "internalType": "uint128",
+            "name": "id",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "amount",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "output",
+            "type": "uint128"
+          },
+          {
+            "internalType": "string",
+            "name": "msg",
+            "type": "string"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct MintRuneErrEvent",
+        "name": "mintRuneErr",
+        "type": "tuple"
+      }
+    ],
+    "name": "MintError",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "op",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "outputId",
+            "type": "string"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint128",
+                "name": "id",
+                "type": "uint128"
+              },
+              {
+                "internalType": "uint128",
+                "name": "amount",
+                "type": "uint128"
+              },
+              {
+                "internalType": "string",
+                "name": "rune",
+                "type": "string"
+              },
+              {
+                "internalType": "uint8",
+                "name": "divisibility",
+                "type": "uint8"
+              },
+              {
+                "internalType": "string",
+                "name": "symbol",
+                "type": "string"
+              }
+            ],
+            "internalType": "struct RuneBasicInfo",
+            "name": "mint",
+            "type": "tuple"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct MintOutputEvent",
+        "name": "mintOutputEvent",
+        "type": "tuple"
+      }
+    ],
+    "name": "MintOutput",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "op",
+            "type": "string"
+          },
+          {
+            "internalType": "uint128",
+            "name": "id",
+            "type": "uint128"
+          },
+          {
+            "internalType": "string",
+            "name": "rune",
+            "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "divisibility",
+            "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "internalType": "uint128",
+            "name": "amount",
+            "type": "uint128"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct MintRuneEvent",
+        "name": "mintRuneEvent",
+        "type": "tuple"
+      }
+    ],
+    "name": "MintRune",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "outputId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint128",
+        "name": "amount",
+        "type": "uint128"
+      }
+    ],
+    "name": "burn",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "burned",
+    "outputs": [
+      {
+        "internalType": "uint128",
+        "name": "",
+        "type": "uint128"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "divisibility",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "end",
+    "outputs": [
+      {
+        "internalType": "uint64",
+        "name": "",
+        "type": "uint64"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint128",
+        "name": "claimId",
+        "type": "uint128"
+      }
+    ],
+    "name": "getId",
+    "outputs": [
+      {
+        "internalType": "uint128",
+        "name": "",
+        "type": "uint128"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "id",
+    "outputs": [
+      {
+        "internalType": "uint128",
+        "name": "",
+        "type": "uint128"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint128",
+        "name": "id",
+        "type": "uint128"
+      }
+    ],
+    "name": "isClaimID",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "limit",
+    "outputs": [
+      {
+        "internalType": "uint128",
+        "name": "",
+        "type": "uint128"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "txId",
+        "type": "string"
+      },
+      {
+        "internalType": "uint64",
+        "name": "height",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint32",
+        "name": "outputLen",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint128",
+        "name": "opreturnIndex",
+        "type": "uint128"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint128",
+            "name": "id",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "amount",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "output",
+            "type": "uint128"
+          }
+        ],
+        "internalType": "struct Edict[]",
+        "name": "sameIdEdicts",
+        "type": "tuple[]"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint128",
+            "name": "id",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "amount",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "output",
+            "type": "uint128"
+          }
+        ],
+        "internalType": "struct Edict[]",
+        "name": "edicts",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "preOutputIds",
+        "type": "string[]"
+      },
+      {
+        "internalType": "bool",
+        "name": "isIssuanceMint",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "isClaimId",
+        "type": "bool"
+      }
+    ],
+    "name": "mintOrTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "name": "outputIdTobalance",
+    "outputs": [
+      {
+        "internalType": "uint128",
+        "name": "",
+        "type": "uint128"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "rune",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "runesEntrypoint",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "runesEntrypoint_",
+        "type": "address"
+      }
+    ],
+    "name": "setRunesEntrypoint",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "supply",
+    "outputs": [
+      {
+        "internalType": "uint128",
+        "name": "",
+        "type": "uint128"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint32",
+        "name": "outputLen",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint128",
+        "name": "opreturnIndex",
+        "type": "uint128"
+      },
+      {
+        "internalType": "string",
+        "name": "preOutputId",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "txId",
+        "type": "string"
+      }
+    ],
+    "name": "transferToFirstOutput",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

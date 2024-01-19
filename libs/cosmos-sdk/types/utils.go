@@ -106,12 +106,6 @@ type ParaMsg struct {
 	InvalidExecute      bool
 }
 
-type FeeSplitInfo struct {
-	Addr   AccAddress
-	Fee    Coins
-	HasFee bool
-}
-
 type TxWatcher struct {
 	IWatcher
 }

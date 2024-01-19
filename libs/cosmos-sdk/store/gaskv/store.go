@@ -41,6 +41,10 @@ func (gs *Store) GetStoreType() types.StoreType {
 	return gs.parent.GetStoreType()
 }
 
+func (gs *Store) GetStoreName() string {
+	return gs.parent.GetStoreName()
+}
+
 // Implements KVStore.
 func (gs *Store) Get(key []byte) (value []byte) {
 	gs.gasMeter.ConsumeGas(gs.gasConfig.ReadCostFlat, types.GasReadCostFlatDesc)
@@ -72,6 +76,10 @@ func (gs *Store) Delete(key []byte) {
 	// charge gas to prevent certain attack vectors even though space is being freed
 	gs.gasMeter.ConsumeGas(gs.gasConfig.DeleteCost, types.GasDeleteDesc)
 	gs.parent.Delete(key)
+}
+
+func (gs *Store) CleanBrcRpcState() {
+	gs.parent.CleanBrcRpcState()
 }
 
 // Iterator implements the KVStore interface. It returns an iterator which

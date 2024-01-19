@@ -11,12 +11,13 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	ethcrypto "github.com/ethereum/go-ethereum/crypto"
+	"github.com/tendermint/go-amino"
+
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/exported"
 	authtypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
-	"github.com/tendermint/go-amino"
 )
 
 var _ exported.Account = (*EthAccount)(nil)

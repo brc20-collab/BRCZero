@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/golang/protobuf/proto"
+
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
@@ -13,6 +14,7 @@ import (
 	authtypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
 	"github.com/brc20-collab/brczero/libs/tendermint/global"
 	"github.com/brc20-collab/brczero/libs/tendermint/types"
+	brcxtypes "github.com/brc20-collab/brczero/x/brcx/types"
 )
 
 const IGNORE_HEIGHT_CHECKING = -1
@@ -51,8 +53,10 @@ func TxDecoder(cdc codec.CdcAbstraction) sdk.TxDecoder {
 
 		for index, f := range []decodeFunc{
 			evmDecoder,
+			// only use evmdecoder
 			aminoDecoder,
-			ibcDecoder,
+			//ibcDecoder,
+			brcxtypes.Decoder,
 		} {
 			if tx, err = f(cdc, txBytes); err == nil {
 				tx.SetRaw(txBytes)

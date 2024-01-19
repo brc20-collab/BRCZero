@@ -3,11 +3,13 @@ package automation
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
-	"github.com/spf13/viper"
 	"io/ioutil"
 	"sync"
 	"time"
+
+	"github.com/spf13/viper"
+
+	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
 )
 
 var (
@@ -144,16 +146,6 @@ func PrecommitsNotMaj23(height int64, round int) bool {
 		return true
 	}
 	return false
-}
-
-func PrerunTimeOut(height int64, round int) {
-	if !enableRoleTest {
-		return
-	}
-	if act, ok := roleAction[actionKey(height, round)]; ok {
-		timeSleep := act.preRunWait
-		time.Sleep(time.Duration(timeSleep) * time.Second)
-	}
 }
 
 func AddBlockTimeOut(height int64, round int) {

@@ -19,12 +19,13 @@ type Mempool interface {
 	// its validity and whether it should be added to the mempool.
 	CheckTx(tx types.Tx, callback func(*abci.Response), txInfo TxInfo) error
 
-	// ReapMaxBytesMaxGas reaps transactions from the mempool up to maxBytes
-	// bytes total with the condition that the total gasWanted must be less than
-	// maxGas.
-	// If both maxes are negative, there is no cap on the size of all returned
-	// transactions (~ all available transactions).
-	ReapMaxBytesMaxGas(maxBytes, maxGas int64) []types.Tx
+	ZeroReorgChan() <-chan int64
+	GetZeroDataByBTCHeight(btcHeight int64) (types.ZeroData, error)
+	DelZeroDataByBTCHeight(btcHeight int64)
+	SetZeroDataDelivered(btcH int64, value bool)
+	GetZeroDataMinHeight() int64
+	DelAllPrevZeroDataBeforeHeight(height int64)
+
 	ReapEssentialTx(tx types.Tx) abci.TxEssentials
 
 	// ReapMaxTxs reaps up to max transactions from the mempool.
@@ -57,6 +58,7 @@ type Mempool interface {
 		newPostFn PostCheckFunc,
 	) error
 
+	UpdateForBRCZeroData(height int64, btcHeight int64)
 	// FlushAppConn flushes the mempool connection to ensure async reqResCb calls are
 	// done. E.g. from CheckTx.
 	// NOTE: Lock/Unlock must be managed by caller
@@ -95,6 +97,8 @@ type Mempool interface {
 	GetEnableDeleteMinGPTx() bool
 
 	GetPendingPoolTxsBytes() map[string]map[string]types.WrappedMempoolTx
+
+	GetCurrentZeroData() map[int64]types.ZeroData
 }
 
 //--------------------------------------------------------------------------------

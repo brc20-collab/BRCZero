@@ -14,22 +14,18 @@ import (
 	"github.com/brc20-collab/brczero/app/types"
 	"github.com/brc20-collab/brczero/app/utils/sanity"
 	"github.com/brc20-collab/brczero/libs/system/trace"
-	"github.com/brc20-collab/brczero/libs/tendermint/consensus"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/automation"
 	tmtypes "github.com/brc20-collab/brczero/libs/tendermint/types"
 	tmdb "github.com/brc20-collab/brczero/libs/tm-db"
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
 	"github.com/brc20-collab/brczero/x/evm/watcher"
-	"github.com/brc20-collab/brczero/x/infura"
 	"github.com/brc20-collab/brczero/x/token"
-	"github.com/brc20-collab/brczero/x/wasm"
 )
 
 func RegisterAppFlag(cmd *cobra.Command) {
 	cmd.Flags().Bool(watcher.FlagFastQuery, false, "Enable the fast query mode for rpc queries")
 	cmd.Flags().Bool(watcher.FlagFastQueryForWasm, false, "Enable the fast query mode for wasm tx")
 	cmd.Flags().Uint64(eth.FlagFastQueryThreshold, 10, "Set the threshold of fast query")
-	cmd.Flags().String(eth.FlagE2cWasmMsgHelperAddr, "", "Set the e2c wasm msg helper contract address")
 	cmd.Flags().Int(watcher.FlagFastQueryLru, 1000, "Set the size of LRU cache under fast-query mode")
 	cmd.Flags().Int(backend.FlagApiBackendBlockLruCache, 30000, "Set the size of block LRU cache for backend mem cache")
 	cmd.Flags().Int(backend.FlagApiBackendTxLruCache, 100000, "Set the size of tx LRU cache for backend mem cache")
@@ -112,7 +108,6 @@ func RegisterAppFlag(cmd *cobra.Command) {
 	cmd.Flags().String(tmdb.FlagRocksdbOpts, "", "Options of rocksdb. (block_size=4KB,block_cache=1GB,statistics=true,allow_mmap_reads=true,max_open_files=-1,unordered_write=true,pipelined_write=true)")
 	cmd.Flags().String(types.FlagNodeMode, "", "Node mode (rpc|val|archive) is used to manage flags")
 
-	cmd.Flags().Bool(consensus.EnablePrerunTx, true, "enable proactively runtx mode, default open")
 	cmd.Flags().String(automation.ConsensusRole, "", "consensus role")
 	cmd.Flags().String(automation.ConsensusTestcase, "", "consensus test case file")
 
@@ -126,24 +121,11 @@ func RegisterAppFlag(cmd *cobra.Command) {
 	cmd.Flags().Int64(config.FlagCommitGapOffset, 0, "Offset to stagger ac ahead of proposal")
 	cmd.Flags().MarkHidden(config.FlagCommitGapOffset)
 
-	// flags for infura rpc
-	cmd.Flags().Bool(infura.FlagEnable, false, "Enable infura rpc service")
-	cmd.Flags().String(infura.FlagRedisUrl, "", "Redis url(host:port) of infura rpc service")
-	cmd.Flags().String(infura.FlagRedisAuth, "", "Redis auth of infura rpc service")
-	cmd.Flags().Int(infura.FlagRedisDB, 0, "Redis db of infura rpc service")
-	cmd.Flags().String(infura.FlagMysqlUrl, "", "Mysql url(host:port) of infura rpc service")
-	cmd.Flags().String(infura.FlagMysqlUser, "", "Mysql user of infura rpc service")
-	cmd.Flags().String(infura.FlagMysqlPass, "", "Mysql password of infura rpc service")
-	cmd.Flags().String(infura.FlagMysqlDB, "infura", "Mysql db name of infura rpc service")
-	cmd.Flags().Int(infura.FlagCacheQueueSize, 0, "Cache queue size of infura rpc service")
 	cmd.Flags().Int(config.FlagDebugGcInterval, 0, "Force gc every n heights for debug")
 	cmd.Flags().String(rpc.FlagWebsocket, "8546", "websocket port to listen to")
 	cmd.Flags().Int(backend.FlagLogsLimit, 0, "Maximum number of logs returned when calling eth_getLogs")
 	cmd.Flags().Int(backend.FlagLogsTimeout, 60, "Maximum query duration when calling eth_getLogs")
 	cmd.Flags().Int(websockets.FlagSubscribeLimit, 15, "Maximum subscription on a websocket connection")
-
 	// flags for tendermint rpc
 	cmd.Flags().Int(config.FlagMaxSubscriptionClients, 100, "Maximum number of unique clientIDs that Tendermint RPC server can /subscribe or /broadcast_tx_commit")
-
-	wasm.AddModuleInitFlags(cmd)
 }

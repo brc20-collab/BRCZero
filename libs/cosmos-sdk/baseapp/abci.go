@@ -128,14 +128,16 @@ func (app *BaseApp) BeginBlock(req abci.RequestBeginBlock) (res abci.ResponseBeg
 		))
 	}
 
-	if err := app.validateHeight(req); err != nil {
-		panic(err)
+	if !req.IsBrcRpc {
+		if err := app.validateHeight(req); err != nil {
+			panic(err)
+		}
 	}
 
 	// Initialize the DeliverTx state. If this is the first block, it should
 	// already be initialized in InitChain. Otherwise app.deliverState will be
 	// nil, since it is reset on Commit.
-	if req.Header.Height > 1+tmtypes.GetStartBlockHeight() {
+	if req.Header.Height > 1+tmtypes.GetStartBlockHeight() || req.IsBrcRpc {
 		if app.deliverState != nil {
 			app.logger.Info(
 				"deliverState was not reset by BaseApp.Commit due to the previous prerun task being stopped",
@@ -179,8 +181,6 @@ func (app *BaseApp) BeginBlock(req abci.RequestBeginBlock) (res abci.ResponseBeg
 
 	app.feeCollector = sdk.Coins{}
 	app.feeChanged = false
-	// clean FeeSplitCollector
-	app.FeeSplitCollector = make([]*sdk.FeeSplitInfo, 0)
 
 	return res
 }
@@ -211,7 +211,7 @@ func (app *BaseApp) UpdateFeeCollector(fee sdk.Coins, add bool) {
 	}
 }
 
-func (app *BaseApp) updateFeeCollectorAccount(isEndBlock bool) {
+func (app *BaseApp) updateFeeCollectorAccount() {
 	if app.updateFeeCollectorAccHandler == nil || !app.feeChanged {
 		return
 	}
@@ -224,22 +224,16 @@ func (app *BaseApp) updateFeeCollectorAccount(isEndBlock bool) {
 	}()
 
 	ctx, cache := app.cacheTxContext(app.getContextForTx(runTxModeDeliver, []byte{}), []byte{})
-	if isEndBlock {
-		// The feesplit is only processed at the endblock
-		if err := app.updateFeeCollectorAccHandler(ctx, app.feeCollector, app.FeeSplitCollector); err != nil {
-			panic(err)
-		}
-	} else {
-		if err := app.updateFeeCollectorAccHandler(ctx, app.feeCollector, nil); err != nil {
-			panic(err)
-		}
+	if err := app.updateFeeCollectorAccHandler(ctx, app.feeCollector); err != nil {
+		panic(err)
 	}
+
 	cache.Write()
 }
 
 // EndBlock implements the ABCI interface.
 func (app *BaseApp) EndBlock(req abci.RequestEndBlock) (res abci.ResponseEndBlock) {
-	app.updateFeeCollectorAccount(true)
+	app.updateFeeCollectorAccount()
 
 	if app.deliverState.ms.TracingEnabled() {
 		app.deliverState.ms = app.deliverState.ms.SetTracingContext(nil).(sdk.CacheMultiStore)

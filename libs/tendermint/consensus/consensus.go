@@ -6,6 +6,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pkg/errors"
+
 	"github.com/brc20-collab/brczero/libs/system/trace"
 	cfg "github.com/brc20-collab/brczero/libs/tendermint/config"
 	cstypes "github.com/brc20-collab/brczero/libs/tendermint/consensus/types"
@@ -16,8 +18,6 @@ import (
 	"github.com/brc20-collab/brczero/libs/tendermint/p2p"
 	sm "github.com/brc20-collab/brczero/libs/tendermint/state"
 	"github.com/brc20-collab/brczero/libs/tendermint/types"
-	"github.com/pkg/errors"
-	"github.com/spf13/viper"
 )
 
 //-----------------------------------------------------------------------------
@@ -50,8 +50,8 @@ type preBlockTaskRes struct {
 //-----------------------------------------------------------------------------
 
 const (
-	msgQueueSize   = 1000
-	EnablePrerunTx = "enable-preruntx"
+	msgQueueSize      = 1000
+	BrczeroRetryTimes = 5
 )
 
 // msgs from the reactor which may update the state
@@ -157,14 +157,15 @@ type State struct {
 	trc          *trace.Tracer
 	blockTimeTrc *trace.Tracer
 
-	prerunTx bool
-	bt       *BlockTransport
+	bt *BlockTransport
 
 	vcMsg    *ViewChangeMessage
 	vcHeight map[int64]string
 
 	preBlockTaskChan chan *preBlockTask
 	taskResultChan   chan *preBlockTaskRes
+
+	latestBTCHeight int64
 }
 
 // preBlockSignal
@@ -184,6 +185,7 @@ func NewState(
 	blockStore sm.BlockStore,
 	txNotifier txNotifier,
 	evpool evidencePool,
+	latestBTCHeight int64,
 	options ...StateOption,
 ) *State {
 	cs := &State{
@@ -202,12 +204,12 @@ func NewState(
 		evsw:             tmevents.NewEventSwitch(),
 		metrics:          NopMetrics(),
 		trc:              trace.NewTracer(trace.Consensus),
-		prerunTx:         viper.GetBool(EnablePrerunTx),
 		bt:               &BlockTransport{},
 		blockTimeTrc:     trace.NewTracer(trace.LastBlockTime),
 		vcHeight:         make(map[int64]string),
 		taskResultChan:   make(chan *preBlockTaskRes, 1),
 		preBlockTaskChan: make(chan *preBlockTask, 1),
+		latestBTCHeight:  latestBTCHeight,
 	}
 	// set function defaults (may be overwritten before calling Start)
 	cs.decideProposal = cs.defaultDecideProposal
@@ -220,9 +222,6 @@ func NewState(
 	}
 
 	cs.updateToState(state)
-	if cs.prerunTx {
-		cs.blockExec.InitPrerun()
-	}
 
 	// Don't call scheduleRound0 yet.
 	// We do that upon Start().
@@ -230,6 +229,7 @@ func NewState(
 	for _, option := range options {
 		option(cs)
 	}
+
 	return cs
 }
 

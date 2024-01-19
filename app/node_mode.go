@@ -3,9 +3,6 @@ package app
 import (
 	"errors"
 	"fmt"
-	"sort"
-	"strings"
-
 	"github.com/brc20-collab/brczero/app/config"
 	appconfig "github.com/brc20-collab/brczero/app/config"
 	"github.com/brc20-collab/brczero/app/rpc/backend"
@@ -22,6 +19,7 @@ import (
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
 	"github.com/brc20-collab/brczero/x/evm/watcher"
 	"github.com/spf13/viper"
+	"sort"
 )
 
 func setNodeConfig(ctx *server.Context) error {
@@ -111,10 +109,6 @@ func logStartingFlags(logger log.Logger) {
 	kvMap := make(map[string]interface{})
 	var keys []string
 	for _, key := range viper.AllKeys() {
-		if strings.Index(key, "infura.") == 0 {
-			continue
-		}
-
 		keys = append(keys, key)
 		kvMap[key] = viper.Get(key)
 		if len(key) > maxLen {

@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"math/big"
 
-	ethcmn "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
@@ -14,6 +12,8 @@ import (
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto"
 	cryptoamino "github.com/brc20-collab/brczero/libs/tendermint/crypto/encoding/amino"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/multisig"
+	ethcmn "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/tendermint/go-amino"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -123,6 +123,11 @@ func (tx *StdTx) GetMsgs() []sdk.Msg { return tx.Msgs }
 // require access to any other information.
 func (tx *StdTx) ValidateBasic() error {
 	stdSigs := tx.GetSignatures()
+
+	if len(stdSigs) == 0 {
+		// ignore sigs for brczero
+		return nil
+	}
 
 	if tx.Fee.Gas > maxGasWanted {
 		return sdkerrors.Wrapf(

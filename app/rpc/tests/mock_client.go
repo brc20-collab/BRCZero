@@ -7,19 +7,15 @@ import (
 	"net/http"
 	"time"
 
-	blockindexer "github.com/brc20-collab/brczero/libs/tendermint/state/indexer/block/kv"
-
-	"github.com/brc20-collab/brczero/libs/tendermint/global"
-
 	apptesting "github.com/brc20-collab/brczero/libs/ibc-go/testing"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	tmcfg "github.com/brc20-collab/brczero/libs/tendermint/config"
+	"github.com/brc20-collab/brczero/libs/tendermint/global"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/bytes"
 	tmbytes "github.com/brc20-collab/brczero/libs/tendermint/libs/bytes"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
 	tmmath "github.com/brc20-collab/brczero/libs/tendermint/libs/math"
 	"github.com/brc20-collab/brczero/libs/tendermint/mempool"
-	mempl "github.com/brc20-collab/brczero/libs/tendermint/mempool"
 	"github.com/brc20-collab/brczero/libs/tendermint/proxy"
 	"github.com/brc20-collab/brczero/libs/tendermint/rpc/client"
 	"github.com/brc20-collab/brczero/libs/tendermint/rpc/client/mock"
@@ -28,6 +24,7 @@ import (
 	rpcserver "github.com/brc20-collab/brczero/libs/tendermint/rpc/jsonrpc/server"
 	sm "github.com/brc20-collab/brczero/libs/tendermint/state"
 	tmstate "github.com/brc20-collab/brczero/libs/tendermint/state"
+	blockindexer "github.com/brc20-collab/brczero/libs/tendermint/state/indexer/block/kv"
 	"github.com/brc20-collab/brczero/libs/tendermint/state/txindex"
 	"github.com/brc20-collab/brczero/libs/tendermint/state/txindex/kv"
 	"github.com/brc20-collab/brczero/libs/tendermint/state/txindex/null"
@@ -132,6 +129,7 @@ func NewMockClient(chainId string, chain apptesting.TestChainI, app abci.Applica
 	mempool := mempool.NewCListMempool(
 		config.Mempool,
 		proxyApp.Mempool(),
+		mc.state.LastBlockHeight,
 		mc.state.LastBlockHeight,
 	)
 	mc.env.Mempool = mempool
@@ -272,22 +270,7 @@ func (c MockClient) ABCIQueryWithOptions(
 	return &ctypes.ResultABCIQuery{Response: resQuery}, nil
 }
 func (c MockClient) BroadcastTxSync(tx types.Tx) (*ctypes.ResultBroadcastTx, error) {
-	resCh := make(chan *abci.Response, 1)
-	err := c.env.Mempool.CheckTx(tx, func(res *abci.Response) {
-		resCh <- res
-	}, mempl.TxInfo{})
-	if err != nil {
-		return nil, err
-	}
-	res := <-resCh
-	r := res.GetCheckTx()
-	return &ctypes.ResultBroadcastTx{
-		Code:      r.Code,
-		Data:      r.Data,
-		Log:       r.Log,
-		Codespace: r.Codespace,
-		Hash:      tx.Hash(),
-	}, nil
+	return nil, fmt.Errorf("BroadcastTxSync is not provided yet")
 }
 
 // error if either min or max are negative or min > max

@@ -25,27 +25,28 @@ import (
 // CLIContext implements a typical CLI context created in SDK modules for
 // transaction handling and queries.
 type CLIContext struct {
-	FromAddress   sdk.AccAddress
-	Client        rpcclient.Client
-	ChainID       string
-	Keybase       keys.Keybase
-	Input         io.Reader
-	Output        io.Writer
-	OutputFormat  string
-	Height        int64
-	HomeDir       string
-	NodeURI       string
-	From          string
-	BroadcastMode string
-	Verifier      tmlite.Verifier
-	FromName      string
-	Codec         *codec.Codec
-	TrustNode     bool
-	UseLedger     bool
-	Simulate      bool
-	GenerateOnly  bool
-	Indent        bool
-	SkipConfirm   bool
+	FromAddress    sdk.AccAddress
+	Client         rpcclient.Client
+	ChainID        string
+	Keybase        keys.Keybase
+	Input          io.Reader
+	Output         io.Writer
+	OutputFormat   string
+	Height         int64
+	HomeDir        string
+	NodeURI        string
+	From           string
+	BroadcastMode  string
+	Verifier       tmlite.Verifier
+	FromName       string
+	Codec          *codec.Codec
+	TrustNode      bool
+	UseLedger      bool
+	Simulate       bool
+	GenerateOnly   bool
+	Indent         bool
+	SkipConfirm    bool
+	StartBtcHeight uint64
 
 	InterfaceRegistry types.InterfaceRegistry
 	CodecProy         *codec.CodecProxy
@@ -90,24 +91,25 @@ func NewCLIContextWithInputAndFrom(input io.Reader, from string) CLIContext {
 	}
 
 	ctx := CLIContext{
-		Client:        rpc,
-		ChainID:       viper.GetString(flags.FlagChainID),
-		Input:         input,
-		Output:        os.Stdout,
-		NodeURI:       nodeURI,
-		From:          viper.GetString(flags.FlagFrom),
-		OutputFormat:  viper.GetString(cli.OutputFlag),
-		Height:        viper.GetInt64(flags.FlagHeight),
-		HomeDir:       viper.GetString(flags.FlagHome),
-		TrustNode:     viper.GetBool(flags.FlagTrustNode),
-		UseLedger:     viper.GetBool(flags.FlagUseLedger),
-		BroadcastMode: viper.GetString(flags.FlagBroadcastMode),
-		Simulate:      viper.GetBool(flags.FlagDryRun),
-		GenerateOnly:  genOnly,
-		FromAddress:   fromAddress,
-		FromName:      fromName,
-		Indent:        viper.GetBool(flags.FlagIndentResponse),
-		SkipConfirm:   viper.GetBool(flags.FlagSkipConfirmation),
+		Client:         rpc,
+		ChainID:        viper.GetString(flags.FlagChainID),
+		Input:          input,
+		Output:         os.Stdout,
+		NodeURI:        nodeURI,
+		From:           viper.GetString(flags.FlagFrom),
+		OutputFormat:   viper.GetString(cli.OutputFlag),
+		Height:         viper.GetInt64(flags.FlagHeight),
+		HomeDir:        viper.GetString(flags.FlagHome),
+		TrustNode:      viper.GetBool(flags.FlagTrustNode),
+		UseLedger:      viper.GetBool(flags.FlagUseLedger),
+		BroadcastMode:  viper.GetString(flags.FlagBroadcastMode),
+		Simulate:       viper.GetBool(flags.FlagDryRun),
+		GenerateOnly:   genOnly,
+		FromAddress:    fromAddress,
+		FromName:       fromName,
+		Indent:         viper.GetBool(flags.FlagIndentResponse),
+		SkipConfirm:    viper.GetBool(flags.FlagSkipConfirmation),
+		StartBtcHeight: viper.GetUint64("consensus.start_btc_height"),
 	}
 
 	// create a verifier for the specific chain ID and RPC client

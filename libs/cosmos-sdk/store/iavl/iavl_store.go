@@ -3,6 +3,9 @@ package iavl
 import (
 	"errors"
 	"fmt"
+	"io"
+	"sync"
+
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/cachekv"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/flatkv"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/tracekv"
@@ -12,8 +15,6 @@ import (
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	tmkv "github.com/brc20-collab/brczero/libs/tendermint/libs/kv"
 	dbm "github.com/brc20-collab/brczero/libs/tm-db"
-	"io"
-	"sync"
 )
 
 var (
@@ -209,6 +210,10 @@ func (st *Store) GetStoreType() types.StoreType {
 	return types.StoreTypeIAVL
 }
 
+func (st *Store) GetStoreName() string {
+	return "IAVLStore"
+}
+
 // Implements Store.
 func (st *Store) CacheWrap() types.CacheWrap {
 	return cachekv.NewStoreWithPreChangeHandler(st, st.tree.PreChanges)
@@ -252,6 +257,9 @@ func (st *Store) Has(key []byte) (exists bool) {
 func (st *Store) Delete(key []byte) {
 	st.tree.Remove(key)
 	st.deleteFlatKV(key)
+}
+
+func (st *Store) CleanBrcRpcState() {
 }
 
 // DeleteVersions deletes a series of versions from the MutableTree. An error

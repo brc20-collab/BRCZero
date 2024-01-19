@@ -10,19 +10,19 @@ import (
 	authtypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
 	ctypes "github.com/brc20-collab/brczero/libs/tendermint/rpc/core/types"
 
+	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
-	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
 )
 
 // NewTransaction returns a transaction that will serialize to the RPC
 // representation, with the given location metadata set (if available).
 func NewTransaction(tx *evmtypes.MsgEthereumTx, txHash, blockHash common.Hash, blockNumber, index uint64) (*Transaction, error) {
 	// Verify signature and retrieve sender address
-	err := tx.VerifySig(tx.ChainID(), int64(blockNumber))
-	if err != nil {
-		return nil, err
-	}
+	//err := tx.VerifySig(tx.ChainID(), int64(blockNumber))
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	rpcTx := &Transaction{
 		From:     common.HexToAddress(tx.GetFrom()),

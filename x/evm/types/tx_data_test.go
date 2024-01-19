@@ -1,6 +1,9 @@
 package types
 
 import (
+	"encoding/hex"
+	"github.com/brc20-collab/brczero/libs/tendermint/crypto/tmhash"
+	"github.com/ethereum/go-ethereum/rlp"
 	"math"
 	"math/big"
 	"strings"
@@ -189,4 +192,23 @@ func TestTxData_String(t *testing.T) {
 	expectedEthAddr := ethcmn.HexToAddress("0x0000000000000000000000000000000000000000")
 	txData.Recipient = &expectedEthAddr
 	require.True(t, strings.EqualFold(expectedStrWithRecipient, txData.String()))
+}
+
+func TestTxData_RLPENcode(t *testing.T) {
+	addr := ethcmn.HexToAddress("0xbb20556f68932D7c4D1633e4fE51071C64fCa8c6")
+	noBTCFee := TxData{
+		AccountNonce: 2,
+		Price:        big.NewInt(3),
+		GasLimit:     1,
+		Recipient:    &addr,
+		Amount:       big.NewInt(4),
+		Payload:      []byte("test"),
+		V:            big.NewInt(5),
+		R:            big.NewInt(6),
+		S:            big.NewInt(7),
+	}
+
+	tx, err := rlp.EncodeToBytes(noBTCFee)
+	require.NoError(t, err)
+	t.Log("tx", hex.EncodeToString(tmhash.Sum(tx)))
 }

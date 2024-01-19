@@ -77,7 +77,9 @@ func (cs *State) isBlockProducer() (string, string) {
 
 // Enter (CreateEmptyBlocks): from enterNewRound(height,round)
 // Enter (CreateEmptyBlocks, CreateEmptyBlocksInterval > 0 ):
-// 		after enterNewRound(height,round), after timeout of CreateEmptyBlocksInterval
+//
+//	after enterNewRound(height,round), after timeout of CreateEmptyBlocksInterval
+//
 // Enter (!CreateEmptyBlocks) : after enterNewRound(height,round), once txs are in the mempool
 func (cs *State) enterPropose(height int64, round int) {
 	logger := cs.Logger.With("height", height, "round", round)
@@ -120,6 +122,9 @@ func (cs *State) enterPropose(height int64, round int) {
 
 	// If we don't get the proposal and all block parts quick enough, enterPrevote
 	cs.timeoutTicker.ScheduleTimeout(timeoutInfo{Duration: cs.config.Propose(round), Height: height, Round: round, Step: cstypes.RoundStepPropose, ActiveViewChange: cs.HasVC})
+
+	minHeight := cs.blockExec.GetZeroDataMinHeight()
+	cs.rpcDeliverTxs(minHeight)
 
 	if isBlockProducer == "y" {
 		logger.Info("enterPropose: Our turn to propose",
@@ -236,7 +241,27 @@ func (cs *State) createProposalBlock() (block *types.Block, blockParts *types.Pa
 	}
 	proposerAddr := cs.privValidatorPubKey.Address()
 
-	return cs.blockExec.CreateProposalBlock(cs.Height, cs.state, commit, proposerAddr)
+	return cs.blockExec.CreateProposalBlock(cs.Height, cs.state, commit, proposerAddr, cs.latestBTCHeight)
+}
+
+func (cs *State) createMockBlock(btcHeight int64, bzd types.ZeroData) (block *types.Block, blockParts *types.PartSet) {
+	var commit *types.Commit
+	switch {
+	case cs.Height == types.GetStartBlockHeight()+1:
+		// We're creating a proposal for the first block.
+		// The commit is empty, but not nil.
+		commit = types.NewCommit(0, 0, types.BlockID{}, nil)
+	case cs.LastCommit.HasTwoThirdsMajority():
+		// Make the commit from LastCommit
+		commit = cs.LastCommit.MakeCommit()
+	default: // This shouldn't happen.
+		cs.Logger.Error("enterPropose: Cannot propose anything: No commit for the previous block")
+		return
+	}
+
+	proposerAddr := cs.privValidatorPubKey.Address()
+
+	return cs.state.MakeBlockBrc(cs.Height, bzd.Txs, commit, make([]types.Evidence, 0), proposerAddr, btcHeight, bzd.BTCBlockHash)
 }
 
 //-----------------------------------------------------------------------------
@@ -288,7 +313,7 @@ func (cs *State) unmarshalBlock() error {
 	_, err = cdc.UnmarshalBinaryLengthPrefixedReader(
 		pbpReader,
 		&cs.ProposalBlock,
-		cs.state.ConsensusParams.Block.MaxBytes,
+		cs.state.ConsensusParams.Block.MaxBytes*1000,
 	)
 	return err
 }
@@ -348,14 +373,13 @@ func (cs *State) addProposalBlockPart(msg *BlockPartMessage, peerID p2p.ID) (add
 	if added && cs.ProposalBlockParts.IsComplete() {
 		err = cs.unmarshalBlock()
 		if err != nil {
-			return
+			return added, err
 		}
+
 		cs.trc.Pin("lastPart")
 		cs.bt.onRecvBlock(height)
 		cs.bt.totalParts = cs.ProposalBlockParts.Total()
-		if cs.prerunTx {
-			cs.blockExec.NotifyPrerun(cs.ProposalBlock)
-		}
+
 		// NOTE: it's possible to receive complete proposal blocks for future rounds without having the proposal
 		cs.Logger.Info("Received complete proposal block", "height", cs.ProposalBlock.Height, "hash", cs.ProposalBlock.Hash())
 		cs.eventBus.PublishEventCompleteProposal(cs.CompleteProposalEvent())

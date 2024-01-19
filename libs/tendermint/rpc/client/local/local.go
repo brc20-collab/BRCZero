@@ -174,6 +174,22 @@ func (c *Local) BlockByHash(hash []byte) (*ctypes.ResultBlock, error) {
 	return core.BlockByHash(c.ctx, hash)
 }
 
+func (c *Local) HeightByBtcHash(btcHash string) (int64, error) {
+	return core.HeightByBtcHash(c.ctx, btcHash)
+}
+
+func (c *Local) BtcBlockHashByBtcTxid(btcTxid string) (string, error) {
+	return core.BtcBlockHashByBtcTxid(c.ctx, btcTxid)
+}
+
+func (c *Local) BtcBlockHashByBtcHeight(btcHeight int64) (string, error) {
+	return core.BtcBlockHashByBtcHeight(c.ctx, btcHeight)
+}
+
+func (c *Local) MapTxhashTxid(btcHash, protocolName string) (map[string]string, error) {
+	return core.MapTxhashTxid(c.ctx, btcHash, protocolName)
+}
+
 func (c *Local) BlockInfo(height *int64) (*types.BlockMeta, error) {
 	return core.BlockInfo(c.ctx, height)
 }

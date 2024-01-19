@@ -1,8 +1,9 @@
 package listenkv
 
 import (
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/types"
 	"io"
+
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/types"
 )
 
 var _ types.KVStore = &Store{}
@@ -42,6 +43,10 @@ func (s *Store) Set(key []byte, value []byte) {
 func (s *Store) Delete(key []byte) {
 	s.parent.Delete(key)
 	s.onWrite(true, key, nil)
+}
+
+func (s *Store) CleanBrcRpcState() {
+	s.parent.CleanBrcRpcState()
 }
 
 // Has implements the KVStore interface. It delegates the Has call to the
@@ -113,8 +118,8 @@ func (li *listenIterator) Value() []byte {
 }
 
 // Close implements the Iterator interface.
-func (li *listenIterator) Close()  {
-	 li.parent.Close()
+func (li *listenIterator) Close() {
+	li.parent.Close()
 }
 
 // Error delegates the Error call to the parent iterator.
@@ -126,6 +131,10 @@ func (li *listenIterator) Error() error {
 // KVStore type.
 func (s *Store) GetStoreType() types.StoreType {
 	return s.parent.GetStoreType()
+}
+
+func (s *Store) GetStoreName() string {
+	return s.parent.GetStoreName()
 }
 
 // CacheWrap implements the KVStore interface. It panics as a Store

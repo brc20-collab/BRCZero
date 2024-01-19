@@ -92,6 +92,8 @@ type MptStore struct {
 	statisticsBeginTime time.Time
 
 	outputDelta *trie.MptDelta
+
+	brcRpcStateCache map[string][]byte
 }
 
 func (ms *MptStore) CommitterCommitMap(deltaMap iavl.TreeDeltaMap) (_ types.CommitID, _ iavl.TreeDeltaMap) {
@@ -129,6 +131,7 @@ func generateMptStore(logger tmlog.Logger, id types.CommitID, db ethstate.Databa
 		retriever:           retriever,
 		exitSignal:          make(chan struct{}),
 		outputDelta:         trie.NewMptDelta(),
+		brcRpcStateCache:    map[string][]byte{},
 	}
 	if mptStore.logger == nil {
 		mptStore.logger = tmlog.NewNopLogger()
@@ -188,7 +191,7 @@ func (ms *MptStore) openTrie(id types.CommitID) error {
 func (ms *MptStore) GetImmutable(height int64) (*ImmutableMptStore, error) {
 	rootHash := ms.GetMptRootHash(uint64(height))
 
-	return NewImmutableMptStore(ms.db, rootHash)
+	return NewImmutableMptStore(ms.db, rootHash, ms.brcRpcStateCache)
 }
 
 /*
@@ -196,6 +199,10 @@ func (ms *MptStore) GetImmutable(height int64) (*ImmutableMptStore, error) {
  */
 func (ms *MptStore) GetStoreType() types.StoreType {
 	return StoreTypeMPT
+}
+
+func (ms *MptStore) GetStoreName() string {
+	return "MptStore"
 }
 
 func (ms *MptStore) CacheWrap() types.CacheWrap {
@@ -210,6 +217,12 @@ func (ms *MptStore) CacheWrapWithTrace(w io.Writer, tc types.TraceContext) types
 }
 
 func (ms *MptStore) Get(key []byte) []byte {
+	if tmtypes.RpcFlag != tmtypes.RpcApplyBlockMode {
+		if value := ms.GetBrcRpcState(key); value != nil {
+			return value
+		}
+	}
+
 	switch mptKeyType(key) {
 	case storageType:
 		addr, stateRoot, realKey := decodeAddressStorageInfo(key)
@@ -242,7 +255,17 @@ func (ms *MptStore) Get(key []byte) []byte {
 	default:
 		panic(fmt.Errorf("not support key %s for mpt get", hex.EncodeToString(key)))
 	}
+}
 
+func (ms *MptStore) GetBrcRpcState(key []byte) []byte {
+	if value, ok := ms.brcRpcStateCache[hex.EncodeToString(key)]; ok {
+		return value
+	}
+	return nil
+}
+
+func (ms *MptStore) CleanBrcRpcState() {
+	ms.brcRpcStateCache = make(map[string][]byte, 0)
 }
 
 func (ms *MptStore) tryGetStorageTrie(addr ethcmn.Address, stateRoot ethcmn.Hash, useCache bool) ethstate.Trie {
@@ -275,6 +298,11 @@ func (ms *MptStore) Has(key []byte) bool {
 func (ms *MptStore) Set(key, value []byte) {
 	types.AssertValidValue(value)
 
+	if tmtypes.RpcFlag == tmtypes.RpcDeliverTxsMode {
+		ms.brcRpcStateCache[hex.EncodeToString(key)] = value
+		return
+	}
+
 	if produceDelta {
 		ms.outputDelta.SetKV = append(ms.outputDelta.SetKV, &trie.DeltaKV{Key: key, Val: value})
 	}
@@ -301,6 +329,8 @@ func (ms *MptStore) Set(key, value []byte) {
 }
 
 func (ms *MptStore) Delete(key []byte) {
+	delete(ms.brcRpcStateCache, hex.EncodeToString(key))
+
 	if produceDelta {
 		ms.outputDelta.DelKV = append(ms.outputDelta.DelKV, &trie.DeltaKV{Key: key, Val: nil})
 	}

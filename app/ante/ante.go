@@ -31,7 +31,7 @@ func NewAnteHandler(ak auth.AccountKeeper, evmKeeper EVMKeeper, sk types.SupplyK
 
 	stdTxAnteHandler = sdk.ChainAnteDecorators(
 		authante.NewSetUpContextDecorator(),               // outermost AnteDecorator. SetUpContext must be called first
-		NewWasmGasLimitDecorator(evmKeeper),               // gas limit should not be greater than max gas limit
+		NewGasLimitDecorator(evmKeeper),                   // gas limit should not be greater than max gas limit
 		NewAccountBlockedVerificationDecorator(evmKeeper), //account blocked check AnteDecorator
 		authante.NewMempoolFeeDecorator(),
 		authante.NewValidateBasicDecorator(),
@@ -39,7 +39,7 @@ func NewAnteHandler(ak auth.AccountKeeper, evmKeeper EVMKeeper, sk types.SupplyK
 		authante.NewConsumeGasForTxSizeDecorator(ak),
 		authante.NewSetPubKeyDecorator(ak), // SetPubKeyDecorator must be called before all signature verification decorators
 		authante.NewValidateSigCountDecorator(ak),
-		authante.NewDeductFeeDecorator(ak, sk),
+		//authante.NewDeductFeeDecorator(ak, sk),
 		authante.NewSigGasConsumeDecorator(ak, sigGasConsumer),
 		authante.NewSigVerificationDecorator(ak),
 		authante.NewIncrementSequenceDecorator(ak), // innermost AnteDecorator
@@ -52,7 +52,6 @@ func NewAnteHandler(ak auth.AccountKeeper, evmKeeper EVMKeeper, sk types.SupplyK
 		NewEthMempoolFeeDecorator(evmKeeper),
 		authante.NewValidateBasicDecorator(),
 		NewEthSigVerificationDecorator(),
-		NewAccountBlockedVerificationDecorator(evmKeeper), //account blocked check AnteDecorator
 		NewAccountAnteDecorator(ak, evmKeeper, sk),
 	)
 

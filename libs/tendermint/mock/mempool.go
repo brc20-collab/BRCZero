@@ -32,7 +32,17 @@ func (Mempool) Size() int { return 0 }
 func (Mempool) CheckTx(_ types.Tx, _ func(*abci.Response), _ mempl.TxInfo) error {
 	return nil
 }
-func (Mempool) ReapMaxBytesMaxGas(_, _ int64) []types.Tx      { return nil }
+func (Mempool) ZeroReorgChan() <-chan int64 {
+	return nil
+}
+
+func (Mempool) GetZeroDataByBTCHeight(btcHeight int64) (types.ZeroData, error) {
+	return types.ZeroData{}, nil
+}
+func (Mempool) GetZeroDataMinHeight() int64                   { return 0 }
+func (Mempool) DelAllPrevZeroDataBeforeHeight(height int64)   {}
+func (Mempool) DelZeroDataByBTCHeight(btcHeight int64)        {}
+func (Mempool) SetZeroDataDelivered(btcH int64, value bool)   {}
 func (Mempool) ReapEssentialTx(tx types.Tx) abci.TxEssentials { return nil }
 func (Mempool) ReapMaxTxs(n int) types.Txs                    { return types.Txs{} }
 func (Mempool) ReapUserTxsCnt(address string) int             { return 0 }
@@ -53,11 +63,12 @@ func (Mempool) Update(
 	trace.GetElapsedInfo().AddInfo(trace.GasUsed, fmt.Sprintf("%d", gasUsed))
 	return nil
 }
-func (Mempool) Flush()                        {}
-func (Mempool) FlushAppConn() error           { return nil }
-func (Mempool) TxsAvailable() <-chan struct{} { return make(chan struct{}) }
-func (Mempool) EnableTxsAvailable()           {}
-func (Mempool) TxsBytes() int64               { return 0 }
+func (Mempool) UpdateForBRCZeroData(height int64, btcHeight int64) {}
+func (Mempool) Flush()                                             {}
+func (Mempool) FlushAppConn() error                                { return nil }
+func (Mempool) TxsAvailable() <-chan struct{}                      { return make(chan struct{}) }
+func (Mempool) EnableTxsAvailable()                                {}
+func (Mempool) TxsBytes() int64                                    { return 0 }
 
 func (Mempool) TxsFront() *clist.CElement    { return nil }
 func (Mempool) TxsWaitChan() <-chan struct{} { return nil }
@@ -89,4 +100,8 @@ func (Mempool) GetEnableDeleteMinGPTx() bool {
 
 func (Mempool) GetPendingPoolTxsBytes() map[string]map[string]types.WrappedMempoolTx {
 	return make(map[string]map[string]types.WrappedMempoolTx)
+}
+
+func (Mempool) GetCurrentZeroData() map[int64]types.ZeroData {
+	return make(map[int64]types.ZeroData)
 }

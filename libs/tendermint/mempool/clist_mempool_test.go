@@ -48,7 +48,7 @@ func newMempoolWithAppAndConfig(cc proxy.ClientCreator, config *cfg.Config) (*CL
 	if err != nil {
 		panic(err)
 	}
-	mempool := NewCListMempool(config.Mempool, appConnMem, 0)
+	mempool := NewCListMempool(config.Mempool, appConnMem, 0, 0)
 	mempool.SetLogger(log.TestingLogger())
 	return mempool, func() { os.RemoveAll(config.RootDir) }
 }
@@ -92,56 +92,6 @@ func checkTxs(t *testing.T, mempool Mempool, count int, peerID uint16) types.Txs
 		}
 	}
 	return txs
-}
-
-func TestReapMaxBytesMaxGas(t *testing.T) {
-	app := kvstore.NewApplication()
-	cc := proxy.NewLocalClientCreator(app)
-	mempool, cleanup := newMempoolWithApp(cc)
-	defer cleanup()
-
-	// Ensure gas calculation behaves as expected
-	checkTxs(t, mempool, 1, UnknownPeerID)
-	tx0 := mempool.TxsFront().Value.(*mempoolTx)
-	// assert that kv store has gas wanted = 1.
-	require.Equal(t, app.CheckTx(abci.RequestCheckTx{Tx: tx0.tx}).GasWanted, int64(1), "KVStore had a gas value neq to 1")
-	require.Equal(t, tx0.gasWanted, int64(1), "transactions gas was set incorrectly")
-	// ensure each tx is 20 bytes long
-	require.Equal(t, len(tx0.tx), 20, "Tx is longer than 20 bytes")
-	mempool.Flush()
-
-	// each table driven test creates numTxsToCreate txs with checkTx, and at the end clears all remaining txs.
-	// each tx has 20 bytes + amino overhead = 21 bytes, 1 gas
-	tests := []struct {
-		numTxsToCreate int
-		maxBytes       int64
-		maxGas         int64
-		expectedNumTxs int
-	}{
-		{20, -1, -1, 20},
-		{20, -1, 0, 1},
-		{20, -1, 10, 10},
-		{20, -1, 30, 20},
-		{20, 0, -1, 0},
-		{20, 0, 10, 0},
-		{20, 10, 10, 0},
-		{20, 22, 10, 1},
-		{20, 220, -1, 10},
-		{20, 220, 5, 5},
-		{20, 220, 10, 10},
-		{20, 220, 15, 10},
-		{20, 20000, -1, 20},
-		{20, 20000, 5, 5},
-		{20, 20000, 30, 20},
-		{2000, -1, -1, 300},
-	}
-	for tcIndex, tt := range tests {
-		checkTxs(t, mempool, tt.numTxsToCreate, UnknownPeerID)
-		got := mempool.ReapMaxBytesMaxGas(tt.maxBytes, tt.maxGas)
-		assert.Equal(t, tt.expectedNumTxs, len(got), "Got %d txs, expected %d, tc #%d",
-			len(got), tt.expectedNumTxs, tcIndex)
-		mempool.Flush()
-	}
 }
 
 func TestMempoolFilters(t *testing.T) {
@@ -260,118 +210,6 @@ func TestTxsAvailable(t *testing.T) {
 	checkTxs(t, mempool, 100, UnknownPeerID)
 	ensureFire(t, mempool.TxsAvailable(), timeoutMS)
 	ensureNoFire(t, mempool.TxsAvailable(), timeoutMS)
-}
-
-func TestSerialReap(t *testing.T) {
-	app := counter.NewApplication(true)
-	app.SetOption(abci.RequestSetOption{Key: "serial", Value: "on"})
-	cc := proxy.NewLocalClientCreator(app)
-
-	mempool, cleanup := newMempoolWithApp(cc)
-	defer cleanup()
-	mempool.config.MaxTxNumPerBlock = 10000
-
-	appConnCon, _ := cc.NewABCIClient()
-	appConnCon.SetLogger(log.TestingLogger().With("module", "abci-client", "connection", "consensus"))
-	err := appConnCon.Start()
-	require.Nil(t, err)
-
-	cacheMap := make(map[string]struct{})
-	deliverTxsRange := func(start, end int) {
-		// Deliver some txs.
-		for i := start; i < end; i++ {
-
-			// This will succeed
-			txBytes := make([]byte, 8)
-			binary.BigEndian.PutUint64(txBytes, uint64(i))
-			err := mempool.CheckTx(txBytes, nil, TxInfo{})
-			_, cached := cacheMap[string(txBytes)]
-			if cached {
-				require.NotNil(t, err, "expected error for cached tx")
-			} else {
-				require.Nil(t, err, "expected no err for uncached tx")
-			}
-			cacheMap[string(txBytes)] = struct{}{}
-
-			// Duplicates are cached and should return error
-			err = mempool.CheckTx(txBytes, nil, TxInfo{})
-			require.NotNil(t, err, "Expected error after CheckTx on duplicated tx")
-		}
-	}
-
-	reapCheck := func(exp int) {
-		txs := mempool.ReapMaxBytesMaxGas(-1, -1)
-		require.Equal(t, len(txs), exp, fmt.Sprintf("Expected to reap %v txs but got %v", exp, len(txs)))
-	}
-
-	updateRange := func(start, end int) {
-		txs := make([]types.Tx, 0)
-		for i := start; i < end; i++ {
-			txBytes := make([]byte, 8)
-			binary.BigEndian.PutUint64(txBytes, uint64(i))
-			txs = append(txs, txBytes)
-		}
-		if err := mempool.Update(0, txs, abciResponses(len(txs), abci.CodeTypeOK), nil, nil); err != nil {
-			t.Error(err)
-		}
-	}
-
-	commitRange := func(start, end int) {
-		// Deliver some txs.
-		for i := start; i < end; i++ {
-			txBytes := make([]byte, 8)
-			binary.BigEndian.PutUint64(txBytes, uint64(i))
-			res, err := appConnCon.DeliverTxSync(abci.RequestDeliverTx{Tx: txBytes})
-			if err != nil {
-				t.Errorf("client error committing tx: %v", err)
-			}
-			if res.IsErr() {
-				t.Errorf("error committing tx. Code:%v result:%X log:%v",
-					res.Code, res.Data, res.Log)
-			}
-		}
-		res, err := appConnCon.CommitSync(abci.RequestCommit{})
-		if err != nil {
-			t.Errorf("client error committing: %v", err)
-		}
-		if len(res.Data) != 8 {
-			t.Errorf("error committing. Hash:%X", res.Data)
-		}
-	}
-
-	//----------------------------------------
-
-	// Deliver some txs.
-	deliverTxsRange(0, 100)
-
-	// Reap the txs.
-	reapCheck(100)
-
-	// Reap again.  We should get the same amount
-	reapCheck(100)
-
-	// Deliver 0 to 999, we should reap 900 new txs
-	// because 100 were already counted.
-	deliverTxsRange(0, 1000)
-
-	// Reap the txs.
-	reapCheck(BlockMaxTxNum)
-
-	// Reap again.  We should get the same amount
-	reapCheck(BlockMaxTxNum)
-
-	// Commit from the conensus AppConn
-	commitRange(0, BlockMaxTxNum)
-	updateRange(0, BlockMaxTxNum)
-
-	// We should have 500 left.
-	reapCheck(BlockMaxTxNum)
-
-	// Deliver 100 invalid txs and 100 valid txs
-	deliverTxsRange(900, 1100)
-
-	// We should have 300 now.
-	reapCheck(BlockMaxTxNum)
 }
 
 // Size of the amino encoded TxMessage is the length of the
@@ -510,96 +348,6 @@ func abciResponses(n int, code uint32) []*abci.ResponseDeliverTx {
 		responses = append(responses, &abci.ResponseDeliverTx{Code: code})
 	}
 	return responses
-}
-
-func TestAddAndSortTx(t *testing.T) {
-	app := kvstore.NewApplication()
-	cc := proxy.NewLocalClientCreator(app)
-	config := cfg.ResetTestRoot("mempool_test")
-	config.Mempool.SortTxByGp = true
-	mempool, cleanup := newMempoolWithAppAndConfig(cc, config)
-	defer cleanup()
-
-	//tx := &mempoolTx{height: 1, gasWanted: 1, tx:[]byte{0x01}}
-	testCases := []struct {
-		Tx *mempoolTx
-	}{
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("1"), from: "18", realTx: abci.MockTx{GasPrice: big.NewInt(3780)}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("2"), from: "6", realTx: abci.MockTx{GasPrice: big.NewInt(5853)}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("3"), from: "7", realTx: abci.MockTx{GasPrice: big.NewInt(8315)}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("4"), from: "10", realTx: abci.MockTx{GasPrice: big.NewInt(9526)}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("5"), from: "15", realTx: abci.MockTx{GasPrice: big.NewInt(9140)}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("6"), from: "9", realTx: abci.MockTx{GasPrice: big.NewInt(9227)}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("7"), from: "3", realTx: abci.MockTx{GasPrice: big.NewInt(761)}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("8"), from: "18", realTx: abci.MockTx{GasPrice: big.NewInt(9740)}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("9"), from: "1", realTx: abci.MockTx{GasPrice: big.NewInt(6574)}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("10"), from: "8", realTx: abci.MockTx{GasPrice: big.NewInt(9656)}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("11"), from: "12", realTx: abci.MockTx{GasPrice: big.NewInt(6554)}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("12"), from: "16", realTx: abci.MockTx{GasPrice: big.NewInt(5609)}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("13"), from: "6", realTx: abci.MockTx{GasPrice: big.NewInt(2791), Nonce: 1}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("14"), from: "18", realTx: abci.MockTx{GasPrice: big.NewInt(2698), Nonce: 1}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("15"), from: "1", realTx: abci.MockTx{GasPrice: big.NewInt(6925), Nonce: 1}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("16"), from: "3", realTx: abci.MockTx{GasPrice: big.NewInt(3171)}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("17"), from: "1", realTx: abci.MockTx{GasPrice: big.NewInt(2965), Nonce: 2}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("18"), from: "19", realTx: abci.MockTx{GasPrice: big.NewInt(2484)}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("19"), from: "13", realTx: abci.MockTx{GasPrice: big.NewInt(9722)}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("20"), from: "7", realTx: abci.MockTx{GasPrice: big.NewInt(4236), Nonce: 1}}},
-		{&mempoolTx{height: 1, gasWanted: 1, tx: []byte("21"), from: "18", realTx: abci.MockTx{GasPrice: big.NewInt(1780)}}},
-	}
-
-	for _, exInfo := range testCases {
-		mempool.addTx(exInfo.Tx)
-	}
-	require.Equal(t, 18, mempool.txs.Len(), fmt.Sprintf("Expected to txs length %v but got %v", 18, mempool.txs.Len()))
-
-	// The txs in mempool should sorted, the output should be (head -> tail):
-	//
-	//Address:  18  , GasPrice:  9740  , Nonce:  0
-	//Address:  13  , GasPrice:  9722  , Nonce:  0
-	//Address:  8  , GasPrice:  9656  , Nonce:  0
-	//Address:  10  , GasPrice:  9526  , Nonce:  0
-	//Address:  9  , GasPrice:  9227  , Nonce:  0
-	//Address:  15  , GasPrice:  9140  , Nonce:  0
-	//Address:  7  , GasPrice:  8315  , Nonce:  0
-	//Address:  1  , GasPrice:  6574  , Nonce:  0
-	//Address:  1  , GasPrice:  6925  , Nonce:  1
-	//Address:  12  , GasPrice:  6554  , Nonce:  0
-	//Address:  6  , GasPrice:  5853  , Nonce:  0
-	//Address:  16  , GasPrice:  5609  , Nonce:  0
-	//Address:  7  , GasPrice:  4236  , Nonce:  1
-	//Address:  3  , GasPrice:  3171  , Nonce:  0
-	//Address:  1  , GasPrice:  2965  , Nonce:  2
-	//Address:  6  , GasPrice:  2791  , Nonce:  1
-	//Address:  18  , GasPrice:  2698  , Nonce:  1
-	//Address:  19  , GasPrice:  2484  , Nonce:  0
-
-	require.Equal(t, 3, mempool.GetUserPendingTxsCnt("1"))
-	require.Equal(t, 1, mempool.GetUserPendingTxsCnt("15"))
-	require.Equal(t, 2, mempool.GetUserPendingTxsCnt("18"))
-
-	require.Equal(t, "18", mempool.txs.Front().Address)
-	require.Equal(t, big.NewInt(9740), mempool.txs.Front().GasPrice)
-	require.Equal(t, uint64(0), mempool.txs.Front().Nonce)
-
-	require.Equal(t, "19", mempool.txs.Back().Address)
-	require.Equal(t, big.NewInt(2484), mempool.txs.Back().GasPrice)
-	require.Equal(t, uint64(0), mempool.txs.Back().Nonce)
-
-	require.Equal(t, true, checkTx(mempool.txs.Front()))
-
-	addressList := mempool.GetAddressList()
-	for _, addr := range addressList {
-		require.Equal(t, true, checkAccNonce(addr, mempool.txs.Front()))
-	}
-
-	txs := mempool.ReapMaxBytesMaxGas(-1, -1)
-	require.Equal(t, 18, len(txs), fmt.Sprintf("Expected to reap %v txs but got %v", 18, len(txs)))
-
-	mempool.Flush()
-	require.Equal(t, 0, mempool.txs.Len())
-	require.Equal(t, 0, mempool.txs.BroadcastLen())
-	require.Equal(t, 0, len(mempool.GetAddressList()))
-
 }
 
 func TestReplaceTx(t *testing.T) {

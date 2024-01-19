@@ -22,8 +22,6 @@ import (
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/supply"
 	"github.com/brc20-collab/brczero/x/evm/types"
 	"github.com/brc20-collab/brczero/x/token"
-	wasmkeeper "github.com/brc20-collab/brczero/x/wasm/keeper"
-	wasmtypes "github.com/brc20-collab/brczero/x/wasm/types"
 )
 
 const (
@@ -47,7 +45,7 @@ func ParseGasPrice() *hexutil.Big {
 		return (*hexutil.Big)(gasPrices[0].Amount.BigInt())
 	}
 	//return the default gas price : DefaultGasPrice
-	defaultGP := sdk.NewDecFromBigIntWithPrec(big.NewInt(ethermint.DefaultGasPrice), sdk.Precision/2+1).BigInt()
+	defaultGP := sdk.NewDecFromBigIntWithPrec(big.NewInt(ethermint.DefaultGasPrice), sdk.Precision).BigInt()
 	return (*hexutil.Big)(defaultGP)
 }
 
@@ -251,13 +249,6 @@ func accountType(account authexported.Account, cliCtx clientCtx.CLIContext, wasm
 		ethAcc, _ := account.(*ethermint.EthAccount)
 		if !bytes.Equal(ethAcc.CodeHash, ethcrypto.Keccak256(nil)) {
 			return token.ContractAccount
-		}
-		// Determine whether it is a wasm contract
-		route := fmt.Sprintf("custom/%s/%s/%s", wasmtypes.QuerierRoute, wasmkeeper.QueryGetContract, wasmAddr.String())
-		_, _, err := cliCtx.Query(route)
-		// Here, the address format must be valid, and only wasmtypes.ErrNotFound error may occur.
-		if err == nil {
-			return token.WasmAccount
 		}
 		return token.UserAccount
 	case *supply.ModuleAccount:

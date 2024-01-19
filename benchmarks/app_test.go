@@ -34,7 +34,6 @@ import (
 	"github.com/brc20-collab/brczero/libs/tendermint/types"
 	dbm "github.com/brc20-collab/brczero/libs/tm-db"
 	types2 "github.com/brc20-collab/brczero/x/evm/types"
-	wasmtypes "github.com/brc20-collab/brczero/x/wasm/types"
 )
 
 func TestTxSending(t *testing.T) {
@@ -164,7 +163,7 @@ func InitializeOKXApp(b testing.TB, db dbm.DB, numAccounts int) AppInfo {
 }
 
 func setup(db dbm.DB, withGenesis bool, invCheckPeriod uint) (*app.BRCZeroApp, simapp.GenesisState) {
-	okxApp := app.NewBRCZeroApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, invCheckPeriod)
+	okxApp := app.NewBRCZeroApp(log.NewNopLogger(), db, nil, true, invCheckPeriod)
 	if withGenesis {
 		return okxApp, app.NewDefaultGenesisState()
 	}
@@ -187,11 +186,6 @@ func SetupWithGenesisAccounts(b testing.TB, db dbm.DB, genAccs []authexported.Ge
 	evmGenesis.Params.EnableCall = true
 	evmGenesis.Params.MaxGasLimitPerTx = GasLimit * 2
 	genesisState[types2.ModuleName] = appCodec.MustMarshalJSON(evmGenesis)
-
-	genesisState[wasmtypes.ModuleName] = appCodec.MustMarshalJSON(
-		wasmtypes.GenesisState{
-			Params: wasmtypes.DefaultParams(),
-		})
 
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
 	if err != nil {

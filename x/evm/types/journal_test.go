@@ -335,13 +335,13 @@ func (suite *JournalTestSuite) TestJournal_cmchange_revert() {
 
 	// prepare account
 	update := suite.stateDB.accountKeeper.NewAccountWithAddress(suite.ctx, sdk.AccAddress(ethcmn.HexToAddress("0x0000000000000000000000000000000000000001").Bytes()))
-	update.SetCoins(sdk.NewCoins(sdk.NewCoin(brc10, sdk.NewDec(1))))
+	update.SetCoins(sdk.NewCoins(sdk.NewCoin("brc10", sdk.NewDec(1))))
 
 	insert := suite.stateDB.accountKeeper.NewAccountWithAddress(suite.ctx, sdk.AccAddress(ethcmn.HexToAddress("0x0000000000000000000000000000000000000002").Bytes()))
-	insert.SetCoins(sdk.NewCoins(sdk.NewCoin(brc10, sdk.NewDec(1))))
+	insert.SetCoins(sdk.NewCoins(sdk.NewCoin("brc10", sdk.NewDec(1))))
 
 	delete := suite.stateDB.accountKeeper.NewAccountWithAddress(suite.ctx, sdk.AccAddress(ethcmn.HexToAddress("0x0000000000000000000000000000000000000003").Bytes()))
-	delete.SetCoins(sdk.NewCoins(sdk.NewCoin(brc10, sdk.NewDec(1))))
+	delete.SetCoins(sdk.NewCoins(sdk.NewCoin("brc10", sdk.NewDec(1))))
 
 	suite.stateDB.accountKeeper.SetAccount(suite.ctx, update)
 	suite.stateDB.accountKeeper.SetAccount(suite.ctx, delete)
@@ -360,7 +360,7 @@ func (suite *JournalTestSuite) TestJournal_cmchange_revert() {
 
 	subCtx, write := suite.ctx.CacheContextWithMultiSnapshotRWSet()
 	suite.stateDB.accountKeeper.SetAccount(subCtx, insert)
-	update.SetCoins(sdk.NewCoins(sdk.NewCoin(brc10, sdk.NewDec(0))))
+	update.SetCoins(sdk.NewCoins(sdk.NewCoin("brc10", sdk.NewDec(0))))
 	suite.stateDB.accountKeeper.SetAccount(subCtx, update)
 	suite.stateDB.accountKeeper.RemoveAccount(subCtx, delete)
 
@@ -402,7 +402,7 @@ func (suite *JournalTestSuite) TestJournal_cmchange_revert() {
 
 	suite.stateDB.accountKeeper.IterateAccounts(suite.ctx, func(account authexported.Account) bool {
 		if account.GetAddress().Equals(update.GetAddress()) {
-			update.SetCoins(sdk.NewCoins(sdk.NewCoin(brc10, sdk.NewDec(1))))
+			update.SetCoins(sdk.NewCoins(sdk.NewCoin("brc10", sdk.NewDec(1))))
 			suite.Require().Equal(update.String(), account.String())
 		} else if account.GetAddress().Equals(insert.GetAddress()) {
 			suite.Require().Equal(insert.String(), account.String())

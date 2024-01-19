@@ -269,6 +269,13 @@ func (app *localClient) EndBlockSync(req types.RequestEndBlock) (*types.Response
 	return &res, nil
 }
 
+func (app *localClient) CleanZeroRpcState() {
+	app.mtx.Lock()
+	defer app.mtx.Unlock()
+
+	app.Application.CleanBrcRpcState()
+}
+
 //-------------------------------------------------------
 
 func (app *localClient) callback(req *types.Request, res *types.Response) *ReqRes {

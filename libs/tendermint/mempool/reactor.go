@@ -4,19 +4,16 @@ import (
 	"bytes"
 	"fmt"
 	"math"
-	"reflect"
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/tendermint/go-amino"
 
-	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	cfg "github.com/brc20-collab/brczero/libs/tendermint/config"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/clist"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
 	"github.com/brc20-collab/brczero/libs/tendermint/p2p"
 	"github.com/brc20-collab/brczero/libs/tendermint/types"
-	"github.com/tendermint/go-amino"
 )
 
 const (
@@ -31,6 +28,9 @@ const (
 	UnknownPeerID uint16 = 0
 
 	maxActiveIDs = math.MaxUint16
+
+	PullZeroDataInterval = time.Second * 1
+	BtcConfirmedGap      = 5
 )
 
 // Reactor handles mempool tx broadcasting amongst peers.
@@ -126,7 +126,6 @@ func NewReactor(config *cfg.MempoolConfig, mempool *CListMempool) *Reactor {
 		memR.nodeKeyWhitelist[nodeKey] = struct{}{}
 	}
 	memR.BaseReactor = *p2p.NewBaseReactor("Mempool", memR)
-	memR.press()
 	return memR
 }
 
@@ -226,58 +225,10 @@ func (memR *Reactor) logCheckTxError(tx []byte, height int64, err error) {
 }
 
 // Receive implements Reactor.
-// It adds any received transactions to the mempool.
+// It would have added any received transactions to the mempool,
+// but BRCZero does not need to receive tx from other nodes.
 func (memR *Reactor) Receive(chID byte, src p2p.Peer, msgBytes []byte) {
-	if memR.mempool.config.Sealed {
-		return
-	}
-	msg, err := memR.decodeMsg(msgBytes)
-	if err != nil {
-		memR.Logger.Error("Error decoding message", "src", src, "chId", chID, "msg", msg, "err", err, "bytes", msgBytes)
-		memR.Switch.StopPeerForError(src, err)
-		return
-	}
-	memR.logReceive(src, chID, msg)
-
-	txInfo := TxInfo{SenderID: memR.ids.GetForPeer(src)}
-	if src != nil {
-		txInfo.SenderP2PID = src.ID()
-	}
-	var tx types.Tx
-
-	switch msg := msg.(type) {
-	case *TxMessage:
-		tx = msg.Tx
-		if _, isInWhiteList := memR.nodeKeyWhitelist[string(src.ID())]; isInWhiteList && msg.From != "" {
-			txInfo.from = msg.From
-		}
-		*msg = TxMessage{}
-		txMessageDeocdePool.Put(msg)
-	case *WtxMessage:
-		tx = msg.Wtx.Payload
-		if err := msg.Wtx.verify(memR.nodeKeyWhitelist); err != nil {
-			memR.Logger.Error("wtx.verify", "error", err, "txhash",
-				common.BytesToHash(types.Tx(msg.Wtx.Payload).Hash()),
-			)
-		} else {
-			txInfo.wtx = msg.Wtx
-			txInfo.checkType = abci.CheckTxType_WrappedCheck
-		}
-	case *WrapCMTxMessage:
-		tx = msg.Wtx.GetTx()
-		if _, isInWhiteList := memR.nodeKeyWhitelist[string(src.ID())]; isInWhiteList && msg.From != "" {
-			txInfo.from = msg.From
-		}
-		txInfo.wrapCMTx = msg.Wtx
-	default:
-		memR.Logger.Error(fmt.Sprintf("Unknown message type %v", reflect.TypeOf(msg)))
-		return
-	}
-
-	err = memR.mempool.CheckTx(tx, nil, txInfo)
-	if err != nil {
-		memR.logCheckTxError(tx, memR.mempool.height, err)
-	}
+	//do nothing
 }
 
 // PeerState describes the state of a peer.

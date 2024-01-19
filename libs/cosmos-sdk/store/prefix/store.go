@@ -47,6 +47,10 @@ func (s Store) GetStoreType() types.StoreType {
 	return s.parent.GetStoreType()
 }
 
+func (s Store) GetStoreName() string {
+	return s.parent.GetStoreName()
+}
+
 // Implements CacheWrap
 func (s Store) CacheWrap() types.CacheWrap {
 	return cachekv.NewStore(s)
@@ -78,6 +82,10 @@ func (s Store) Set(key, value []byte) {
 // Implements KVStore
 func (s Store) Delete(key []byte) {
 	s.parent.Delete(s.key(key))
+}
+
+func (s Store) CleanBrcRpcState() {
+	s.parent.CleanBrcRpcState()
 }
 
 // Implements KVStore

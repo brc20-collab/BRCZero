@@ -51,6 +51,10 @@ func (ts *Store) GetStoreType() types.StoreType {
 	return types.StoreTypeTransient
 }
 
+func (ts *Store) GetStoreName() string {
+	return "TransientStore"
+}
+
 func (ts *Store) GetDBWriteCount() int {
 	return 0
 }
@@ -86,5 +90,9 @@ func (ts *Store) GetFlatKVWriteCount() int {
 }
 
 func (ts *Store) SetUpgradeVersion(int64) {
+
+}
+
+func (ts *Store) CleanBrcRpcState() {
 
 }

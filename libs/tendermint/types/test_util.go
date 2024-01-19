@@ -88,3 +88,20 @@ func MakeBlock(height int64, txs []Tx, lastCommit *Commit, evidence []Evidence) 
 	block.fillHeader()
 	return block
 }
+
+func MakeBlockBrc(height int64, txs []Tx, lastCommit *Commit, evidence []Evidence, btcHeight int64, btcBlockHash string) *Block {
+	block := &Block{
+		Header: Header{
+			Height: height,
+		},
+		Data: Data{
+			Txs: txs,
+		},
+		Evidence:     EvidenceData{Evidence: evidence},
+		LastCommit:   lastCommit,
+		BtcHeight:    btcHeight,
+		BtcBlockHash: btcBlockHash,
+	}
+	block.fillHeader()
+	return block
+}

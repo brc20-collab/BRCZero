@@ -1,0 +1,15 @@
+version: '3'
+services:
+  bitcoin:
+    image: lncm/bitcoind:v22.0
+    container_name: local_bitcoin_node
+    ports:
+      - "18443:18443"  # RPC port
+    volumes:
+      - ./bitcoin-data:/data/.bitcoin
+    command:
+#      - "-daemon"
+      - "-regtest"
+      - "-rpcuser=bitcoinrpc"
+      - "-rpcpassword=bitcoinrpc"
+#    restart: always

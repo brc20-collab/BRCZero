@@ -1,8 +1,9 @@
 package types
 
 import (
-	tmkv "github.com/brc20-collab/brczero/libs/tendermint/libs/kv"
 	"sync"
+
+	tmkv "github.com/brc20-collab/brczero/libs/tendermint/libs/kv"
 
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/types"

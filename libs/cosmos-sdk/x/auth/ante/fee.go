@@ -4,12 +4,11 @@ import (
 	"fmt"
 
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
+	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/exported"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/keeper"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
 	tmtypes "github.com/brc20-collab/brczero/libs/tendermint/types"
-
-	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
 )
 
 var (

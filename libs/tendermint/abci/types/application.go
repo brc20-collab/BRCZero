@@ -31,6 +31,8 @@ type Application interface {
 	PreDeliverRealTx([]byte) TxEssentials
 	// DeliverRealTx deliver tx returned by PreDeliverRealTx, if PreDeliverRealTx returns nil, DeliverRealTx SHOULD NOT be called
 	DeliverRealTx(TxEssentials) ResponseDeliverTx
+
+	CleanBrcRpcState()
 }
 
 //-------------------------------------------------------
@@ -63,6 +65,9 @@ func (BaseApplication) PreDeliverRealTx([]byte) TxEssentials {
 
 func (BaseApplication) DeliverRealTx(TxEssentials) ResponseDeliverTx {
 	panic("do not support DeliverRealTx")
+}
+
+func (BaseApplication) CleanBrcRpcState() {
 }
 
 func (BaseApplication) CheckTx(req RequestCheckTx) ResponseCheckTx {

@@ -138,6 +138,10 @@ func (rs *Store) GetStoreType() types.StoreType {
 	return types.StoreTypeMulti
 }
 
+func (rs *Store) GetStoreName() string {
+	return "RootMultiStore"
+}
+
 func (rs *Store) GetStores() map[types.StoreKey]types.CommitKVStore {
 	return rs.stores
 }
@@ -587,6 +591,12 @@ func (rs *Store) LastCommitVersion() int64 {
 
 func (rs *Store) CommitterCommit(interface{}) (_ types.CommitID, _ interface{}) {
 	return
+}
+
+func (rs *Store) CleanBrcRpcState() {
+	for _, store := range rs.stores {
+		store.CleanBrcRpcState()
+	}
 }
 
 // Implements Committer/CommitStore.

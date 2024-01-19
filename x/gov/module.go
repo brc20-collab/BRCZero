@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"math/rand"
 
-	"github.com/gorilla/mux"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/client/context"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
@@ -16,7 +15,7 @@ import (
 	"github.com/brc20-collab/brczero/x/gov/client/rest"
 	"github.com/brc20-collab/brczero/x/gov/keeper"
 	"github.com/brc20-collab/brczero/x/gov/types"
-	"github.com/brc20-collab/brczero/x/wasm/watcher"
+	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 )
 
@@ -150,9 +149,6 @@ func (AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}
 // EndBlock implements module end-block
 func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
 	EndBlocker(ctx, am.keeper)
-	if watcher.Enable() {
-		watcher.Save(nil)
-	}
 
 	return []abci.ValidatorUpdate{}
 }

@@ -24,7 +24,6 @@ import (
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/simulation"
 	ibctransfer "github.com/brc20-collab/brczero/libs/ibc-go/modules/apps/transfer"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto"
-	"github.com/brc20-collab/brczero/x/icamauth"
 )
 
 // SimAppChainID hardcoded chainID for simulation
@@ -131,7 +130,6 @@ func newProxyDecoder() *codec.CodecProxy {
 		ibctransfer.AppModuleBasic{},
 		ica.AppModuleBasic{},
 		ibcfee.AppModuleBasic{},
-		icamauth.AppModuleBasic{},
 	)
 	cdc := chaincodec.MakeCodec(ModuleBasics)
 	interfaceReg := chaincodec.MakeIBC(ModuleBasics)

@@ -19,10 +19,11 @@ import (
 	"github.com/brc20-collab/brczero/x/evidence/internal/keeper"
 	"github.com/brc20-collab/brczero/x/evidence/internal/types"
 
+	"github.com/stretchr/testify/suite"
+
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/ed25519"
-	"github.com/stretchr/testify/suite"
 )
 
 var (
@@ -66,7 +67,7 @@ type KeeperTestSuite struct {
 func MakeOKEXApp() *app.BRCZeroApp {
 	genesisState := app.NewDefaultGenesisState()
 	db := dbm.NewMemDB()
-	okexapp := app.NewBRCZeroApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, 0)
+	okexapp := app.NewBRCZeroApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, 0)
 
 	stateBytes, err := codec.MarshalJSONIndent(okexapp.Codec(), genesisState)
 	if err != nil {

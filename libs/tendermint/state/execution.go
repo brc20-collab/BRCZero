@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/nacos-group/nacos-sdk-go/common/logger"
 	"github.com/tendermint/go-amino"
 
 	"github.com/brc20-collab/brczero/libs/system/trace"
@@ -65,8 +66,6 @@ type BlockExecutor struct {
 	// download or upload data to dds
 	deltaContext *DeltaContext
 
-	prerunCtx *prerunContext
-
 	isFastSync bool
 
 	// async save state, validators, consensus params, abci responses here
@@ -109,7 +108,6 @@ func NewBlockExecutor(
 		evpool:       evpool,
 		logger:       logger,
 		metrics:      NopMetrics(),
-		prerunCtx:    newPrerunContex(logger),
 		deltaContext: newDeltaContext(logger),
 		eventsChan:   make(chan event, 5),
 	}
@@ -121,6 +119,8 @@ func NewBlockExecutor(
 	res.deltaContext.init()
 
 	res.initAsyncDBContext()
+
+	go res.RpcReorgRoutine()
 
 	return res
 }
@@ -166,23 +166,30 @@ func (blockExec *BlockExecutor) CreateProposalBlock(
 	height int64,
 	state State, commit *types.Commit,
 	proposerAddr []byte,
+	latestBH int64,
 ) (*types.Block, *types.PartSet) {
 
 	maxBytes := state.ConsensusParams.Block.MaxBytes
-	maxGas := state.ConsensusParams.Block.MaxGas
-
 	// Fetch a limited amount of valid evidence
 	maxNumEvidence, _ := types.MaxEvidencePerBlock(maxBytes)
 	evidence := blockExec.evpool.PendingEvidence(maxNumEvidence)
 
-	// Fetch a limited amount of valid txs
-	maxDataBytes := types.MaxDataBytes(maxBytes, state.Validators.Size(), len(evidence))
-	if cfg.DynamicConfig.GetMaxGasUsedPerBlock() > -1 {
-		maxGas = cfg.DynamicConfig.GetMaxGasUsedPerBlock()
-	}
-	txs := blockExec.mempool.ReapMaxBytesMaxGas(maxDataBytes, maxGas)
+	//txs := blockExec.mempool.ReapMaxBytesMaxGas(maxDataBytes, maxGas)
 
-	return state.MakeBlock(height, txs, commit, evidence, proposerAddr)
+	txs := make([]types.Tx, 0)
+	btcBlockHash := ""
+	btcHeight := latestBH + 1
+	if zeroData, err := blockExec.mempool.GetZeroDataByBTCHeight(btcHeight); err == nil {
+		if zeroData.IsConfirmed {
+			txs = zeroData.Txs
+			btcBlockHash = zeroData.BTCBlockHash
+		} else {
+			blockExec.logger.Error(fmt.Sprintf("zero data have not been confirmed in height %d!", btcHeight))
+		}
+	}
+	blockExec.mempool.DelAllPrevZeroDataBeforeHeight(btcHeight)
+
+	return state.MakeBlockBrc(height, txs, commit, evidence, proposerAddr, btcHeight, btcBlockHash)
 }
 
 // ValidateBlock validates the given block against the given state.
@@ -241,7 +248,9 @@ func (blockExec *BlockExecutor) ApplyBlock(
 	//wait till the last block async write be saved
 	blockExec.tryWaitLastBlockSave(block.Height - 1)
 
+	types.RpcFlag = types.RpcApplyBlockMode
 	abciResponses, duration, err := blockExec.runAbci(block, deltaInfo)
+	types.RpcFlag = types.RpcDefaultMode
 
 	// publish event
 	if types.EnableEventBlockTime {
@@ -332,6 +341,62 @@ func (blockExec *BlockExecutor) ApplyBlock(
 	return state, retainHeight, nil
 }
 
+func (blockExec *BlockExecutor) DeliverTxsForBrczeroRpc(block *types.Block) (*ABCIResponses, error) {
+	var validTxs, invalidTxs = 0, 0
+	txIndex := 0
+	abciResponses := NewABCIResponses(block)
+	proxyCb := func(req *abci.Request, res *abci.Response) {
+		if r, ok := res.Value.(*abci.Response_DeliverTx); ok {
+			// TODO: make use of res.Log
+			// TODO: make use of this info
+			// Blocks may include invalid txs.
+			txRes := r.DeliverTx
+			if txRes.Code == abci.CodeTypeOK {
+				validTxs++
+			} else {
+				logger.Debug("Invalid tx", "code", txRes.Code, "log", txRes.Log, "index", txIndex)
+				invalidTxs++
+			}
+			abciResponses.DeliverTxs[txIndex] = txRes
+			txIndex++
+		}
+	}
+
+	proxyApp := blockExec.proxyApp
+	proxyApp.SetResponseCallback(proxyCb)
+
+	var err error
+	abciResponses.BeginBlock, err = proxyApp.BeginBlockSync(abci.RequestBeginBlock{
+		Hash:                block.Hash(),
+		Header:              types.TM2PB.Header(&block.Header),
+		LastCommitInfo:      abci.LastCommitInfo{Votes: make([]abci.VoteInfo, 0)},
+		ByzantineValidators: make([]abci.Evidence, 0),
+		IsBrcRpc:            true,
+	})
+	if err != nil {
+		logger.Error("Error in proxyAppConn.BeginBlock", "err", err)
+		return nil, err
+	}
+
+	for _, tx := range block.Txs {
+		proxyApp.DeliverTxAsync(abci.RequestDeliverTx{Tx: tx})
+		if err := proxyApp.Error(); err != nil {
+			return nil, err
+		}
+	}
+
+	abciResponses.EndBlock, err = proxyApp.EndBlockSync(abci.RequestEndBlock{
+		Height:     block.Height,
+		DeliverTxs: abciResponses.DeliverTxs,
+	})
+	if err != nil {
+		logger.Error("Error in proxyAppConn.EndBlock", "err", err)
+		return nil, err
+	}
+
+	return abciResponses, nil
+}
+
 func (blockExec *BlockExecutor) ApplyBlockWithTrace(
 	state State, blockID types.BlockID, block *types.Block) (State, int64, error) {
 	s, id, err := blockExec.ApplyBlock(state, blockID, block)
@@ -351,10 +416,6 @@ func (blockExec *BlockExecutor) runAbci(block *types.Block, deltaInfo *DeltaInfo
 		abciResponses = deltaInfo.abciResponses
 		duration = time.Now().Sub(t0)
 	} else {
-		pc := blockExec.prerunCtx
-		if pc.prerunTx {
-			abciResponses, duration, err = pc.getPrerunResult(block)
-		}
 
 		if abciResponses == nil {
 			t0 := time.Now()
@@ -435,13 +496,20 @@ func (blockExec *BlockExecutor) commit(
 
 	trc.Pin("mpUpdate")
 	// Update mempool.
-	err = blockExec.mempool.Update(
-		block.Height,
-		block.Txs,
-		deliverTxResponses,
-		TxPreCheck(state),
-		TxPostCheck(state),
-	)
+	// todo delete all Update related code
+	//err = blockExec.mempool.Update(
+	//	block.Height,
+	//	block.Txs,
+	//	deliverTxResponses,
+	//	TxPreCheck(state),
+	//	TxPostCheck(state),
+	//)
+
+	// notify mempool tx available
+	blockExec.mempool.UpdateForBRCZeroData(block.Height, block.BtcHeight)
+
+	// Update ZeroData
+	blockExec.mempool.DelZeroDataByBTCHeight(block.BtcHeight)
 
 	if !cfg.DynamicConfig.GetMempoolRecheck() && block.Height%cfg.DynamicConfig.GetMempoolForceRecheckGap() == 0 {
 		proxyCb := func(req *abci.Request, res *abci.Response) {
@@ -535,7 +603,6 @@ func execBlockOnProxyApp(context *executionTask) (*ABCIResponses, error) {
 		if context != nil && context.stopped {
 			stopedCh <- struct{}{}
 			close(stopedCh)
-			context.dump(fmt.Sprintf("Prerun stopped, %d/%d tx executed", count+1, len(block.Txs)))
 			return nil, fmt.Errorf("Prerun stopped")
 		}
 		count += 1
@@ -771,4 +838,33 @@ func fireEvents(
 func (blockExec *BlockExecutor) FireBlockTimeEvents(height int64, txNum int, available bool) {
 	blockExec.eventBus.PublishEventLatestBlockTime(
 		types.EventDataBlockTime{Height: height, TimeNow: tmtime.Now().UnixMilli(), TxNum: txNum, Available: available})
+}
+
+func (blockExec *BlockExecutor) GetZeroDataByBTCHeight(btcHeight int64) (types.ZeroData, error) {
+	return blockExec.mempool.GetZeroDataByBTCHeight(btcHeight)
+}
+
+func (blockExec *BlockExecutor) GetZeroDataMinHeight() int64 {
+	return blockExec.mempool.GetZeroDataMinHeight()
+}
+
+func (BlockExec *BlockExecutor) SetZeroDataDelivered(btcH int64, value bool) {
+	BlockExec.mempool.SetZeroDataDelivered(btcH, value)
+}
+
+func (BlockExec *BlockExecutor) ZeroReorgChain() <-chan int64 {
+	return BlockExec.mempool.ZeroReorgChan()
+}
+
+func (blockExec *BlockExecutor) CleanZeroRpcState() {
+	blockExec.proxyApp.CleanZeroRpcState()
+}
+
+func (blockExec *BlockExecutor) RpcReorgRoutine() {
+	for {
+		select {
+		case <-blockExec.ZeroReorgChain():
+			blockExec.CleanZeroRpcState()
+		}
+	}
 }

@@ -7,11 +7,8 @@ import (
 	apptype "github.com/brc20-collab/brczero/app/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/server"
 	cosmost "github.com/brc20-collab/brczero/libs/cosmos-sdk/store/types"
-	"github.com/brc20-collab/brczero/libs/tendermint/consensus"
 	"github.com/brc20-collab/brczero/libs/tendermint/state"
-	"github.com/brc20-collab/brczero/libs/tendermint/types"
 	"github.com/brc20-collab/brczero/x/evm/watcher"
-	"github.com/brc20-collab/brczero/x/infura"
 )
 
 // CheckStart check start command's flags. if user set conflict flags return error.
@@ -52,23 +49,13 @@ import (
 // --node-mode=archive(--pruning=nothing) conflicts with --fast-query
 
 var (
-	startDependentElems = []dependentPair{
-		{ // if infura.FlagEnable=true , watcher.FlagFastQuery must be set to true
-			config:       boolItem{name: infura.FlagEnable, expect: true},
-			reliedConfig: boolItem{name: watcher.FlagFastQuery, expect: true},
-		},
-	}
+	startDependentElems = []dependentPair{}
 	// conflicts flags
 	startConflictElems = []conflictPair{
 		// --fast-query      conflict with --pruning=nothing
 		{
 			configA: boolItem{name: watcher.FlagFastQuery, expect: true},
 			configB: stringItem{name: server.FlagPruning, expect: cosmost.PruningOptionNothing},
-		},
-		// --enable-preruntx conflict with --download-delta
-		{
-			configA: boolItem{name: consensus.EnablePrerunTx, expect: true},
-			configB: boolItem{name: types.FlagDownloadDDS, expect: true},
 		},
 		{
 			configA: stringItem{name: apptype.FlagNodeMode, expect: string(apptype.RpcNode)},

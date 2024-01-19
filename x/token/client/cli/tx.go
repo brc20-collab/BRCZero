@@ -2,7 +2,6 @@ package cli
 
 import (
 	"bufio"
-	"fmt"
 	"io/ioutil"
 	"strings"
 
@@ -327,38 +326,6 @@ func getCmdTransferOwnership(cdc *codec.Codec) *cobra.Command {
 	}
 	cmd.Flags().StringP("symbol", "s", "", "symbol of the token to be transferred")
 	cmd.Flags().String("to", "", "the user to be transferred")
-	return cmd
-}
-
-// SendTxCmd will create a transaction to send and sign
-func SendTxCmd(cdc *codec.Codec) *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "send [from_key_or_address] [to_address] [amount]",
-		Short: "Create and sign a send tx",
-		Args:  cobra.ExactArgs(3),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContextWithFrom(args[0]).WithCodec(cdc)
-
-			to, err := sdk.AccAddressFromBech32(args[1])
-			if err != nil {
-				return fmt.Errorf("invalid address：%s", args[1])
-			}
-
-			coins, err := sdk.ParseDecCoins(args[2])
-			if err != nil {
-				return err
-			}
-
-			// build and sign the transaction, then broadcast to Tendermint
-			msg := types.NewMsgTokenSend(cliCtx.GetFromAddress(), to, coins)
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
-		},
-	}
-
-	cmd = flags.PostCommands(cmd)[0]
-
 	return cmd
 }
 

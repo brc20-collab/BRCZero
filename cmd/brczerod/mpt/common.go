@@ -59,7 +59,6 @@ func newMigrationApp(ctx *server.Context) *app.BRCZeroApp {
 		appDb,
 		nil,
 		true,
-		map[int64]bool{},
 		0,
 	)
 }

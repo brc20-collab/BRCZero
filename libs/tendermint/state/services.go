@@ -20,6 +20,7 @@ type BlockStore interface {
 
 	LoadBlockMeta(height int64) *types.BlockMeta
 	LoadBlock(height int64) *types.Block
+	LoadBTCMeta(height int64) (*types.BTCBlockMeta, error)
 
 	SaveBlock(block *types.Block, blockParts *types.PartSet, seenCommit *types.Commit)
 
@@ -27,6 +28,10 @@ type BlockStore interface {
 	DeleteBlocksFromTop(height int64) (uint64, error)
 
 	LoadBlockByHash(hash []byte) *types.Block
+	LoadZeroHeightByBtcHash(hash string) (int64, error)
+	LoadBtcBlockHashByBtcTxid(btcTxid string) (string, error)
+	LoadBtcBlockHashByBtcHeight(btcHeight int64) (string, error)
+	LoadMapTxhashTxidByBtcHash(btcHash, protocolName string) (map[string]string, error)
 	LoadBlockPart(height int64, index int) *types.Part
 
 	LoadBlockCommit(height int64) *types.Commit

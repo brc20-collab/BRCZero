@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"crypto/sha256"
+	"fmt"
 	"net/http"
 	"strings"
 	"sync"
@@ -389,6 +390,22 @@ func (c *baseRPCClient) LatestBlockNumber() (int64, error) {
 		return 0, err
 	}
 	return info.LastHeight, nil
+}
+
+func (c *baseRPCClient) HeightByBtcHash(btcHash string) (int64, error) {
+	return 0, fmt.Errorf("baseRPCClient")
+}
+
+func (c *baseRPCClient) BtcBlockHashByBtcTxid(string) (string, error) {
+	return "", fmt.Errorf("baseRPCClient")
+}
+
+func (c *baseRPCClient) BtcBlockHashByBtcHeight(btcHeight int64) (string, error) {
+	return "", fmt.Errorf("baseRPCClient")
+}
+
+func (c *baseRPCClient) MapTxhashTxid(btcHash, protocolName string) (map[string]string, error) {
+	return nil, fmt.Errorf("baseRPCClient")
 }
 
 func (c *baseRPCClient) Genesis() (*ctypes.ResultGenesis, error) {

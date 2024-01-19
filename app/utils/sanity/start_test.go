@@ -1,16 +1,16 @@
 package sanity
 
 import (
+	"testing"
+
+	"github.com/spf13/cobra"
+
 	apptype "github.com/brc20-collab/brczero/app/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/server"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/types"
-	"github.com/brc20-collab/brczero/libs/tendermint/consensus"
 	"github.com/brc20-collab/brczero/libs/tendermint/state"
 	sm "github.com/brc20-collab/brczero/libs/tendermint/state"
-	ttypes "github.com/brc20-collab/brczero/libs/tendermint/types"
 	"github.com/brc20-collab/brczero/x/evm/watcher"
-	"github.com/spf13/cobra"
-	"testing"
 )
 
 func getCommandNodeModeRpcPruningNothing() *cobra.Command {
@@ -47,23 +47,6 @@ func getCommandFastQueryPruningNothing() *cobra.Command {
 	})
 }
 
-func getCommandEnablePreruntxDownloadDelta() *cobra.Command {
-	return getCommand([]universeFlag{
-		&boolFlag{
-			Name:    consensus.EnablePrerunTx,
-			Default: false,
-			Changed: true,
-			Value:   true,
-		},
-		&boolFlag{
-			Name:    ttypes.FlagDownloadDDS,
-			Default: false,
-			Changed: true,
-			Value:   true,
-		},
-	})
-}
-
 func getCommandDeliverTxsExecModeSerial(v int) *cobra.Command {
 	return getCommand([]universeFlag{
 		&intFlag{
@@ -86,7 +69,6 @@ func TestCheckStart(t *testing.T) {
 		{name: "range-TxsExecModeSerial 2", cmdFunc: func() { getCommandDeliverTxsExecModeSerial(state.DeliverTxsExecModeParallel) }, wantErr: false},
 		{name: "range-TxsExecModeSerial 3", cmdFunc: func() { getCommandDeliverTxsExecModeSerial(3) }, wantErr: true},
 		{name: "1. conflicts --fast-query and --pruning=nothing", cmdFunc: func() { getCommandFastQueryPruningNothing() }, wantErr: true},
-		{name: "2. conflicts --enable-preruntx and --download-delta", cmdFunc: func() { getCommandEnablePreruntxDownloadDelta() }, wantErr: true},
 		{name: "3. conflicts --node-mod=rpc and --pruning=nothing", cmdFunc: func() { getCommandNodeModeRpcPruningNothing() }, wantErr: true},
 	}
 	for _, tt := range tests {

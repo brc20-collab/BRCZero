@@ -74,6 +74,10 @@ func (s Store) GetStoreType() types.StoreType {
 	return types.StoreTypeMemory
 }
 
+func (s Store) GetStoreName() string {
+	return "MemoryStore"
+}
+
 // CacheWrap branches the underlying store.
 func (s Store) CacheWrap() types.CacheWrap {
 	return cachekv.NewStore(s)
@@ -101,3 +105,5 @@ func (s *Store) GetPruning() types.PruningOptions { return types.PruningOptions{
 func (s Store) LastCommitID() (id types.CommitID) { return }
 func (s Store) LastCommitVersion() (v int64)      { return }
 func (s *Store) SetUpgradeVersion(int64)          {}
+
+func (s Store) CleanBrcRpcState() {}

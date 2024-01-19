@@ -88,6 +88,9 @@ func (app *PersistentKVStoreApplication) DeliverRealTx(tx types.TxEssentials) ty
 	panic("do not support deliver real tx")
 }
 
+func (app *PersistentKVStoreApplication) CleanBrcRpcState() {
+}
+
 func (app *PersistentKVStoreApplication) CheckTx(req types.RequestCheckTx) types.ResponseCheckTx {
 	return app.app.CheckTx(req)
 }

@@ -57,3 +57,5 @@ func (cdsa commitDBStoreAdapter) GetFlatKVWriteTime() int  { return 0 }
 func (cdsa commitDBStoreAdapter) GetFlatKVReadCount() int  { return 0 }
 func (cdsa commitDBStoreAdapter) GetFlatKVWriteCount() int { return 0 }
 func (cdsa commitDBStoreAdapter) SetUpgradeVersion(int64)  {}
+
+func (cdsa commitDBStoreAdapter) CleanBrcRpcState() {}

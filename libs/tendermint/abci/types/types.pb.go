@@ -9,14 +9,14 @@ import (
 	math_bits "math/bits"
 	time "time"
 
+	merkle "github.com/brc20-collab/brczero/libs/tendermint/crypto/merkle"
+	kv "github.com/brc20-collab/brczero/libs/tendermint/libs/kv"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	golang_proto "github.com/golang/protobuf/proto"
 	_ "github.com/golang/protobuf/ptypes/duration"
 	_ "github.com/golang/protobuf/ptypes/timestamp"
-	merkle "github.com/brc20-collab/brczero/libs/tendermint/crypto/merkle"
-	kv "github.com/brc20-collab/brczero/libs/tendermint/libs/kv"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -628,10 +628,11 @@ type RequestBeginBlock struct {
 	Hash                 []byte         `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
 	Header               Header         `protobuf:"bytes,2,opt,name=header,proto3" json:"header"`
 	LastCommitInfo       LastCommitInfo `protobuf:"bytes,3,opt,name=last_commit_info,json=lastCommitInfo,proto3" json:"last_commit_info"`
-	ByzantineValidators  []Evidence     `protobuf:"bytes,4,rep,name=byzantine_validators,json=byzantineValidators,proto3" json:"byzantine_validators"`
-	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
-	XXX_unrecognized     []byte         `json:"-"`
-	XXX_sizecache        int32          `json:"-"`
+	IsBrcRpc             bool
+	ByzantineValidators  []Evidence `protobuf:"bytes,4,rep,name=byzantine_validators,json=byzantineValidators,proto3" json:"byzantine_validators"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
 }
 
 func (m *RequestBeginBlock) Reset()         { *m = RequestBeginBlock{} }

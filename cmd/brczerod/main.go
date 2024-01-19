@@ -88,6 +88,8 @@ func main() {
 			ctx, codecProxy.GetCdc(), app.ModuleBasics, staking.AppModuleBasic{}, auth.GenesisAccountIterator{},
 			app.DefaultNodeHome, app.DefaultCLIHome,
 		),
+		genutilcli.GenMsgInscriptionCmd(ctx, codecProxy.GetCdc(), app.ModuleBasics, app.DefaultNodeHome, app.DefaultCLIHome),
+		genutilcli.GenMsgBasicxCmd(ctx, codecProxy.GetCdc(), app.ModuleBasics, app.DefaultNodeHome, app.DefaultCLIHome),
 		genutilcli.ValidateGenesisCmd(ctx, codecProxy.GetCdc(), app.ModuleBasics),
 		client.TestnetCmd(ctx, codecProxy.GetCdc(), app.ModuleBasics, auth.GenesisAccountIterator{}),
 		replayCmd(ctx, client.RegisterAppFlag, codecProxy, newApp, registry, registerRoutes),
@@ -164,7 +166,6 @@ func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application
 		db,
 		traceStore,
 		true,
-		map[int64]bool{},
 		viper.GetUint(flagInvCheckPeriod),
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(viper.GetString(server.FlagMinGasPrices)),
@@ -177,13 +178,13 @@ func exportAppStateAndTMValidators(
 ) (json.RawMessage, []tmtypes.GenesisValidator, error) {
 	var ethermintApp *app.BRCZeroApp
 	if height != -1 {
-		ethermintApp = app.NewBRCZeroApp(logger, db, traceStore, false, map[int64]bool{}, 0)
+		ethermintApp = app.NewBRCZeroApp(logger, db, traceStore, false, 0)
 
 		if err := ethermintApp.LoadHeight(height); err != nil {
 			return nil, nil, err
 		}
 	} else {
-		ethermintApp = app.NewBRCZeroApp(logger, db, traceStore, true, map[int64]bool{}, 0)
+		ethermintApp = app.NewBRCZeroApp(logger, db, traceStore, true, 0)
 	}
 
 	return ethermintApp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)

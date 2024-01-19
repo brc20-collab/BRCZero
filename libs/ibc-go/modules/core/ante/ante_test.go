@@ -471,7 +471,6 @@ func (suite *AnteTestSuite) TestAnteDecorator() {
 			// reset suite
 			suite.SetupTest()
 
-			k := suite.chainB.App().GetFacadedKeeper()
 			//decorator := ante.NewAnteDecorator(k)
 			app := suite.chainB.GetSimApp()
 			msgs := tc.malleate(suite)
@@ -493,7 +492,7 @@ func (suite *AnteTestSuite) TestAnteDecorator() {
 				1,
 				suite.chainB.SenderAccountPV(),
 			)
-			antehandler := appante.NewAnteHandler(app.AccountKeeper, app.EvmKeeper, app.SupplyKeeper, validateMsgHook(), app.WasmHandler, k, app.StakingKeeper, app.ParamsKeeper)
+			antehandler := appante.NewAnteHandler(app.AccountKeeper, app.EvmKeeper, app.SupplyKeeper, validateMsgHook())
 			antehandler(deliverCtx, ibcTx, false)
 			//_, err = decorator.AnteHandle(deliverCtx, ibcTx, false, next)
 			suite.Require().NoError(err, "antedecorator should not error on DeliverTx")

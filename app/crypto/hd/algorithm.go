@@ -23,8 +23,8 @@ const (
 )
 
 // SupportedAlgorithms defines the list of signing algorithms used on Ethermint:
-//  - eth_secp256k1 (Ethereum)
-//  - secp256k1 (Tendermint)
+//   - eth_secp256k1 (Ethereum)
+//   - secp256k1 (Tendermint)
 var SupportedAlgorithms = []keys.SigningAlgo{EthSecp256k1, keys.Secp256k1}
 
 // EthSecp256k1Options defines a keys options for the ethereum Secp256k1 curve.

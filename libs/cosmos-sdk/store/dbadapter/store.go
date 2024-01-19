@@ -49,6 +49,8 @@ func (dsa Store) Delete(key []byte) {
 	}
 }
 
+func (dsa Store) CleanBrcRpcState() {}
+
 // Iterator wraps the underlying DB's Iterator method panicing on error.
 func (dsa Store) Iterator(start, end []byte) types.Iterator {
 	iter, err := dsa.DB.Iterator(start, end)
@@ -72,6 +74,10 @@ func (dsa Store) ReverseIterator(start, end []byte) types.Iterator {
 // GetStoreType returns the type of the store.
 func (Store) GetStoreType() types.StoreType {
 	return types.StoreTypeDB
+}
+
+func (Store) GetStoreName() string {
+	return "DBStore"
 }
 
 // CacheWrap cache wraps the underlying store.

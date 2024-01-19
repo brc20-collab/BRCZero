@@ -2,7 +2,12 @@ package types
 
 import (
 	"bytes"
+	"encoding/hex"
+	"github.com/brc20-collab/brczero/libs/tendermint/crypto/tmhash"
+	ethcmn "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/rlp"
 	"math"
+	"math/big"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -254,4 +259,23 @@ func BenchmarkTxResultAminoUnmarshal(b *testing.B) {
 			}
 		}
 	})
+}
+
+func TestTx_Hash(t *testing.T) {
+	addr := ethcmn.HexToAddress("0xbb20556f68932D7c4D1633e4fE51071C64fCa8c6")
+	noBTCFee := ethTxData{
+		AccountNonce: 2,
+		Price:        big.NewInt(3),
+		GasLimit:     1,
+		Recipient:    &addr,
+		Amount:       big.NewInt(4),
+		Payload:      []byte("test"),
+		V:            big.NewInt(5),
+		R:            big.NewInt(6),
+		S:            big.NewInt(7),
+	}
+
+	tx, err := rlp.EncodeToBytes(noBTCFee)
+	require.NoError(t, err)
+	t.Log("tx", hex.EncodeToString(tmhash.Sum(tx)))
 }

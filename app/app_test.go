@@ -64,7 +64,7 @@ var (
 
 func TestBRCZeroAppExport(t *testing.T) {
 	db := dbm.NewMemDB()
-	app := NewBRCZeroApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, 0)
+	app := NewBRCZeroApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, 0)
 
 	genesisState := ModuleBasics.DefaultGenesis()
 	stateBytes, err := codec.MarshalJSONIndent(app.Codec(), genesisState)
@@ -80,14 +80,14 @@ func TestBRCZeroAppExport(t *testing.T) {
 	app.Commit(abci.RequestCommit{})
 
 	// Making a new app object with the db, so that initchain hasn't been called
-	app2 := NewBRCZeroApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, 0)
+	app2 := NewBRCZeroApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, 0)
 	_, _, err = app2.ExportAppStateAndValidators(false, []string{})
 	require.NoError(t, err, "ExportAppStateAndValidators should not have an error")
 }
 
 func TestModuleManager(t *testing.T) {
 	db := dbm.NewMemDB()
-	app := NewBRCZeroApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, 0)
+	app := NewBRCZeroApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, 0)
 
 	for moduleName, _ := range ModuleBasics {
 		if moduleName == upgrade.ModuleName {

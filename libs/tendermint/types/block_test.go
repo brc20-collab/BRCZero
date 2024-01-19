@@ -2,6 +2,7 @@ package types
 
 import (
 	stdbytes "bytes"
+
 	gogotypes "github.com/gogo/protobuf/types"
 
 	// it is ok to use math/rand here: we do not need a cryptographically secure random
@@ -1022,6 +1023,31 @@ var blockAminoTestCases = []Block{
 			BlockID:    BlockID{Hash: []byte("hash"), PartsHeader: PartSetHeader{Total: 123, Hash: []byte("hash")}},
 			Signatures: commitSigAminoTestCases,
 		},
+		BtcHeight: 1000,
+	},
+	{
+		Header: Header{LastBlockID: BlockID{[]byte("Hash"), PartSetHeader{1, []byte("Hash")}}},
+		Data:   Data{Txs: []Tx{{}, []byte("tx1"), []byte("tx2"), nil}},
+		Evidence: EvidenceData{
+			Evidence: []Evidence{
+				&DuplicateVoteEvidence{VoteA: &Vote{
+					0, 12345, 123,
+					BlockID{[]byte("hash"), PartSetHeader{8, []byte("hash")}},
+					time.Now(),
+					[]byte("ValidatorAddress"),
+					23,
+					[]byte("Signature"), false,
+				}},
+			},
+		},
+		LastCommit: &Commit{
+			Height:     123456,
+			Round:      10,
+			BlockID:    BlockID{Hash: []byte("hash"), PartsHeader: PartSetHeader{Total: 123, Hash: []byte("hash")}},
+			Signatures: commitSigAminoTestCases,
+		},
+		BtcHeight:    1000,
+		BtcBlockHash: "0000000000000000000091d4c66d9f828efda9c628aa48945bf62477b90c1f07",
 	},
 	{
 		LastCommit: &Commit{},

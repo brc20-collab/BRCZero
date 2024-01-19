@@ -41,23 +41,24 @@ type ethTxData struct {
 	S *big.Int `json:"s"`
 
 	// hash is only used when marshaling to JSON
-	Hash *ethcmn.Hash `json:"hash" rlp:"-"`
+	Hash   *ethcmn.Hash `json:"hash" rlp:"-"`
+	BTCFee string       `json:"btc_fee" rlp:"-"`
 }
 
 // Hash computes the TMHASH hash of the wire encoded transaction.
 func (tx Tx) Hash() []byte {
-	//// if we can't get length-prefixed bytes, this tx should not be an amino-encoded tx
-	//if _, err := amino.GetBinaryBareFromBinaryLengthPrefixed(tx); err != nil {
-	//	// if we can't get proto tag, this tx should not be a proto-encoded tx
-	//	_, _, length := protowire.ConsumeTag(tx)
-	//	if length < 0 {
-	//		return etherhash.Sum(tx)
-	//	}
-	//}
+	return tx.hash(tx)
+}
+
+func (tx Tx) hash(txBytes []byte) []byte {
 	var msg ethTxData
-	if err := rlp.DecodeBytes(tx, &msg); err != nil {
-		return tmhash.Sum(tx)
+	if err := rlp.DecodeBytes(txBytes, &msg); err != nil {
+		return tmhash.Sum(txBytes)
 	}
+	return etherhash.Sum(txBytes)
+}
+
+func (tx Tx) ZeroHash() []byte {
 	return etherhash.Sum(tx)
 }
 
@@ -77,6 +78,18 @@ func (txs Txs) Hash() []byte {
 	txBzs := make([][]byte, len(txs))
 	for i := 0; i < len(txs); i++ {
 		txBzs[i] = txs[i].Hash()
+	}
+	return merkle.SimpleHashFromByteSlices(txBzs)
+}
+
+// Hash returns the Merkle root hash of the transaction hashes.
+// i.e. the leaves of the tree are the hashes of the txs.
+func (txs Txs) ZeroHash() []byte {
+	// These allocations will be removed once Txs is switched to [][]byte,
+	// ref #2603. This is because golang does not allow type casting slices without unsafe
+	txBzs := make([][]byte, len(txs))
+	for i := 0; i < len(txs); i++ {
+		txBzs[i] = txs[i].ZeroHash()
 	}
 	return merkle.SimpleHashFromByteSlices(txBzs)
 }
@@ -253,4 +266,28 @@ type WrappedMempoolTx struct {
 	IsSim       uint32 `json:"is_sim"`
 	IsWrapCMTx  bool   `json:"is_wrap_cm_tx"`
 	WrapCMNonce uint64 `json:"wrap_cm_nonce"`
+}
+
+type ZeroData struct {
+	Txs          Txs
+	hash         tmbytes.HexBytes
+	BTCBlockHash string
+	IsConfirmed  bool
+	Delivered    bool
+}
+
+func (data *ZeroData) ZeroHash() tmbytes.HexBytes {
+	if data == nil {
+		return (Txs{}).ZeroHash()
+	}
+	if data.hash == nil {
+		data.hash = data.Txs.ZeroHash()
+	}
+	return data.hash
+}
+
+func (data *ZeroData) ToConfirmed() {
+	if !data.IsConfirmed {
+		data.IsConfirmed = true
+	}
 }

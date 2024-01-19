@@ -51,11 +51,9 @@ import (
 	"github.com/brc20-collab/brczero/libs/tendermint/global"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/log"
 	tmtypes "github.com/brc20-collab/brczero/libs/tendermint/types"
-	"github.com/brc20-collab/brczero/x/erc20"
 	"github.com/brc20-collab/brczero/x/evm"
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
 	"github.com/brc20-collab/brczero/x/evm/watcher"
-	"github.com/brc20-collab/brczero/x/vmbridge"
 )
 
 const (
@@ -73,26 +71,23 @@ const (
 
 // PublicEthereumAPI is the eth_ prefixed set of APIs in the Web3 JSON-RPC spec.
 type PublicEthereumAPI struct {
-	ctx                  context.Context
-	clientCtx            clientcontext.CLIContext
-	chainIDEpoch         *big.Int
-	logger               log.Logger
-	backend              backend.Backend
-	keys                 []ethsecp256k1.PrivKey // unlocked keys
-	nonceLock            *rpctypes.AddrLocker
-	keyringLock          sync.Mutex
-	gasPrice             *hexutil.Big
-	wrappedBackend       *watcher.Querier
-	watcherBackend       *watcher.Watcher
-	evmFactory           simulation.EvmFactory
-	txPool               *TxPool
-	Metrics              *monitor.RpcMetrics
-	callCache            *lru.Cache
-	cdc                  *codec.Codec
-	fastQueryThreshold   uint64
-	systemContract       []byte
-	e2cWasmCodeLimit     uint64
-	e2cWasmMsgHelperAddr string
+	ctx                context.Context
+	clientCtx          clientcontext.CLIContext
+	chainIDEpoch       *big.Int
+	logger             log.Logger
+	backend            backend.Backend
+	keys               []ethsecp256k1.PrivKey // unlocked keys
+	nonceLock          *rpctypes.AddrLocker
+	keyringLock        sync.Mutex
+	gasPrice           *hexutil.Big
+	wrappedBackend     *watcher.Querier
+	watcherBackend     *watcher.Watcher
+	evmFactory         simulation.EvmFactory
+	txPool             *TxPool
+	Metrics            *monitor.RpcMetrics
+	callCache          *lru.Cache
+	cdc                *codec.Codec
+	fastQueryThreshold uint64
 }
 
 // NewAPI creates an instance of the public ETH Web3 API.
@@ -107,19 +102,17 @@ func NewAPI(
 	}
 
 	api := &PublicEthereumAPI{
-		ctx:                  context.Background(),
-		clientCtx:            clientCtx,
-		chainIDEpoch:         epoch,
-		logger:               log.With("module", "json-rpc", "namespace", NameSpace),
-		backend:              backend,
-		keys:                 keys,
-		nonceLock:            nonceLock,
-		gasPrice:             ParseGasPrice(),
-		wrappedBackend:       watcher.NewQuerier(),
-		watcherBackend:       watcher.NewWatcher(log),
-		fastQueryThreshold:   viper.GetUint64(FlagFastQueryThreshold),
-		systemContract:       getSystemContractAddr(clientCtx),
-		e2cWasmMsgHelperAddr: viper.GetString(FlagE2cWasmMsgHelperAddr),
+		ctx:                context.Background(),
+		clientCtx:          clientCtx,
+		chainIDEpoch:       epoch,
+		logger:             log.With("module", "json-rpc", "namespace", NameSpace),
+		backend:            backend,
+		keys:               keys,
+		nonceLock:          nonceLock,
+		gasPrice:           ParseGasPrice(),
+		wrappedBackend:     watcher.NewQuerier(),
+		watcherBackend:     watcher.NewWatcher(log),
+		fastQueryThreshold: viper.GetUint64(FlagFastQueryThreshold),
 	}
 	api.evmFactory = simulation.NewEvmFactory(clientCtx.ChainID, api.wrappedBackend)
 	module := evm.AppModuleBasic{}
@@ -863,19 +856,6 @@ func (api *PublicEthereumAPI) Call(args rpctypes.CallArgs, blockNrOrHash rpctype
 		return nil, err
 	}
 
-	wasmCode, newParam, isWasmMsgStoreCode := api.isLargeWasmMsgStoreCode(args)
-	if isWasmMsgStoreCode {
-		*args.Data = newParam
-		wasmCode, err = judgeWasmCode(wasmCode)
-		if err != nil {
-			return []byte{}, TransformDataError(err, "eth_call judgeWasmCode")
-		}
-	}
-
-	// eth_call for wasm
-	if api.isWasmCall(args) {
-		return api.wasmCall(args, blockNr)
-	}
 	simRes, err := api.doCall(args, blockNr, big.NewInt(ethermint.DefaultRPCGasLimit), false, overrides)
 	if err != nil {
 		return []byte{}, TransformDataError(err, "eth_call")
@@ -884,14 +864,6 @@ func (api *PublicEthereumAPI) Call(args rpctypes.CallArgs, blockNrOrHash rpctype
 	data, err := evmtypes.DecodeResultData(simRes.Result.Data)
 	if err != nil {
 		return []byte{}, TransformDataError(err, "eth_call")
-	}
-
-	if isWasmMsgStoreCode {
-		ret, err := replaceToRealWasmCode(data.Ret, wasmCode)
-		if err != nil {
-			return []byte{}, TransformDataError(err, "eth_call replaceToRealWasmCode")
-		}
-		data.Ret = ret
 	}
 
 	if overrides == nil {
@@ -984,12 +956,7 @@ func (api *PublicEthereumAPI) doCall(
 		if err != nil {
 			return simRes, err
 		}
-		tempHooks := evm.NewLogProcessEvmHook(
-			erc20.NewSendToIbcEventHandler(erc20.Keeper{}),
-			erc20.NewSendNative20ToIbcEventHandler(erc20.Keeper{}),
-			vmbridge.NewSendToWasmEventHandler(vmbridge.Keeper{}),
-			vmbridge.NewCallToWasmEventHandler(vmbridge.Keeper{}),
-		)
+		tempHooks := evm.NewLogProcessEvmHook()
 		if ok := tempHooks.IsCanHooked(data.Logs); !ok {
 			return simRes, nil
 		}
@@ -1302,8 +1269,7 @@ func (api *PublicEthereumAPI) GetTransactionReceipt(hash common.Hash) (*watcher.
 	monitor := monitor.GetMonitor("eth_getTransactionReceipt", api.logger, api.Metrics).OnBegin()
 	defer monitor.OnEnd("hash", hash)
 	res, e := api.wrappedBackend.GetTransactionReceipt(hash)
-	// do not use watchdb when it`s a evm2cm tx
-	if e == nil && !api.isEvm2CmTx(res.To) {
+	if e == nil {
 		return res, nil
 	}
 
@@ -1359,18 +1325,6 @@ func (api *PublicEthereumAPI) GetTransactionReceipt(hash common.Hash) (*watcher.
 		if len(log.Topics) == 0 {
 			data.Logs[k].Topics = make([]common.Hash, 0)
 		}
-	}
-
-	// evm2cm tx logs
-	if api.isEvm2CmTx(ethTx.To()) {
-		data.Logs = append(data.Logs, &ethtypes.Log{
-			Address:     *ethTx.To(),
-			Topics:      []common.Hash{hash},
-			Data:        []byte(tx.TxResult.Log),
-			BlockNumber: uint64(tx.Height),
-			TxHash:      hash,
-			BlockHash:   blockHash,
-		})
 	}
 
 	// fix gasUsed when deliverTx ante handler check sequence invalid
@@ -1737,4 +1691,21 @@ func (api *PublicEthereumAPI) JudgeEvm2CmTx(toAddr, payLoad []byte) bool {
 		return bytes.Equal(toAddr, addr)
 	}
 	return false
+}
+
+func (api *PublicEthereumAPI) GetLogsByBtcHash(btcHash string) ([][]*ethtypes.Log, error) {
+	h, err := api.backend.HeightByBtcHash(btcHash)
+	if err != nil {
+		return nil, err
+	}
+	return api.backend.GetLogs(h)
+}
+
+func (api *PublicEthereumAPI) GetLogsOptimizeForEvent(height uint64) ([][]*ethtypes.Log, []common.Hash, error) {
+	return api.backend.GetLogsOptimize(int64(height))
+}
+
+func (api *PublicEthereumAPI) GetLogsOptimize(height uint64) ([][]*ethtypes.Log, error) {
+	logs, _, err := api.backend.GetLogsOptimize(int64(height))
+	return logs, err
 }

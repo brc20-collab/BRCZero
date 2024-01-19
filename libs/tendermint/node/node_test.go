@@ -245,6 +245,7 @@ func TestCreateProposalBlock(t *testing.T) {
 		config.Mempool,
 		proxyApp.Mempool(),
 		state.LastBlockHeight,
+		0,
 		mempl.WithMetrics(memplMetrics),
 		mempl.WithPreCheck(sm.TxPreCheck(state)),
 		mempl.WithPostCheck(sm.TxPostCheck(state)),
@@ -290,6 +291,7 @@ func TestCreateProposalBlock(t *testing.T) {
 		height,
 		state, commit,
 		proposerAddr,
+		1,
 	)
 
 	err = blockExec.ValidateBlock(state, block)

@@ -6,9 +6,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common"
-	ethcore "github.com/ethereum/go-ethereum/core"
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/baseapp"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	sdkerrors "github.com/brc20-collab/brczero/libs/cosmos-sdk/types/errors"
@@ -18,6 +15,9 @@ import (
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
 	"github.com/brc20-collab/brczero/x/evm"
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
+	"github.com/ethereum/go-ethereum/common"
+	ethcore "github.com/ethereum/go-ethereum/core"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
 )
 
 type accountKeeperInterface interface {
@@ -175,15 +175,13 @@ func ethGasConsume(ek EVMKeeper, ak accountKeeperInterface, sk types.SupplyKeepe
 		cost := (&feeInts[0]).SetUint64(gasLimit)
 		cost = cost.Mul(msgEthTx.Data.Price, cost)
 
-		const evmDenom = sdk.DefaultBondDenom
-
-		feeAmt := sdk.NewDecCoinsFromDec(evmDenom, sdk.NewDecWithBigIntAndPrec(cost, sdk.Precision))
-
+		feeAmt := sdk.NewDecWithBigIntAndPrec(cost, sdk.Precision)
+		btcAmt := sdk.NewDecWithBigIntAndPrecForBTCFee(msgEthTx.Data.BTCFee)
 		ctx.UpdateFromAccountCache(acc, accGetGas)
 
-		err := deductFees(ek, ak, sk, *ctx, acc, feeAmt)
-		if err != nil {
-			return err
+		// check gas fee is less than btc fee
+		if feeAmt.GT(btcAmt) {
+			return sdkerrors.Wrapf(sdkerrors.ErrOutOfGas, "the brczero fee must be less than btc fee")
 		}
 	}
 

@@ -2,19 +2,17 @@ package ante
 
 import (
 	"fmt"
-	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/mint"
-	wasmtypes "github.com/brc20-collab/brczero/x/wasm/types"
-
-	ethcmn "github.com/ethereum/go-ethereum/common"
 	ethermint "github.com/brc20-collab/brczero/app/types"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth"
+	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/mint"
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
 	"github.com/brc20-collab/brczero/x/gov/types"
 	"github.com/brc20-collab/brczero/x/params"
 	paramstypes "github.com/brc20-collab/brczero/x/params/types"
 	stakingkeeper "github.com/brc20-collab/brczero/x/staking/exported"
 	stakingtypes "github.com/brc20-collab/brczero/x/staking/types"
+	ethcmn "github.com/ethereum/go-ethereum/common"
 )
 
 type AnteDecorator struct {
@@ -57,10 +55,6 @@ func (ad AnteDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, ne
 			case paramstypes.UpgradeProposal:
 				if err := ad.pk.CheckMsgSubmitProposal(ctx, msg); err != nil {
 					return ctx, err
-				}
-			case *wasmtypes.ExtraProposal:
-				if !ad.sk.IsValidator(ctx, msg.Proposer) {
-					return ctx, wasmtypes.ErrProposerMustBeValidator
 				}
 			case mint.ExtraProposal:
 				if !ad.sk.IsValidator(ctx, msg.Proposer) {

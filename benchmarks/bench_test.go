@@ -2,7 +2,6 @@ package benchmarks
 
 import (
 	"encoding/hex"
-	"encoding/json"
 	"math/big"
 	"os"
 	"testing"
@@ -21,7 +20,6 @@ import (
 	dbm "github.com/brc20-collab/brczero/libs/tm-db"
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
 	token "github.com/brc20-collab/brczero/x/token/types"
-	wasmtypes "github.com/brc20-collab/brczero/x/wasm/types"
 )
 
 func BenchmarkTxSending(b *testing.B) {
@@ -47,13 +45,6 @@ func BenchmarkTxSending(b *testing.B) {
 			numAccounts: 50,
 		},
 		{
-			name:        "cw20 transfer - memdb",
-			db:          buildMemDB,
-			blockSize:   20,
-			txBuilder:   buildTxFromMsg(cw20TransferMsg),
-			numAccounts: 50,
-		},
-		{
 			name:        "basic send - leveldb",
 			db:          buildLevelDB,
 			blockSize:   20,
@@ -65,13 +56,6 @@ func BenchmarkTxSending(b *testing.B) {
 			db:          buildLevelDB,
 			blockSize:   20,
 			txBuilder:   buildOip20Transfer,
-			numAccounts: 50,
-		},
-		{
-			name:        "cw20 transfer - leveldb",
-			db:          buildLevelDB,
-			blockSize:   20,
-			txBuilder:   buildTxFromMsg(cw20TransferMsg),
 			numAccounts: 50,
 		},
 		{
@@ -89,13 +73,6 @@ func BenchmarkTxSending(b *testing.B) {
 			numAccounts: 8000,
 		},
 		{
-			name:        "cw20 transfer - leveldb - 8k accounts",
-			db:          buildLevelDB,
-			blockSize:   20,
-			txBuilder:   buildTxFromMsg(cw20TransferMsg),
-			numAccounts: 8000,
-		},
-		{
 			name:        "basic send - leveldb - 8k accounts - huge blocks",
 			db:          buildLevelDB,
 			blockSize:   1000,
@@ -107,13 +84,6 @@ func BenchmarkTxSending(b *testing.B) {
 			db:          buildLevelDB,
 			blockSize:   1000,
 			txBuilder:   buildOip20Transfer,
-			numAccounts: 8000,
-		},
-		{
-			name:        "cw20 transfer - leveldb - 8k accounts - huge blocks",
-			db:          buildLevelDB,
-			blockSize:   1000,
-			txBuilder:   buildTxFromMsg(cw20TransferMsg),
 			numAccounts: 8000,
 		},
 		{
@@ -130,13 +100,6 @@ func BenchmarkTxSending(b *testing.B) {
 			txBuilder:   buildOip20Transfer,
 			numAccounts: 80000,
 		},
-		{
-			name:        "cw20 transfer - leveldb - 80k accounts - huge blocks",
-			db:          buildLevelDB,
-			blockSize:   1000,
-			txBuilder:   buildTxFromMsg(cw20TransferMsg),
-			numAccounts: 80000,
-		},
 	}
 
 	for _, tc := range cases {
@@ -145,7 +108,6 @@ func BenchmarkTxSending(b *testing.B) {
 			defer func() {
 				_ = db.Close()
 				_ = os.RemoveAll("./data")
-				_ = os.RemoveAll("./wasm")
 			}()
 			appInfo := InitializeOKXApp(b, db, tc.numAccounts)
 			err := deployOip20(&appInfo)
@@ -195,69 +157,6 @@ func tokenSendMsg(info *AppInfo) ([]sdk.Msg, error) {
 	coins := sdk.Coins{sdk.NewInt64Coin(info.Denom, 1)}
 	sendMsg := token.NewMsgTokenSend(info.MinterAddr, rcpt, coins)
 	return []sdk.Msg{sendMsg}, nil
-}
-
-func cw20TransferMsg(info *AppInfo) ([]sdk.Msg, error) {
-	rcpt := sdk.AccAddress(secp256k1.GenPrivKey().PubKey().Address())
-	transfer := cw20ExecMsg{Transfer: &transferMsg{
-		Recipient: rcpt.String(),
-		Amount:    88,
-	}}
-	transferBz, err := json.Marshal(transfer)
-	if err != nil {
-		return nil, err
-	}
-
-	sendMsg := &wasmtypes.MsgExecuteContract{
-		Sender:   info.MinterAddr.String(),
-		Contract: info.Cw20ContractAddr,
-		Msg:      transferBz,
-	}
-	return []sdk.Msg{sendMsg}, nil
-}
-
-func cw20StoreMsg(info *AppInfo) ([]sdk.Msg, error) {
-	cw20Code, err := os.ReadFile("./testdata/cw20_base.wasm")
-	if err != nil {
-		return nil, err
-	}
-
-	perm := wasmtypes.AccessTypeOnlyAddress.With(info.MinterAddr)
-	storeMsg := wasmtypes.MsgStoreCode{
-		Sender:                info.MinterAddr.String(),
-		WASMByteCode:          cw20Code,
-		InstantiatePermission: &perm,
-	}
-	return []sdk.Msg{storeMsg}, nil
-}
-
-func cw20InstantiateMsg(info *AppInfo) ([]sdk.Msg, error) {
-	codeID := uint64(1)
-	addr := info.MinterAddr.String()
-	init := cw20InitMsg{
-		Name:     "OK Token",
-		Symbol:   brc10,
-		Decimals: 8,
-		InitialBalances: []balance{
-			{
-				Address: addr,
-				Amount:  1000000000,
-			},
-		},
-	}
-	initBz, err := json.Marshal(init)
-	if err != nil {
-		return nil, err
-	}
-	initMsg := wasmtypes.MsgInstantiateContract{
-		Sender: addr,
-		Admin:  addr,
-		CodeID: codeID,
-		Label:  "Demo contract",
-		Msg:    initBz,
-	}
-
-	return []sdk.Msg{initMsg}, nil
 }
 
 func buildTxFromMsg(builder func(info *AppInfo) ([]sdk.Msg, error)) func(n int, info *AppInfo) []tmtypes.Tx {

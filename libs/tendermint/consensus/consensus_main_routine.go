@@ -3,14 +3,15 @@ package consensus
 import (
 	"bytes"
 	"fmt"
+	"reflect"
+	"runtime/debug"
+	"time"
+
 	cfg "github.com/brc20-collab/brczero/libs/tendermint/config"
 	cstypes "github.com/brc20-collab/brczero/libs/tendermint/consensus/types"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/fail"
 	"github.com/brc20-collab/brczero/libs/tendermint/types"
 	tmtime "github.com/brc20-collab/brczero/libs/tendermint/types/time"
-	"reflect"
-	"runtime/debug"
-	"time"
 )
 
 //-----------------------------------------
@@ -190,7 +191,7 @@ func (cs *State) handleMsg(mi msgInfo) (added bool) {
 
 		cs.mtx.Unlock()
 		cs.mtx.Lock()
-		if added && cs.ProposalBlockParts.IsComplete() {
+		if added && cs.ProposalBlockParts.IsComplete() && err == nil {
 			cs.handleCompleteProposal(msg.Height)
 		}
 
@@ -347,10 +348,11 @@ func (cs *State) handleTxsAvailable() {
 
 	switch cs.Step {
 	case cstypes.RoundStepNewHeight: // timeoutCommit phase
-		if cs.needProofBlock(cs.Height) {
-			// enterPropose will be called by enterNewRound
-			return
-		}
+		//todo when only brczeroData of mempool, it's only be called by block commit.
+		//if cs.needProofBlock(cs.Height) {
+		//	// enterPropose will be called by enterNewRound
+		//	return
+		//}
 
 		// +1ms to ensure RoundStepNewRound timeout always happens after RoundStepNewHeight
 		timeoutCommit := cs.StartTime.Sub(tmtime.Now()) + 1*time.Millisecond
@@ -371,4 +373,37 @@ func (cs *State) preMakeBlockRoutine() {
 			return
 		}
 	}
+}
+
+func (cs *State) isValidator() bool {
+	if cs.privValidator == nil || cs.privValidatorPubKey == nil {
+		return false
+	}
+	if !cs.Validators.HasAddress(cs.privValidatorPubKey.Address()) {
+		return false
+	}
+	return true
+}
+
+func (cs *State) rpcDeliverTxs(btcHeight int64) {
+	if cs.isValidator() {
+		return
+	}
+
+	for h := btcHeight; h <= btcHeight+5; h++ {
+		brczeroData, err := cs.blockExec.GetZeroDataByBTCHeight(h)
+		if err != nil || brczeroData.IsConfirmed || brczeroData.Delivered {
+			continue
+		}
+
+		mockBlock, _ := cs.createMockBlock(h, brczeroData)
+		// when DeliverTx, the stores(mpt and iavl) use Set()/Delete() and the cache the kv
+		types.RpcFlag = types.RpcDeliverTxsMode
+		_, _ = cs.blockExec.DeliverTxsForBrczeroRpc(mockBlock)
+
+		types.RpcFlag = types.RpcDefaultMode
+
+		cs.blockExec.SetZeroDataDelivered(h, true)
+	}
+
 }

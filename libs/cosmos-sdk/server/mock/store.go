@@ -113,6 +113,10 @@ func (ms multiStore) GetStoreType() sdk.StoreType {
 	panic("not implemented")
 }
 
+func (ms multiStore) GetStoreName() string {
+	panic("not implemented")
+}
+
 func (ms multiStore) SetInterBlockCache(_ sdk.MultiStorePersistentCache) {
 	panic("not implemented")
 }
@@ -171,6 +175,10 @@ func (kv kvStore) GetStoreType() sdk.StoreType {
 	panic("not implemented")
 }
 
+func (kv kvStore) GetStoreName() string {
+	panic("not implemented")
+}
+
 func (kv kvStore) Get(key []byte) []byte {
 	v, ok := kv.store[string(key)]
 	if !ok {
@@ -190,6 +198,9 @@ func (kv kvStore) Set(key, value []byte) {
 
 func (kv kvStore) Delete(key []byte) {
 	delete(kv.store, string(key))
+}
+
+func (kv kvStore) CleanBrcRpcState() {
 }
 
 func (kv kvStore) Prefix(prefix []byte) sdk.KVStore {
@@ -233,5 +244,9 @@ func (ms multiStore) GetCommitVersion() (int64, error) {
 }
 
 func (ms multiStore) CommitterCommitMap(*tmtypes.TreeDelta) (sdk.CommitID, *tmtypes.TreeDelta) {
+	panic("not implemented")
+}
+
+func (ms multiStore) CleanBrcRpcState() {
 	panic("not implemented")
 }

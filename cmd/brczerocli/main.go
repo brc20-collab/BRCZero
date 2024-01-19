@@ -3,12 +3,6 @@ package main
 import (
 	"fmt"
 
-	"github.com/brc20-collab/brczero/libs/system"
-
-	interfacetypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
-
-	authtypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
-
 	"github.com/spf13/cobra"
 
 	"github.com/brc20-collab/brczero/app"
@@ -21,6 +15,7 @@ import (
 	clientkeys "github.com/brc20-collab/brczero/libs/cosmos-sdk/client/keys"
 	clientrpc "github.com/brc20-collab/brczero/libs/cosmos-sdk/client/rpc"
 	sdkcodec "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
+	interfacetypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/codec/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/crypto/keys"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/server"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
@@ -28,12 +23,13 @@ import (
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth"
 	authcmd "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/client/cli"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/client/utils"
+	authtypes "github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/bank"
+	"github.com/brc20-collab/brczero/libs/system"
 	tmamino "github.com/brc20-collab/brczero/libs/tendermint/crypto/encoding/amino"
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/multisig"
 	"github.com/brc20-collab/brczero/libs/tendermint/libs/cli"
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
-	tokencmd "github.com/brc20-collab/brczero/x/token/client/cli"
 )
 
 var (
@@ -123,7 +119,6 @@ func txCmd(proxy *sdkcodec.CodecProxy, reg interfacetypes.InterfaceRegistry) *co
 	}
 	cdc := proxy.GetCdc()
 	txCmd.AddCommand(
-		tokencmd.SendTxCmd(cdc),
 		flags.LineBreak,
 		authcmd.GetSignCommand(cdc),
 		authcmd.GetMultiSignCommand(cdc),

@@ -14,17 +14,17 @@ import (
 
 	"github.com/brc20-collab/brczero/libs/system/trace"
 
-	"github.com/ethereum/go-ethereum/common"
-	ethcmn "github.com/ethereum/go-ethereum/common"
-	ethstate "github.com/ethereum/go-ethereum/core/state"
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
-	ethvm "github.com/ethereum/go-ethereum/core/vm"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/codec"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/mpt"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/prefix"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/store/types"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth"
+	"github.com/ethereum/go-ethereum/common"
+	ethcmn "github.com/ethereum/go-ethereum/common"
+	ethstate "github.com/ethereum/go-ethereum/core/state"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
+	ethvm "github.com/ethereum/go-ethereum/core/vm"
 )
 
 var (

@@ -7,7 +7,6 @@ import (
 	appconfig "github.com/brc20-collab/brczero/app/config"
 	"github.com/brc20-collab/brczero/libs/system/trace"
 	abci "github.com/brc20-collab/brczero/libs/tendermint/abci/types"
-	"github.com/brc20-collab/brczero/x/wasm/watcher"
 )
 
 // BeginBlock implements the Application interface
@@ -57,17 +56,6 @@ func (app *BRCZeroApp) Commit(req abci.RequestCommit) abci.ResponseCommit {
 	//defer trace.GetTraceSummary().Dump()
 	defer trace.OnCommitDone()
 
-	// reload upgrade info for upgrade proposal
-	app.setupUpgradeModules(true)
-	tasks := app.heightTasks[app.BaseApp.LastBlockHeight()+1]
-	if tasks != nil {
-		ctx := app.BaseApp.GetDeliverStateCtx()
-		for _, t := range *tasks {
-			if err := t.Execute(ctx); nil != err {
-				panic("bad things")
-			}
-		}
-	}
 	res := app.BaseApp.Commit(req)
 
 	// we call watch#Commit here ,because
@@ -75,7 +63,6 @@ func (app *BRCZeroApp) Commit(req abci.RequestCommit) abci.ResponseCommit {
 	// 2. before commit the block,State#updateToState hasent not called yet,so the proposalBlockPart is not nil which means we wont
 	// 	  call the prerun during commit step(edge case)
 	app.EvmKeeper.Watcher.Commit()
-	watcher.Commit()
 
 	return res
 }

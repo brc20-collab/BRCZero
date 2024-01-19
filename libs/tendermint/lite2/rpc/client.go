@@ -9,12 +9,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/brc20-collab/brczero/libs/tendermint/mempool"
-
 	"github.com/brc20-collab/brczero/libs/tendermint/crypto/merkle"
 	tmbytes "github.com/brc20-collab/brczero/libs/tendermint/libs/bytes"
 	service "github.com/brc20-collab/brczero/libs/tendermint/libs/service"
 	lite "github.com/brc20-collab/brczero/libs/tendermint/lite2"
+	"github.com/brc20-collab/brczero/libs/tendermint/mempool"
 	rpcclient "github.com/brc20-collab/brczero/libs/tendermint/rpc/client"
 	ctypes "github.com/brc20-collab/brczero/libs/tendermint/rpc/core/types"
 	rpctypes "github.com/brc20-collab/brczero/libs/tendermint/rpc/jsonrpc/types"
@@ -218,6 +217,22 @@ func (c *Client) LatestBlockNumber() (int64, error) {
 		return 0, err
 	}
 	return info.LastHeight, nil
+}
+
+func (c *Client) HeightByBtcHash(btcHash string) (int64, error) {
+	return 0, fmt.Errorf("tmrpc client")
+}
+
+func (c *Client) BtcBlockHashByBtcTxid(string) (string, error) {
+	return "", fmt.Errorf("tmrpc client")
+}
+
+func (c *Client) BtcBlockHashByBtcHeight(btcHeight int64) (string, error) {
+	return "", fmt.Errorf("tmrpc client")
+}
+
+func (c *Client) MapTxhashTxid(btcHash, protocolName string) (map[string]string, error) {
+	return nil, fmt.Errorf("tmrpc client")
 }
 
 // BlockchainInfo calls rpcclient#BlockchainInfo and then verifies every header

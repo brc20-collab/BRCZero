@@ -203,9 +203,8 @@ type BaseApp struct { // nolint: maligned
 
 	parallelTxManage *parallelTxManager
 
-	feeCollector      sdk.Coins
-	feeChanged        bool // used to judge whether should update the fee-collector account
-	FeeSplitCollector []*sdk.FeeSplitInfo
+	feeCollector sdk.Coins
+	feeChanged   bool // used to judge whether should update the fee-collector account
 
 	checkTxNum        int64
 	wrappedCheckTxNum int64
@@ -260,7 +259,6 @@ func NewBaseApp(
 		interceptors:     make(map[string]Interceptor),
 
 		checkTxCacheMultiStores: newCacheMultiStoreList(),
-		FeeSplitCollector:       make([]*sdk.FeeSplitInfo, 0),
 	}
 
 	for _, option := range options {
@@ -708,7 +706,6 @@ func (app *BaseApp) getContextForTx(mode runTxMode, txBytes []byte) sdk.Context 
 	if mode == runTxModeDeliver {
 		ctx.SetDeliverSerial()
 	}
-	ctx.SetFeeSplitInfo(&sdk.FeeSplitInfo{})
 
 	return ctx
 }
@@ -883,7 +880,7 @@ func (app *BaseApp) runMsgs(ctx sdk.Context, msgs []sdk.Msg, mode runTxMode) (*s
 	msgLogs := make(sdk.ABCIMessageLogs, 0, len(msgs))
 	data := make([]byte, 0, len(msgs))
 	events := sdk.EmptyEvents()
-
+	info := make([]byte, 0)
 	// NOTE: GasWanted is determined by the AnteHandler and GasUsed by the GasMeter.
 	for i, msg := range msgs {
 		// skip actual execution for (Re)CheckTx mode
@@ -911,8 +908,13 @@ func (app *BaseApp) runMsgs(ctx sdk.Context, msgs []sdk.Msg, mode runTxMode) (*s
 
 		msgResult, err := handler(ctx, msg)
 		if err != nil {
+			if msgResult != nil && len(msgResult.Events) != 0 {
+				return &sdk.Result{Events: msgResult.Events, Info: msgResult.Info}, sdkerrors.Wrapf(err, "failed to execute message; message index: %d", i)
+			}
 			return nil, sdkerrors.Wrapf(err, "failed to execute message; message index: %d", i)
 		}
+		///TODO Need support multi result info
+		info = msgResult.Info
 
 		msgEvents := sdk.Events{
 			sdk.NewEvent(sdk.EventTypeMessage, sdk.NewAttribute(sdk.AttributeKeyAction, msg.Type())),
@@ -944,6 +946,7 @@ func (app *BaseApp) runMsgs(ctx sdk.Context, msgs []sdk.Msg, mode runTxMode) (*s
 		Data:   data,
 		Log:    strings.TrimSpace(msgLogs.String()),
 		Events: events,
+		Info:   info,
 	}, nil
 }
 
@@ -1054,4 +1057,8 @@ func (app *BaseApp) GetCMS() sdk.CommitMultiStore {
 
 func (app *BaseApp) GetTxDecoder() sdk.TxDecoder {
 	return app.txDecoder
+}
+
+func (app *BaseApp) CleanBrcRpcState() {
+	app.cms.CleanBrcRpcState()
 }

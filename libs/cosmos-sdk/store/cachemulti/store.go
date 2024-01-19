@@ -186,6 +186,10 @@ func (cms Store) GetStoreType() types.StoreType {
 	return types.StoreTypeMulti
 }
 
+func (cms Store) GetStoreName() string {
+	return "MultiStore"
+}
+
 // Write calls Write on each underlying store.
 func (cms Store) Write() {
 	cms.db.Write()

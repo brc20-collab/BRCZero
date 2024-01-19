@@ -3,6 +3,7 @@ package mpt
 import (
 	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
+
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 )
 

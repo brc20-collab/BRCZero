@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"fmt"
 	"log"
 	"net/http"
@@ -21,6 +22,11 @@ import (
 	tmtypes "github.com/brc20-collab/brczero/libs/tendermint/types"
 )
 
+const (
+	flagChangeCodeHash = "change_codehash"
+	flagChangeCode     = "change_code"
+)
+
 func repairStateCmd(ctx *server.Context) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "repair-state",
@@ -38,7 +44,24 @@ func repairStateCmd(ctx *server.Context) *cobra.Command {
 					fmt.Println(err)
 				}
 			}()
-			app.RepairState(ctx, false)
+			changeCodeHash := viper.GetString(flagChangeCodeHash)
+			changeCode := viper.GetString(flagChangeCode)
+			if len(changeCodeHash) != 0 && len(changeCode) != 0 {
+				addr, err := hex.DecodeString(changeCodeHash)
+				if err != nil {
+					fmt.Println("change contract address failed", err)
+				} else {
+					if code, err := hex.DecodeString(changeCode); err != nil {
+						fmt.Println("change code failed: ", err)
+					} else {
+						app.RepairStateChangeContract(ctx, false, addr, code)
+					}
+				}
+
+			} else {
+				app.RepairState(ctx, false)
+			}
+
 			log.Println("--------- repair data success ---------")
 		},
 	}
@@ -51,6 +74,8 @@ func repairStateCmd(ctx *server.Context) *cobra.Command {
 	cmd.Flags().StringP(pprofAddrFlag, "p", "0.0.0.0:6060", "Address and port of pprof HTTP server listening")
 	cmd.Flags().Bool(tmiavl.FlagIavlDiscardFastStorage, false, "Discard fast storage")
 	cmd.Flags().MarkHidden(tmiavl.FlagIavlDiscardFastStorage)
+	cmd.Flags().String(flagChangeCodeHash, "", "change contract address")
+	cmd.Flags().String(flagChangeCode, "", "change contract address")
 
 	return cmd
 }

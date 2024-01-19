@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/common"
-	jsoniter "github.com/json-iterator/go"
 	"github.com/brc20-collab/brczero/app/rpc/namespaces/eth/state"
 	sdk "github.com/brc20-collab/brczero/libs/cosmos-sdk/types"
 	"github.com/brc20-collab/brczero/libs/cosmos-sdk/x/auth"
@@ -17,6 +15,8 @@ import (
 	tmstate "github.com/brc20-collab/brczero/libs/tendermint/state"
 	tmtypes "github.com/brc20-collab/brczero/libs/tendermint/types"
 	evmtypes "github.com/brc20-collab/brczero/x/evm/types"
+	"github.com/ethereum/go-ethereum/common"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/spf13/viper"
 	"github.com/tendermint/go-amino"
 )
@@ -47,7 +47,6 @@ type Watcher struct {
 	evmTxIndex    uint64
 	checkWd       bool
 	filterMap     map[string]struct{}
-	InfuraKeeper  InfuraKeeper
 	delAccountMtx sync.Mutex
 }
 
@@ -147,9 +146,6 @@ func (w *Watcher) SaveTransactionReceipt(status uint32, msg *evmtypes.MsgEthereu
 	}
 	w.UpdateCumulativeGas(txIndex, gasUsed)
 	tr := newTransactionReceipt(status, msg, txHash, w.blockHash, txIndex, w.height, data, w.cumulativeGas[txIndex], gasUsed)
-	if w.InfuraKeeper != nil {
-		w.InfuraKeeper.OnSaveTransactionReceipt(tr)
-	}
 	wMsg := NewMsgTransactionReceipt(tr, txHash)
 	if wMsg != nil {
 		w.batch = append(w.batch, wMsg)
@@ -226,9 +222,6 @@ func (w *Watcher) SaveBlock(block evmtypes.Block) {
 	}
 	// update block hash
 	block.Hash = w.blockHash
-	if w.InfuraKeeper != nil {
-		w.InfuraKeeper.OnSaveBlock(block)
-	}
 	wMsg := NewMsgBlock(block, w.blockHash)
 	if wMsg != nil {
 		w.batch = append(w.batch, wMsg)

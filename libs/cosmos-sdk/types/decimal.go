@@ -121,6 +121,10 @@ func NewDecWithBigIntAndPrec(i *big.Int, prec int64) Dec {
 	}
 }
 
+func NewDecWithBigIntAndPrecForBTCFee(originBTCFee *big.Int) Dec {
+	return NewDecWithBigIntAndPrec(originBTCFee, 9)
+}
+
 // create a new Dec from big integer assuming whole numbers
 // CONTRACT: prec <= Precision
 func NewDecFromInt(i Int) Dec {
